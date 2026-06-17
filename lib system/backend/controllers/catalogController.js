@@ -29,6 +29,37 @@ async function getCatalogBooks(req, res) {
   }
 }
 
+async function addBookReview(req, res) {
+  try {
+    const { id } = req.params;
+    const { studentName, rating, comment } = req.body;
+
+    if (!studentName || !rating || !comment) {
+      res.status(400).json({ success: false, message: "Please fill all fields" });
+      return;
+    }
+
+    const book = await CatalogBook.findById(id);
+    if (!book) {
+      res.status(404).json({ success: false, message: "Book not found" });
+      return;
+    }
+
+    book.reviews.push({
+      studentName: studentName.trim(),
+      rating: Number(rating),
+      comment: comment.trim()
+    });
+
+    await book.save();
+    res.json({ success: true, reviews: book.reviews });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
 module.exports = {
-  getCatalogBooks
+  getCatalogBooks,
+  addBookReview
 };
+
