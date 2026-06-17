@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Books</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- HEADER / NAVIGATION -->
+    <header>
+        <nav class="navbar">
+            <div class="logo-section">
+                <img src="images/logo.jpg" alt="logo">
+                <h2>LibraryMS</h2>
+            </div>
+            
+            <div class="nav-right" style="display: flex; align-items: center; gap: 20px;">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="all_books.html" class="active">Books</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li id="authLink"><a href="login.html">Login</a></li>
+                </ul>
+
+                <!-- Theme Switcher -->
+                <button class="theme-switch" id="themeToggleBtn" title="Toggle Theme">
+                    🌙
+                </button>
+
+                <!-- Hamburger menu for Mobile -->
+                <button class="hamburger" id="menuToggleBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="books-hero">
+        <h1>Explore Our Books</h1>
+        <p>Discover thousands of textbooks, programming manuals, and fiction records from various categories.</p>
+    </section>
+
+    <!-- SEARCH -->
+    <section class="search-section">
+        <h2>Search Books</h2>
+        <div class="search-box">
+            <input type="text" id="publicSearchInput" placeholder="Search books, authors, categories...">
+        </div>
+    </section>
+
+    <!-- CATEGORY FILTER -->
+    <section class="category-filter" id="categoryFilterContainer">
+        <button onclick="filterBooks('All')" class="active">All</button>
+        <button onclick="filterBooks('BCA')">BCA</button>
+        <button onclick="filterBooks('BBA')">BBA</button>
+        <button onclick="filterBooks('MBA')">MBA</button>
+        <button onclick="filterBooks('MCA')">MCA</button>
+        <button onclick="filterBooks('Programming')">Programming</button>
+        <button onclick="filterBooks('Self Improvement')">Self Improvement</button>
+        <button onclick="filterBooks('Psychology')">Psychology</button>
+        <button onclick="filterBooks('Encyclopedia')">Encyclopedia</button>
+        <button onclick="filterBooks('Story books')">Story books</button>
+        <button onclick="filterBooks('Magazine')">Magazine</button>
+    </section>
+
+    <!-- BOOK LIST -->
+    <section class="featured-books">
+        <div id="publicBookList" class="book-container">
+            <!-- Dynamically populated -->
+        </div>
+    </section>
+
+    <!-- LOGIN POPUP -->
+    <div id="loginPopup" class="popup">
+        <div class="popup-content">
+            <h2>🔒 Login Required</h2>
+            <p>Please login first to explore this book's availability and check issue status.</p>
+            <a href="login.html" class="btn">Login Now</a>
+            <button onclick="closePopup()" class="close-btn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h2>LibraryMS</h2>
+                <p>Modern digital library management system for schools and colleges.</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="all_books.html">Books</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact</h3>
+                <p>📍 Patna, Bihar</p>
+                <p>📞 +91 9876543210</p>
+                <p>✉ support@libraryms.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 LibraryMS | Designed By Shikha Sharma
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/public_books.js"></script>
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students Management</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="images/logo.jpg" alt="Logo">
+            <h2>LibraryMS</h2>
+        </div>
+        <ul>
+            <li><a href="dashboard.html">🏠 Dashboard</a></li>
+            <li><a href="books.html">📚 Books</a></li>
+            <li><a href="students.html" class="active">👨‍🎓 Students</a></li>
+            <li><a href="issue-book.html">📖 Issue Book</a></li>
+            <li><a href="logout.html">🚪 Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <h1>Students Management</h1>
+            <div class="profile-section">
+                <button id="darkModeBtn">
+                    🌙 Mode Toggle
+                </button>
+                <div class="profile">
+                    Welcome, Admin
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM -->
+        <div class="table-section">
+            <h2>Add Student</h2>
+            <form id="studentForm">
+                <div class="form-grid">
+                    <input type="text" id="studentName" placeholder="Student Full Name" required>
+                    <input type="text" id="studentCourse" placeholder="Course (e.g. BCA)" required>
+                    <input type="text" id="studentRoll" placeholder="Roll Number" required>
+                    <button type="submit">Add Student</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="table-section">
+            <h2>Search Student</h2>
+            <input type="text" id="studentSearchInput" placeholder="Search by name, course or roll number...">
+        </div>
+
+        <!-- STUDENT LIST -->
+        <div class="table-section">
+            <h2>All Registered Students</h2>
+            <div id="studentList" class="book-grid">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/students.js"></script>
+</body>
+
+</html>

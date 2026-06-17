@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Unified Header for Auth Page -->
+    <header>
+        <nav class="navbar">
+            <div class="logo-section">
+                <img src="images/logo.jpg" alt="logo">
+                <h2>LibraryMS</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="all_books.html">Books</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html" class="active">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="auth-container">
+
+        <div class="auth-box">
+
+            <h2>Library Login</h2>
+
+            <form id="loginForm">
+
+                <div class="input-group">
+                    <label>Username / Email</label>
+                    <input type="text" id="username" placeholder="Enter username or email" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+
+                <button type="submit" class="auth-btn">
+                    Login
+                </button>
+
+            </form>
+
+            <div class="extra-text">
+                Don't have an account?
+                <a href="register.html">Register</a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h2>LibraryMS</h2>
+                <p>Modern digital library management system for schools and colleges.</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="all_books.html">Books</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact</h3>
+                <p>📍 Patna, Bihar</p>
+                <p>📞 +91 9876543210</p>
+                <p>✉ support@libraryms.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 LibraryMS | Designed By Shikha Sharma
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>

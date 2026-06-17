@@ -1,0 +1,110 @@
+/* Contact Page Stylesheet */
+
+.contact-section {
+    padding: 100px 8% 80px;
+    background: var(--bg-color, #f4f7fb);
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.3s ease;
+}
+
+.contact-box {
+    background: var(--card-bg, #ffffff);
+    width: 100%;
+    max-width: 650px;
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px var(--shadow-color, rgba(0, 0, 0, 0.08));
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.contact-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px var(--shadow-hover, rgba(0, 0, 0, 0.12));
+}
+
+.contact-box h2 {
+    text-align: center;
+    margin-bottom: 35px;
+    color: var(--primary-color, #021b3a);
+    font-size: 32px;
+    font-weight: 700;
+    position: relative;
+}
+
+.contact-box h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--accent-color, #f1c40f);
+    border-radius: 2px;
+}
+
+.contact-box .input-group {
+    margin-bottom: 24px;
+}
+
+.contact-box .input-group input,
+.contact-box .input-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color, #cccccc);
+    background: var(--input-bg, #ffffff);
+    color: var(--text-color, #333333);
+    outline: none;
+    font-family: inherit;
+    font-size: 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-box .input-group input:focus,
+.contact-box .input-group textarea:focus {
+    border-color: var(--primary-color, #021b3a);
+    box-shadow: 0 0 0 4px var(--primary-light, rgba(2, 27, 58, 0.1));
+}
+
+.contact-box textarea {
+    resize: none;
+    height: 160px;
+    line-height: 1.6;
+}
+
+.contact-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent-color, #f1c40f);
+    color: var(--primary-color, #021b3a);
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.1s ease;
+}
+
+.contact-btn:hover {
+    background: var(--primary-color, #021b3a);
+    color: #ffffff;
+}
+
+.contact-btn:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+    .contact-section {
+        padding: 80px 20px 60px;
+    }
+    
+    .contact-box {
+        padding: 35px 25px;
+    }
+}

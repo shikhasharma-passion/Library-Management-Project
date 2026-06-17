@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="images/logo.jpg" alt="Logo">
+            <h2>LibraryMS</h2>
+        </div>
+        <ul>
+            <li><a href="dashboard.html" class="active">🏠 Dashboard</a></li>
+            <li><a href="books.html">📚 Books</a></li>
+            <li><a href="students.html">👨‍🎓 Students</a></li>
+            <li><a href="issue-book.html">📖 Issue Book</a></li>
+            <li><a href="logout.html">🚪 Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <h1>Admin Dashboard</h1>
+            
+            <div class="profile-section">
+                <button id="darkModeBtn">
+                    🌙 Mode Toggle
+                </button>
+                <div class="profile">
+                    Welcome, Admin
+                </div>
+            </div>
+        </div>
+
+        <!-- CARDS -->
+        <div class="cards">
+            <div class="card">
+                <h2 id="totalBooks">0</h2>
+                <p>Total Books</p>
+            </div>
+
+            <div class="card">
+                <h2 id="totalStudents">0</h2>
+                <p>Students Registered</p>
+            </div>
+
+            <div class="card">
+                <h2 id="issuedBooks">0</h2>
+                <p>Issued Books</p>
+            </div>
+
+            <div class="card">
+                <h2 id="pendingBooks">0</h2>
+                <p>Pending / Overdue Returns</p>
+            </div>
+        </div>
+
+        <!-- CHARTS SECTION -->
+        <div class="charts-section">
+            <div class="table-section">
+                <h2>Library Analytics</h2>
+                <canvas id="libraryChart"></canvas>
+            </div>
+
+            <div class="table-section">
+                <h2>Book Categories</h2>
+                <canvas id="categoriesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- TABLE SECTION: RECENT ISSUED -->
+        <div class="table-section">
+            <h2>Recent Issued Books</h2>
+            <div class="table-wrapper">
+                <table id="recentIssuedTable">
+                    <!-- Loaded dynamically -->
+                </table>
+            </div>
+        </div>
+
+        <!-- TABLE SECTION: USER CONTACT MESSAGES -->
+        <div class="table-section" id="contactsSection">
+            <h2>User Contacts & Feedback</h2>
+            <div class="table-wrapper">
+                <table id="contactsTable">
+                    <!-- Loaded dynamically -->
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ChartJS and script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+/* Logout Screen Stylesheet */
+
+body {
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    background-color: var(--bg-color, #f4f7fb);
+    padding-top: 15vh;
+    margin: 0;
+    color: var(--text-color, #333333);
+    transition: background 0.3s ease, color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+}
+
+.logout-container {
+    background: var(--card-bg, #ffffff);
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px var(--shadow-color, rgba(0, 0, 0, 0.08));
+    max-width: 450px;
+    width: 90%;
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+h2 {
+    color: var(--primary-color, #021b3a);
+    font-size: 26px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+p {
+    color: var(--text-muted, #666666);
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+/* Spinner element */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--border-color, #e0e0e0);
+    border-top: 5px solid var(--accent-color, #f1c40f);
+    border-radius: 50%;
+    margin: 0 auto;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

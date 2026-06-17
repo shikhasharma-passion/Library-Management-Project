@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="images/logo.jpg" alt="Logo">
+            <h2>Student Panel</h2>
+        </div>
+        <ul>
+            <li><a href="#" class="active">🏠 Dashboard</a></li>
+            <li><a href="all_books.html">📚 Browse Catalog</a></li>
+            <li><a href="contact.html">✉ Contact Library</a></li>
+            <li><a href="logout.html">🚪 Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <h1>Student Dashboard</h1>
+            
+            <div class="profile-section">
+                <button id="darkModeBtn">
+                    🌙 Mode Toggle
+                </button>
+                <div class="profile" id="studentProfile">
+                    Welcome Student
+                </div>
+            </div>
+        </div>
+
+        <!-- OVERDUE ALERT BLOCK (Shows dynamically if fine > 0) -->
+        <div id="overdueAlert" class="alert-card" style="display: none;">
+            <strong>⚠️ Overdue Return Alert:</strong> You have books that are past their return deadline. Please return them to avoid additional daily fines.
+        </div>
+
+        <!-- CARDS -->
+        <div class="cards">
+            <div class="card">
+                <h2 id="studentIssuedCount">0</h2>
+                <p>Issued Books</p>
+            </div>
+
+            <div class="card">
+                <h2 id="studentPendingCount">0</h2>
+                <p>Overdue Returns</p>
+            </div>
+
+            <div class="card">
+                <h2 id="studentFineAmount">Rs. 0</h2>
+                <p>Accumulated Fine</p>
+            </div>
+        </div>
+
+        <!-- TABLE SECTION: MY ISSUED BOOKS -->
+        <div class="table-section">
+            <h2>My Issued Books</h2>
+            <div class="table-wrapper">
+                <table id="studentIssuedTable">
+                    <!-- Dynamically populated -->
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/student_dashboard.js"></script>
+</body>
+
+</html>

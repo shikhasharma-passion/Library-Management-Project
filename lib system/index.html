@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- HEADER / NAVIGATION -->
+    <header>
+        <nav class="navbar">
+            <div class="logo-section">
+                <img src="images/logo.jpg" alt="logo">
+                <h2>LibraryMS</h2>
+            </div>
+            
+            <div class="nav-right" style="display: flex; align-items: center; gap: 20px;">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="all_books.html">Books</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li id="authLink"><a href="login.html">Login</a></li>
+                </ul>
+
+                <!-- Theme Switcher -->
+                <button class="theme-switch" id="themeToggleBtn" title="Toggle Theme">
+                    🌙
+                </button>
+
+                <!-- Hamburger menu for Mobile -->
+                <button class="hamburger" id="menuToggleBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Smart Library Management System</h1>
+            <p>
+                Manage books, student profiles, issues, and returns with a high-end digital ecosystem. 
+                Experience seamless browsing, instant search, and real-time alerts.
+            </p>
+            <div class="hero-buttons">
+                <a href="all_books.html" class="btn">Explore Books</a>
+                <a href="register.html" class="btn secondary-btn">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEARCH SECTION -->
+    <section class="search-section">
+        <h2>Search Your Favorite Books</h2>
+        <div class="search-box">
+            <input type="text" id="homeSearchInput" placeholder="Search books, authors, categories...">
+            <button id="homeSearchBtn">Search</button>
+        </div>
+    </section>
+
+    <!-- FEATURED BOOKS -->
+    <section class="featured-books">
+        <h2>Featured Books</h2>
+        <div class="book-container">
+            <div class="book-item">
+                <img src="images/atomic habit.jpg" alt="Atomic Habits">
+                <h3>Atomic Habits</h3>
+                <p>James Clear</p>
+            </div>
+            <div class="book-item">
+                <img src="images/rich dad poor dad.jpg" alt="Rich Dad Poor Dad">
+                <h3>Rich Dad Poor Dad</h3>
+                <p>Robert Kiyosaki</p>
+            </div>
+            <div class="book-item">
+                <img src="images/psychology of money.jpg" alt="The Psychology of Money">
+                <h3>The Psychology of Money</h3>
+                <p>Morgan Housel</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- POPULAR CATEGORIES -->
+    <section class="category-section">
+        <h2>Popular Categories</h2>
+        <div class="category-container">
+            <div class="category-card" onclick="location.href='all_books.html?cat=BCA'">BCA</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=BBA'">BBA</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=MCA'">MCA</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=MBA'">MBA</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=Programming'">Programming</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=Self Improvement'">Self Improvement</div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features">
+        <div class="card">
+            <h3>📚 Book Management</h3>
+            <p>Easily catalog, organize, update status, and manage book inventories in real-time.</p>
+        </div>
+        <div class="card">
+            <h3>👨‍🎓 Student Records</h3>
+            <p>Access enrollment records, logs, student courses, and academic data with security.</p>
+        </div>
+        <div class="card">
+            <h3>🔄 Issue & Return</h3>
+            <p>Track student borrows, return deadlines, overdue statuses, and calculate automated fines.</p>
+        </div>
+    </section>
+
+    <!-- LIBRARY STATS -->
+    <section class="stats-section">
+        <div class="stat-box">
+            <h2>10K+</h2>
+            <p>Books Available</p>
+        </div>
+        <div class="stat-box">
+            <h2>5K+</h2>
+            <p>Active Students</p>
+        </div>
+        <div class="stat-box">
+            <h2>500+</h2>
+            <p>Daily Visitors</p>
+        </div>
+        <div class="stat-box">
+            <h2>99%</h2>
+            <p>Satisfaction Rate</p>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="about-section">
+        <div class="about-image">
+            <img src="images/modern lib image.jpg" alt="Modern Library">
+        </div>
+        <div class="about-content">
+            <h2>About Our Library</h2>
+            <p>
+                Our digital Library Management System (LibraryMS) serves as a modern digital repository designed to bridge students and physical books seamlessly. 
+            </p>
+            <p>
+                With automated tracking, instant alerts, and customizable reports, librarians and administrators can ensure optimal circulation metrics.
+            </p>
+            <a href="all_books.html" class="btn">Explore Books</a>
+        </div>
+    </section>
+
+    <!-- WHY CHOOSE US -->
+    <section class="why-section">
+        <h2>Why Choose Our Library?</h2>
+        <div class="why-container">
+            <div class="why-card">
+                <h3>⚡ Fast Access</h3>
+                <p>Lookup categories, author names, and shelf spots instantly with our quick indexing.</p>
+            </div>
+            <div class="why-card">
+                <h3>🔒 Secure System</h3>
+                <p>High-end authorization protocols protect private credentials and issue histories.</p>
+            </div>
+            <div class="why-card">
+                <h3>📊 Smart Analytics</h3>
+                <p>Track book demands, student activity trends, and category popularities on detailed graphs.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonial-section">
+        <h2>What Students Say</h2>
+        <div class="testimonial-container">
+            <div class="testimonial-card">
+                <p>“This digital system is extremely convenient. I can search book availability right from my hostel room before visiting.”</p>
+                <h4>- Rahul Kumar</h4>
+            </div>
+            <div class="testimonial-card">
+                <p>“Book issuing and deadline tracking became super simple. No more unexpected overdue fines for missing dates!”</p>
+                <h4>- Priya Sharma</h4>
+            </div>
+            <div class="testimonial-card">
+                <p>“Amazing user-friendly dashboard and beautiful Dark Mode. Highly recommended for colleges.”</p>
+                <h4>- Aman Raj</h4>
+            </div>
+        </div>
+    </section>
+
+    <!-- MEMBERSHIP -->
+    <section class="membership-section">
+        <h2>Become a Member</h2>
+        <p>Join our massive student library community today and read/issue books online.</p>
+        <a href="register.html" class="btn">Register Now</a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h2>LibraryMS</h2>
+                <p>Modern digital library management system for schools and colleges.</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="all_books.html">Books</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact</h3>
+                <p>📍 Patna, Bihar</p>
+                <p>📞 +91 9876543210</p>
+                <p>✉ support@libraryms.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 LibraryMS | Designed By Shikha Sharma
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>

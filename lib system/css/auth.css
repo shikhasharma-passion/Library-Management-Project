@@ -1,0 +1,113 @@
+/* Authentication Pages Stylesheet (Login & Register) */
+
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-color, #f4f7fb);
+    padding: 40px 20px;
+    transition: background 0.3s ease;
+}
+
+.auth-box {
+    background: var(--card-bg, #ffffff);
+    width: 100%;
+    max-width: 450px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px var(--shadow-color, rgba(0, 0, 0, 0.08));
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.auth-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px var(--shadow-hover, rgba(0, 0, 0, 0.12));
+}
+
+.auth-box h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--primary-color, #021b3a);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.input-group {
+    margin-bottom: 24px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color, #333333);
+    font-size: 14px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--border-color, #cccccc);
+    border-radius: 10px;
+    outline: none;
+    font-family: inherit;
+    font-size: 15px;
+    background: var(--input-bg, #ffffff);
+    color: var(--text-color, #333333);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-color, #021b3a);
+    box-shadow: 0 0 0 4px var(--primary-light, rgba(2, 27, 58, 0.1));
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    background: var(--accent-color, #f1c40f);
+    color: var(--primary-color, #021b3a);
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.1s ease;
+}
+
+.auth-btn:hover {
+    background: var(--primary-color, #021b3a);
+    color: #ffffff;
+}
+
+.auth-btn:active {
+    transform: scale(0.98);
+}
+
+.extra-text {
+    text-align: center;
+    margin-top: 25px;
+    color: var(--text-muted, #777777);
+    font-size: 14px;
+}
+
+.extra-text a {
+    color: var(--primary-color, #021b3a);
+    font-weight: 600;
+    text-decoration: none;
+    margin-left: 5px;
+    transition: color 0.3s ease;
+}
+
+.extra-text a:hover {
+    color: var(--accent-color, #f1c40f);
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .auth-box {
+        padding: 30px 20px;
+    }
+}

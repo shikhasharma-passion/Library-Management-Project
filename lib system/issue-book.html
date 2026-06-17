@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Book</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="images/logo.jpg" alt="Logo">
+            <h2>LibraryMS</h2>
+        </div>
+        <ul>
+            <li><a href="dashboard.html">🏠 Dashboard</a></li>
+            <li><a href="books.html">📚 Books</a></li>
+            <li><a href="students.html">👨‍🎓 Students</a></li>
+            <li><a href="issue-book.html" class="active">📖 Issue Book</a></li>
+            <li><a href="logout.html">🚪 Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <h1>Issue Book Management</h1>
+            <div class="profile-section">
+                <button id="darkModeBtn">
+                    🌙 Mode Toggle
+                </button>
+                <div class="profile">
+                    Welcome, Admin
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM -->
+        <div class="table-section">
+            <h2>Issue New Book</h2>
+            <form id="issueForm">
+                <div class="form-grid">
+                    <input type="text" id="issueStudent" placeholder="Student Name" required>
+                    <input type="text" id="issueBook" placeholder="Book Title" required>
+                    <input type="date" id="issueDate" title="Issue Date" required>
+                    <input type="date" id="returnDate" title="Return Deadline" required>
+                    <button type="submit">Issue Book</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- RECORDS -->
+        <div class="table-section">
+            <h2>Issued Records</h2>
+            <div id="issueList" class="book-grid">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/issue.js"></script>
+</body>
+
+</html>

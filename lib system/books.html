@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books Management</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="images/logo.jpg" alt="Logo">
+            <h2>LibraryMS</h2>
+        </div>
+        <ul>
+            <li><a href="dashboard.html">🏠 Dashboard</a></li>
+            <li><a href="books.html" class="active">📚 Books</a></li>
+            <li><a href="students.html">👨‍🎓 Students</a></li>
+            <li><a href="issue-book.html">📖 Issue Book</a></li>
+            <li><a href="logout.html">🚪 Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <h1>Books Management</h1>
+            <div class="profile-section">
+                <button id="darkModeBtn">
+                    🌙 Mode Toggle
+                </button>
+                <div class="profile">
+                    Welcome, Admin
+                </div>
+            </div>
+        </div>
+
+        <!-- ADD BOOK FORM -->
+        <div class="table-section">
+            <h2>Add New Book</h2>
+            <form id="bookForm">
+                <div class="form-grid">
+                    <input type="text" id="bookName" placeholder="Book Title" required>
+                    <input type="text" id="authorName" placeholder="Author Name" required>
+                    <select id="bookCategory" required>
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="BCA">BCA</option>
+                        <option value="BBA">BBA</option>
+                        <option value="MCA">MCA</option>
+                        <option value="MBA">MBA</option>
+                        <option value="Programming">Programming</option>
+                        <option value="Self Improvement">Self Improvement</option>
+                        <option value="Psychology">Psychology</option>
+                        <option value="Encyclopedia">Encyclopedia</option>
+                        <option value="Story books">Story books</option>
+                        <option value="Magazine">Magazine</option>
+                    </select>
+                    <button type="submit">Add Book</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="table-section">
+            <h2>Search Catalog</h2>
+            <input type="text" id="searchInput" placeholder="Search by book title, author, category or status...">
+        </div>
+
+        <!-- BOOK LIST -->
+        <div class="table-section">
+            <h2>All Books</h2>
+            <div id="bookList" class="book-grid">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/books.js"></script>
+</body>
+
+</html>

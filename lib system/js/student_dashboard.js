@@ -1,0 +1,102 @@
+document.addEventListener("DOMContentLoaded", () => {
+    initStudentTheme();
+    loadStudentDashboard();
+});
+
+/* THEME SYSTEM (Persistent across Student Dashboard) */
+function initStudentTheme() {
+    const darkBtn = document.getElementById("darkModeBtn");
+    const currentTheme = localStorage.getItem("theme") || "light";
+
+    if (currentTheme === "dark") {
+        document.body.classList.add("dark-mode");
+        if (darkBtn) darkBtn.innerHTML = "☀️ Light Mode";
+    } else {
+        document.body.classList.remove("dark-mode");
+        if (darkBtn) darkBtn.innerHTML = "🌙 Dark Mode";
+    }
+
+    if (darkBtn) {
+        darkBtn.addEventListener("click", () => {
+            const isDark = document.body.classList.toggle("dark-mode");
+            if (isDark) {
+                localStorage.setItem("theme", "dark");
+                darkBtn.innerHTML = "☀️ Light Mode";
+            } else {
+                localStorage.setItem("theme", "light");
+                darkBtn.innerHTML = "🌙 Dark Mode";
+            }
+        });
+    }
+}
+
+/* LOAD STUDENT METRICS & ISSUED BOOKS */
+async function loadStudentDashboard() {
+    const user = localStorage.getItem("user") || "";
+    const profile = document.getElementById("studentProfile");
+
+    if (profile && user) {
+        profile.innerText = `Welcome, ${user}`;
+    }
+
+    try {
+        const response = await fetch(`/api/student-dashboard?name=${encodeURIComponent(user)}`);
+        const data = await response.json();
+
+        document.getElementById("studentIssuedCount").innerText = data.totalIssued;
+        document.getElementById("studentPendingCount").innerText = data.pendingReturns;
+        document.getElementById("studentFineAmount").innerText = `Rs. ${data.fineAmount}`;
+
+        // Show/Hide Overdue return alert warning
+        const alertCard = document.getElementById("overdueAlert");
+        if (alertCard) {
+            if (Number(data.fineAmount) > 0 || Number(data.pendingReturns) > 0) {
+                alertCard.style.display = "block";
+            } else {
+                alertCard.style.display = "none";
+            }
+        }
+
+        const table = document.getElementById("studentIssuedTable");
+        if (!table) return;
+
+        table.innerHTML = `
+            <tr>
+                <th>Book Title</th>
+                <th>Issue Date</th>
+                <th>Return Deadline</th>
+                <th>Status</th>
+            </tr>
+        `;
+
+        if (data.issuedBooks.length === 0) {
+            table.innerHTML += `
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--text-muted);">You have no books issued currently</td>
+                </tr>
+            `;
+            return;
+        }
+
+        data.issuedBooks.forEach((record) => {
+            let statusClass = "active";
+            let statusText = "Issued";
+            
+            if (record.fine > 0) {
+                statusClass = "overdue";
+                statusText = `Overdue (Rs. ${record.fine})`;
+            }
+
+            table.innerHTML += `
+                <tr>
+                    <td><strong>${record.book}</strong></td>
+                    <td>${record.date}</td>
+                    <td>${record.returnDate}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error("Error loading student dashboard details:", error);
+    }
+}
