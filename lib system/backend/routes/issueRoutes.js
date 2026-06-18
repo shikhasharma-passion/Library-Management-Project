@@ -7,7 +7,12 @@ const {
   getBorrowRequests,
   getStudentBorrowRequests,
   approveBorrowRequest,
-  rejectBorrowRequest
+  rejectBorrowRequest,
+  requestExtension,
+  getExtensionRequests,
+  getStudentExtensionRequests,
+  approveExtensionRequest,
+  rejectExtensionRequest
 } = require("../controllers/issueController");
 
 const router = express.Router();
@@ -23,5 +28,13 @@ router.get("/requests/student", getStudentBorrowRequests);
 router.put("/requests/:id/approve", approveBorrowRequest);
 router.put("/requests/:id/reject", rejectBorrowRequest);
 
+// Return Extensions
+router.post("/:id/extension", requestExtension);
+router.get("/extensions/list", getExtensionRequests);
+router.get("/extensions/student", getStudentExtensionRequests);
+router.put("/extensions/:id/approve", approveExtensionRequest);
+router.put("/extensions/:id/reject", rejectExtensionRequest);
+
 module.exports = router;
+
 

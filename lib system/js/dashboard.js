@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDashboard();
     loadContacts();
     loadBorrowRequests();
+    loadExtensionRequests();
 });
 
 /* THEME SYSTEM (Persistent across Admin Pages) */
@@ -366,6 +367,114 @@ async function rejectBorrowRequest(id) {
         }
     } catch (error) {
         console.error("Error rejecting request:", error);
+    }
+}
+
+/* RETURN EXTENSIONS WORKFLOW */
+async function loadExtensionRequests() {
+    const table = document.getElementById("extensionRequestsTable");
+    if (!table) return;
+
+    table.innerHTML = `
+        <tr>
+            <th>Student</th>
+            <th>Book Title</th>
+            <th>Current Deadline</th>
+            <th>Requested Deadline</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    `;
+
+    try {
+        const response = await fetch("/api/issues/extensions/list");
+        if (!response.ok) return;
+        const requests = await response.json();
+
+        if (requests.length === 0) {
+            table.innerHTML += `
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted);">No extension requests found</td>
+                </tr>
+            `;
+            return;
+        }
+
+        requests.forEach(req => {
+            let statusClass = "active";
+            if (req.status === "Rejected") statusClass = "overdue";
+            if (req.status === "Approved") statusClass = "returned";
+
+            let actionsHtml = "";
+            if (req.status === "Pending") {
+                actionsHtml = `
+                    <div style="display: flex; gap: 10px;">
+                        <button class="action-btn" style="margin-top: 0; padding: 6px 12px; font-size: 13px;" onclick="approveExtensionRequest('${req.id || req._id}')">
+                            Approve
+                        </button>
+                        <button class="delete-btn" style="margin-top: 0; padding: 6px 12px; font-size: 13px;" onclick="rejectExtensionRequest('${req.id || req._id}')">
+                            Reject
+                        </button>
+                    </div>
+                `;
+            } else {
+                actionsHtml = `<span style="font-size: 13px; color: var(--text-muted);">Processed</span>`;
+            }
+
+            table.innerHTML += `
+                <tr>
+                    <td><strong>${req.student}</strong></td>
+                    <td>${req.book}</td>
+                    <td>${req.currentReturnDate}</td>
+                    <td>${req.requestedReturnDate}</td>
+                    <td><span class="status-badge ${statusClass}">${req.status}</span></td>
+                    <td>${actionsHtml}</td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error("Error loading extension requests:", error);
+    }
+}
+
+async function approveExtensionRequest(id) {
+    if (!confirm("Approve this return date extension request?")) return;
+
+    try {
+        const response = await fetch(`/api/issues/extensions/${id}/approve`, {
+            method: "PUT"
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert("Extension request approved!");
+            loadExtensionRequests();
+            loadDashboard(); // Refresh metrics and issued list
+        } else {
+            alert(result.message || "Failed to approve extension request");
+        }
+    } catch (error) {
+        console.error("Error approving extension request:", error);
+    }
+}
+
+async function rejectExtensionRequest(id) {
+    if (!confirm("Are you sure you want to reject this extension request?")) return;
+
+    try {
+        const response = await fetch(`/api/issues/extensions/${id}/reject`, {
+            method: "PUT"
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert("Extension request rejected.");
+            loadExtensionRequests();
+        } else {
+            alert(result.message || "Failed to reject extension request");
+        }
+    } catch (error) {
+        console.error("Error rejecting extension request:", error);
     }
 }
 

@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initStudentTheme();
     loadStudentDashboard();
     loadStudentBorrowRequests();
+    loadStudentExtensionRequests();
 });
 
 /* THEME SYSTEM (Persistent across Student Dashboard) */
@@ -67,13 +68,14 @@ async function loadStudentDashboard() {
                 <th>Issue Date</th>
                 <th>Return Deadline</th>
                 <th>Status</th>
+                <th>Action</th>
             </tr>
         `;
 
         if (data.issuedBooks.length === 0) {
             table.innerHTML += `
                 <tr>
-                    <td colspan="4" style="text-align: center; color: var(--text-muted);">You have no books issued currently</td>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted);">You have no books issued currently</td>
                 </tr>
             `;
             return;
@@ -94,6 +96,11 @@ async function loadStudentDashboard() {
                     <td>${record.date}</td>
                     <td>${record.returnDate}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="action-btn" style="margin-top: 0; padding: 6px 12px; font-size: 13px; width: auto;" onclick="requestBookExtension('${record.id}', '${record.book}', '${record.returnDate}')">
+                            Extend
+                        </button>
+                    </td>
                 </tr>
             `;
         });
@@ -146,6 +153,95 @@ async function loadStudentBorrowRequests() {
         });
     } catch (error) {
         console.error("Error loading student borrow requests:", error);
+    }
+}
+
+async function loadStudentExtensionRequests() {
+    const user = localStorage.getItem("user") || "";
+    const table = document.getElementById("studentExtensionsTable");
+    if (!table) return;
+
+    table.innerHTML = `
+        <tr>
+            <th>Book Title</th>
+            <th>Current Deadline</th>
+            <th>Requested Deadline</th>
+            <th>Status</th>
+        </tr>
+    `;
+
+    try {
+        const response = await fetch(`/api/issues/extensions/student?name=${encodeURIComponent(user)}`);
+        if (!response.ok) return;
+        const requests = await response.json();
+
+        if (requests.length === 0) {
+            table.innerHTML += `
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--text-muted);">No extension requests submitted yet</td>
+                </tr>
+            `;
+            return;
+        }
+
+        requests.forEach(req => {
+            let statusClass = "active";
+            if (req.status === "Rejected") statusClass = "overdue";
+            if (req.status === "Approved") statusClass = "returned";
+
+            table.innerHTML += `
+                <tr>
+                    <td><strong>${req.book}</strong></td>
+                    <td>${req.currentReturnDate}</td>
+                    <td>${req.requestedReturnDate}</td>
+                    <td><span class="status-badge ${statusClass}">${req.status}</span></td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error("Error loading student extension requests:", error);
+    }
+}
+
+async function requestBookExtension(issueId, bookName, currentReturnDate) {
+    // Calculate default return date: +7 days from current return date
+    const current = new Date(currentReturnDate);
+    const extended = new Date(current);
+    extended.setDate(current.getDate() + 7);
+    const defaultDateStr = extended.toISOString().split("T")[0];
+
+    const newDateStr = prompt(`Enter new return date (YYYY-MM-DD) for "${bookName}":\n(Current Deadline: ${currentReturnDate})`, defaultDateStr);
+    if (!newDateStr) return;
+
+    // Simple date format check
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(newDateStr.trim())) {
+        alert("Invalid date format. Please use YYYY-MM-DD.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/issues/${issueId}/extension`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                requestedReturnDate: newDateStr.trim()
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert("Extension request submitted successfully!");
+            loadStudentDashboard();
+            loadStudentExtensionRequests();
+        } else {
+            alert(result.message || "Failed to submit extension request");
+        }
+    } catch (error) {
+        console.error("Error requesting book extension:", error);
+        alert("Server connection failed");
     }
 }
 

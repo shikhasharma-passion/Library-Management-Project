@@ -1,6 +1,7 @@
 const Book = require("../models/Book");
 const Issue = require("../models/Issue");
 const BorrowRequest = require("../models/BorrowRequest");
+const ExtensionRequest = require("../models/ExtensionRequest");
 
 function calculateFine(returnDate) {
   const today = new Date();
@@ -239,6 +240,123 @@ async function rejectBorrowRequest(req, res) {
   }
 }
 
+async function requestExtension(req, res) {
+  try {
+    const { id } = req.params; // Issue ID
+    const { requestedReturnDate } = req.body;
+
+    if (!requestedReturnDate) {
+      res.status(400).json({ success: false, message: "Please select an extension date" });
+      return;
+    }
+
+    const issue = await Issue.findById(id);
+    if (!issue) {
+      res.status(404).json({ success: false, message: "Active issue record not found" });
+      return;
+    }
+
+    // Check if there's already a pending request for this issue
+    const existing = await ExtensionRequest.findOne({
+      issueId: issue._id,
+      status: "Pending"
+    });
+
+    if (existing) {
+      res.status(409).json({ success: false, message: "An extension request is already pending for this book" });
+      return;
+    }
+
+    const request = await ExtensionRequest.create({
+      issueId: issue._id,
+      student: issue.student,
+      book: issue.book,
+      currentReturnDate: issue.returnDate,
+      requestedReturnDate: requestedReturnDate,
+      status: "Pending"
+    });
+
+    res.status(201).json({ success: true, request });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function getExtensionRequests(req, res) {
+  try {
+    const requests = await ExtensionRequest.find().sort({ createdAt: -1 });
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function getStudentExtensionRequests(req, res) {
+  try {
+    const studentName = String(req.query.name || "").trim();
+    if (!studentName) {
+      res.status(400).json({ success: false, message: "Student name required" });
+      return;
+    }
+
+    const requests = await ExtensionRequest.find({
+      student: { $regex: `^${escapeRegex(studentName)}$`, $options: "i" }
+    }).sort({ createdAt: -1 });
+
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function approveExtensionRequest(req, res) {
+  try {
+    const request = await ExtensionRequest.findById(req.params.id);
+    if (!request) {
+      res.status(404).json({ success: false, message: "Extension request not found" });
+      return;
+    }
+
+    const issue = await Issue.findById(request.issueId);
+    if (!issue) {
+      // The book might have been returned already
+      request.status = "Rejected";
+      await request.save();
+      res.status(404).json({ success: false, message: "Issued book record not found. It might have been returned already." });
+      return;
+    }
+
+    // Update Issue return date
+    issue.returnDate = request.requestedReturnDate;
+    await issue.save();
+
+    // Set request status to Approved
+    request.status = "Approved";
+    await request.save();
+
+    res.json({ success: true, message: "Return date extension approved successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function rejectExtensionRequest(req, res) {
+  try {
+    const request = await ExtensionRequest.findById(req.params.id);
+    if (!request) {
+      res.status(404).json({ success: false, message: "Extension request not found" });
+      return;
+    }
+
+    request.status = "Rejected";
+    await request.save();
+
+    res.json({ success: true, message: "Extension request rejected" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
 module.exports = {
   calculateFine,
   formatIssue,
@@ -249,5 +367,10 @@ module.exports = {
   getBorrowRequests,
   getStudentBorrowRequests,
   approveBorrowRequest,
-  rejectBorrowRequest
+  rejectBorrowRequest,
+  requestExtension,
+  getExtensionRequests,
+  getStudentExtensionRequests,
+  approveExtensionRequest,
+  rejectExtensionRequest
 };
