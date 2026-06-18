@@ -269,15 +269,51 @@ function openBookDetails(bookId) {
 }
 
 /* REQUEST BORROW */
-function borrowBookRequest(bookName) {
+async function borrowBookRequest(bookName) {
     const user = localStorage.getItem("user");
     if (!user) {
         closeDetailsModal();
         loginPopup.style.display = "flex";
         return;
     }
-    alert(`Borrow Request sent for "${bookName}". Librarian will approve your record shortly!`);
+
+    const today = new Date();
+    const dateStr = today.toISOString().split("T")[0];
+    
+    const dueDate = new Date();
+    dueDate.setDate(today.getDate() + 14); // Default 14 days borrow period
+    const returnDateStr = dueDate.toISOString().split("T")[0];
+
+    try {
+        const response = await fetch("/api/issues/requests", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                student: user,
+                book: bookName,
+                date: dateStr,
+                returnDate: returnDateStr
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(`Borrow Request sent successfully for "${bookName}"! Status is Pending.`);
+            closeDetailsModal();
+            // Reload catalog
+            loadPublicBooks(activeCategory, publicSearchInput ? publicSearchInput.value.trim() : "");
+        } else {
+            alert(result.message || "Failed to submit borrow request");
+        }
+    } catch (error) {
+        console.error("Error submitting borrow request:", error);
+        alert("Server connection failed");
+    }
 }
+
 
 function closeDetailsModal() {
     const modal = document.getElementById("bookDetailsPopup");

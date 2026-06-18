@@ -3,7 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
-const seedCatalogBooks = require("./utils/seedCatalogBooks");
 
 dotenv.config({ path: path.join(__dirname, ".env") });
 
@@ -15,35 +14,48 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/books", require("./routes/bookRoutes"));
-app.use("/api/students", require("./routes/studentRoutes"));
-app.use("/api/issues", require("./routes/issueRoutes"));
-app.use("/api/catalog", require("./routes/catalogRoutes"));
-app.use("/api/contact", require("./routes/contactRoutes"));
-app.use("/api", require("./routes/dashboardRoutes"));
+function setupMockMongoose() {
+  const mockMongoose = require("./utils/mockMongoose");
+  const mongoosePath = require.resolve("mongoose");
+  require.cache[mongoosePath] = {
+    id: mongoosePath,
+    filename: mongoosePath,
+    loaded: true,
+    exports: mockMongoose
+  };
+}
 
-app.post("/api/login", require("./controllers/authController").login);
-app.post("/api/register", require("./controllers/authController").register);
+function registerAppRoutes() {
+  app.use("/api/auth", require("./routes/authRoutes"));
+  app.use("/api/books", require("./routes/bookRoutes"));
+  app.use("/api/students", require("./routes/studentRoutes"));
+  app.use("/api/issues", require("./routes/issueRoutes"));
+  app.use("/api/catalog", require("./routes/catalogRoutes"));
+  app.use("/api/contact", require("./routes/contactRoutes"));
+  app.use("/api", require("./routes/dashboardRoutes"));
 
-app.get("/api/health", (req, res) => {
-  res.json({ success: true, app: "LibraryMS", status: "running" });
-});
+  app.post("/api/login", require("./controllers/authController").login);
+  app.post("/api/register", require("./controllers/authController").register);
 
-app.use(express.static(frontendPath));
+  app.get("/api/health", (req, res) => {
+    res.json({ success: true, app: "LibraryMS", status: "running" });
+  });
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
+  app.use(express.static(frontendPath));
 
-app.use((req, res) => {
-  if (req.path.startsWith("/api")) {
-    res.status(404).json({ success: false, message: "API route not found" });
-    return;
-  }
+  app.get("/", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
 
-  res.status(404).sendFile(path.join(frontendPath, "index.html"));
-});
+  app.use((req, res) => {
+    if (req.path.startsWith("/api")) {
+      res.status(404).json({ success: false, message: "API route not found" });
+      return;
+    }
+
+    res.status(404).sendFile(path.join(frontendPath, "index.html"));
+  });
+}
 
 function startServer(port, attempts = 0) {
   const server = app.listen(port, () => {
@@ -64,12 +76,26 @@ function startServer(port, attempts = 0) {
 }
 
 async function bootstrap() {
-  await connectDB();
+  try {
+    await connectDB();
+  } catch (error) {
+    console.warn("MongoDB Atlas connection failed:", error.message);
+    console.log("Initializing Local JSON Fallback Database...");
+    setupMockMongoose();
+  }
+
+  // Seed catalog books (handles mock or real connection)
+  const seedCatalogBooks = require("./utils/seedCatalogBooks");
   await seedCatalogBooks();
+
+  // Load and register routes
+  registerAppRoutes();
+
+  // Start Express server
   startServer(requestedPort);
 }
 
 bootstrap().catch(error => {
-  console.error(error.message);
+  console.error("Bootstrap failed:", error.message);
   process.exit(1);
 });

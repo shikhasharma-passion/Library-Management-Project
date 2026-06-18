@@ -1,0 +1,16 @@
+[
+  {
+    "email": "aarav.sharma@example.com",
+    "message": "Please reserve Clean Code if it becomes available.",
+    "_id": "mock_qr23jmpeommbv631h6ejyo",
+    "id": "mock_qr23jmpeommbv631h6ejyo",
+    "name": "Aarav Sharma"
+  },
+  {
+    "email": "priya.verma@example.com",
+    "message": "I need DBMS reference books for semester exam preparation.",
+    "_id": "mock_fyh1g0ytgnhkwpasageai",
+    "id": "mock_fyh1g0ytgnhkwpasageai",
+    "name": "Priya Verma"
+  }
+]

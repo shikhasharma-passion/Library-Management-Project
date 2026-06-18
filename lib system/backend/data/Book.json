@@ -1,0 +1,482 @@
+[
+  {
+    "name": "Atomic Habits",
+    "_id": "mock_u7vdyro8pnqcp71yyyn6d9",
+    "id": "mock_u7vdyro8pnqcp71yyyn6d9",
+    "author": "James Clear",
+    "category": "Self Improvement",
+    "status": "Issued"
+  },
+  {
+    "name": "The Psychology of Money",
+    "_id": "mock_e1bw1jd4sad5zjovwah61r",
+    "id": "mock_e1bw1jd4sad5zjovwah61r",
+    "author": "Morgan Housel",
+    "category": "Finance",
+    "status": "Issued"
+  },
+  {
+    "name": "Rich Dad Poor Dad",
+    "_id": "mock_1vpz8s2281ynyawyp14n",
+    "id": "mock_1vpz8s2281ynyawyp14n",
+    "author": "Robert Kiyosaki",
+    "category": "Finance",
+    "status": "Available"
+  },
+  {
+    "name": "Ikigai",
+    "_id": "mock_vaxukq14lpnvlyuwzfbi9",
+    "id": "mock_vaxukq14lpnvlyuwzfbi9",
+    "author": "Hector Garcia",
+    "category": "Self Improvement",
+    "status": "Available"
+  },
+  {
+    "name": "Think and Grow Rich",
+    "_id": "mock_mc00csmzcvp00l53ryds8",
+    "id": "mock_mc00csmzcvp00l53ryds8",
+    "author": "Napoleon Hill",
+    "category": "Self Improvement",
+    "status": "Available"
+  },
+  {
+    "name": "Clean Code",
+    "_id": "mock_xhy5x5cqlzjvz74nuf0qk",
+    "id": "mock_xhy5x5cqlzjvz74nuf0qk",
+    "author": "Robert C. Martin",
+    "category": "Programming",
+    "status": "Issued"
+  },
+  {
+    "name": "The Pragmatic Programmer",
+    "_id": "mock_3lt2n0u4ctlc4v3j0l4ors",
+    "id": "mock_3lt2n0u4ctlc4v3j0l4ors",
+    "author": "Andrew Hunt",
+    "category": "Programming",
+    "status": "Available"
+  },
+  {
+    "name": "JavaScript: The Good Parts",
+    "_id": "mock_6wamu834p4vkx2v6rs4b8f",
+    "id": "mock_6wamu834p4vkx2v6rs4b8f",
+    "author": "Douglas Crockford",
+    "category": "Programming",
+    "status": "Available"
+  },
+  {
+    "name": "Eloquent JavaScript",
+    "_id": "mock_rp3ukptnwhnl9e6kl6s7m",
+    "id": "mock_rp3ukptnwhnl9e6kl6s7m",
+    "author": "Marijn Haverbeke",
+    "category": "Programming",
+    "status": "Available"
+  },
+  {
+    "name": "You Don't Know JS",
+    "_id": "mock_fcgmykz0aqb3imvo7bg1kb",
+    "id": "mock_fcgmykz0aqb3imvo7bg1kb",
+    "author": "Kyle Simpson",
+    "category": "Programming",
+    "status": "Available"
+  },
+  {
+    "name": "Python Crash Course",
+    "_id": "mock_wcecqyi9o1aw6d7ftj8y0o",
+    "id": "mock_wcecqyi9o1aw6d7ftj8y0o",
+    "author": "Eric Matthes",
+    "category": "Programming",
+    "status": "Issued"
+  },
+  {
+    "name": "Automate the Boring Stuff with Python",
+    "_id": "mock_acrwye5yqubj5ur0b0ur4q",
+    "id": "mock_acrwye5yqubj5ur0b0ur4q",
+    "author": "Al Sweigart",
+    "category": "Programming",
+    "status": "Available"
+  },
+  {
+    "name": "Head First Java",
+    "_id": "mock_m15rggwgxzhb5zh2c86qyt",
+    "id": "mock_m15rggwgxzhb5zh2c86qyt",
+    "author": "Kathy Sierra",
+    "category": "Programming",
+    "status": "Available"
+  },
+  {
+    "name": "Let Us C",
+    "_id": "mock_wktoe3j4l0ndwa7mx8cpdi",
+    "id": "mock_wktoe3j4l0ndwa7mx8cpdi",
+    "author": "Yashavant Kanetkar",
+    "category": "Programming",
+    "status": "Available"
+  },
+  {
+    "name": "Data Structures Through C",
+    "_id": "mock_syyxsqzshddriggr1tvgi",
+    "id": "mock_syyxsqzshddriggr1tvgi",
+    "author": "Yashavant Kanetkar",
+    "category": "BCA",
+    "status": "Available"
+  },
+  {
+    "name": "Computer Fundamentals",
+    "_id": "mock_10x6au4tjwdvbg325kt9m8",
+    "id": "mock_10x6au4tjwdvbg325kt9m8",
+    "author": "P.K. Sinha",
+    "category": "BCA",
+    "status": "Available"
+  },
+  {
+    "name": "Fundamentals of Computers",
+    "_id": "mock_aomvfrnqtb7vnj1detyov8",
+    "id": "mock_aomvfrnqtb7vnj1detyov8",
+    "author": "V. Rajaraman",
+    "category": "BCA",
+    "status": "Available"
+  },
+  {
+    "name": "Operating System Concepts",
+    "_id": "mock_nfnz7xfxjtdx0xbtle1swe",
+    "id": "mock_nfnz7xfxjtdx0xbtle1swe",
+    "author": "Silberschatz, Galvin, Gagne",
+    "category": "Operating System",
+    "status": "Issued"
+  },
+  {
+    "name": "Modern Operating Systems",
+    "_id": "mock_9dyrfbd79njpp3agfd1w18",
+    "id": "mock_9dyrfbd79njpp3agfd1w18",
+    "author": "Andrew S. Tanenbaum",
+    "category": "Operating System",
+    "status": "Available"
+  },
+  {
+    "name": "Database System Concepts",
+    "_id": "mock_82qhc4d12mdpa2v4wdp67h",
+    "id": "mock_82qhc4d12mdpa2v4wdp67h",
+    "author": "Abraham Silberschatz",
+    "category": "DBMS",
+    "status": "Issued"
+  },
+  {
+    "name": "Database Management Systems",
+    "_id": "mock_91v5a9beagbhh5qdeiw2co",
+    "id": "mock_91v5a9beagbhh5qdeiw2co",
+    "author": "Raghu Ramakrishnan",
+    "category": "DBMS",
+    "status": "Available"
+  },
+  {
+    "name": "Computer Networks",
+    "_id": "mock_eruha5a6hdpmflu0coh9ba",
+    "id": "mock_eruha5a6hdpmflu0coh9ba",
+    "author": "Andrew S. Tanenbaum",
+    "category": "Networking",
+    "status": "Issued"
+  },
+  {
+    "name": "Data Communications and Networking",
+    "_id": "mock_gxmwu1kb8bo1bcjlhsb3ba",
+    "id": "mock_gxmwu1kb8bo1bcjlhsb3ba",
+    "author": "Behrouz A. Forouzan",
+    "category": "Networking",
+    "status": "Available"
+  },
+  {
+    "name": "Artificial Intelligence: A Modern Approach",
+    "_id": "mock_emfb3wn97d9tfb1ro7ylp",
+    "id": "mock_emfb3wn97d9tfb1ro7ylp",
+    "author": "Stuart Russell",
+    "category": "Artificial Intelligence",
+    "status": "Available"
+  },
+  {
+    "name": "Machine Learning",
+    "_id": "mock_b8n62nhmajt0qfay4sxtxv",
+    "id": "mock_b8n62nhmajt0qfay4sxtxv",
+    "author": "Tom M. Mitchell",
+    "category": "Artificial Intelligence",
+    "status": "Available"
+  },
+  {
+    "name": "Hands-On Machine Learning",
+    "_id": "mock_ygc0kwxzhgt372d5w03f",
+    "id": "mock_ygc0kwxzhgt372d5w03f",
+    "author": "Aurelien Geron",
+    "category": "Data Science",
+    "status": "Available"
+  },
+  {
+    "name": "Data Science from Scratch",
+    "_id": "mock_y828p3du24mizodw9pl6kc",
+    "id": "mock_y828p3du24mizodw9pl6kc",
+    "author": "Joel Grus",
+    "category": "Data Science",
+    "status": "Available"
+  },
+  {
+    "name": "Introduction to Algorithms",
+    "_id": "mock_33f657giitarwpjoihix9",
+    "id": "mock_33f657giitarwpjoihix9",
+    "author": "Thomas H. Cormen",
+    "category": "Algorithms",
+    "status": "Available"
+  },
+  {
+    "name": "Design and Analysis of Algorithms",
+    "_id": "mock_x1bn435v4edb3gnzealse6",
+    "id": "mock_x1bn435v4edb3gnzealse6",
+    "author": "Anany Levitin",
+    "category": "Algorithms",
+    "status": "Available"
+  },
+  {
+    "name": "Software Engineering",
+    "_id": "mock_uclgkhrybj2nekrjwb2db",
+    "id": "mock_uclgkhrybj2nekrjwb2db",
+    "author": "Ian Sommerville",
+    "category": "Software Engineering",
+    "status": "Available"
+  },
+  {
+    "name": "Software Engineering: A Practitioner's Approach",
+    "_id": "mock_htudjq6fkq4hmzwt2na4qn",
+    "id": "mock_htudjq6fkq4hmzwt2na4qn",
+    "author": "Roger S. Pressman",
+    "category": "Software Engineering",
+    "status": "Available"
+  },
+  {
+    "name": "HTML and CSS",
+    "_id": "mock_o7kkc5iylx792ozx1xyzx",
+    "id": "mock_o7kkc5iylx792ozx1xyzx",
+    "author": "Jon Duckett",
+    "category": "Web Development",
+    "status": "Available"
+  },
+  {
+    "name": "JavaScript and JQuery",
+    "_id": "mock_o64xqtmgv8f4j4as38vnud",
+    "id": "mock_o64xqtmgv8f4j4as38vnud",
+    "author": "Jon Duckett",
+    "category": "Web Development",
+    "status": "Available"
+  },
+  {
+    "name": "Learning React",
+    "_id": "mock_676sklt3mz98lhitnr7hjd",
+    "id": "mock_676sklt3mz98lhitnr7hjd",
+    "author": "Alex Banks",
+    "category": "Web Development",
+    "status": "Available"
+  },
+  {
+    "name": "Node.js Design Patterns",
+    "_id": "mock_nnxgu1qujxidhh2zn8o9ea",
+    "id": "mock_nnxgu1qujxidhh2zn8o9ea",
+    "author": "Mario Casciaro",
+    "category": "Web Development",
+    "status": "Available"
+  },
+  {
+    "name": "Express in Action",
+    "_id": "mock_0k46e80qm9zzzwb6f00m8",
+    "id": "mock_0k46e80qm9zzzwb6f00m8",
+    "author": "Evan Hahn",
+    "category": "Web Development",
+    "status": "Available"
+  },
+  {
+    "name": "MongoDB: The Definitive Guide",
+    "_id": "mock_gt76590jsbh6j5q9nzsigw",
+    "id": "mock_gt76590jsbh6j5q9nzsigw",
+    "author": "Shannon Bradshaw",
+    "category": "Database",
+    "status": "Available"
+  },
+  {
+    "name": "SQL Fundamentals",
+    "_id": "mock_tytgg6bx6stc6g2x6fmhb",
+    "id": "mock_tytgg6bx6stc6g2x6fmhb",
+    "author": "John J. Patrick",
+    "category": "Database",
+    "status": "Available"
+  },
+  {
+    "name": "Principles of Management",
+    "_id": "mock_75sko199nrdbmh0ty3po7",
+    "id": "mock_75sko199nrdbmh0ty3po7",
+    "author": "Harold Koontz",
+    "category": "BBA",
+    "status": "Available"
+  },
+  {
+    "name": "Business Communication",
+    "_id": "mock_pxhgo4z57ipei6osyvfpmf",
+    "id": "mock_pxhgo4z57ipei6osyvfpmf",
+    "author": "Meenakshi Raman",
+    "category": "BBA",
+    "status": "Available"
+  },
+  {
+    "name": "Financial Accounting",
+    "_id": "mock_ge4uy8w4hdsww8o17zg0k8",
+    "id": "mock_ge4uy8w4hdsww8o17zg0k8",
+    "author": "T.S. Grewal",
+    "category": "BBA",
+    "status": "Available"
+  },
+  {
+    "name": "Marketing Management",
+    "_id": "mock_g29e8wolv75jcic7qnoje",
+    "id": "mock_g29e8wolv75jcic7qnoje",
+    "author": "Philip Kotler",
+    "category": "BBA",
+    "status": "Available"
+  },
+  {
+    "name": "Human Resource Management",
+    "_id": "mock_ym2vyia3w2ksortwob0oe",
+    "id": "mock_ym2vyia3w2ksortwob0oe",
+    "author": "Gary Dessler",
+    "category": "BBA",
+    "status": "Available"
+  },
+  {
+    "name": "Strategic Management",
+    "_id": "mock_u4lw55ht0qrgf33ugetxbr",
+    "id": "mock_u4lw55ht0qrgf33ugetxbr",
+    "author": "Michael Porter",
+    "category": "MBA",
+    "status": "Available"
+  },
+  {
+    "name": "Business Analytics",
+    "_id": "mock_1kfv17gxcfhenaps8tjdg4",
+    "id": "mock_1kfv17gxcfhenaps8tjdg4",
+    "author": "James R. Evans",
+    "category": "MBA",
+    "status": "Available"
+  },
+  {
+    "name": "Corporate Finance",
+    "_id": "mock_qwdthi7zkm85nv8obmj0f",
+    "id": "mock_qwdthi7zkm85nv8obmj0f",
+    "author": "Ross, Westerfield, Jaffe",
+    "category": "MBA",
+    "status": "Available"
+  },
+  {
+    "name": "The Lean Startup",
+    "_id": "mock_16i68o2e4z1reffa10icx",
+    "id": "mock_16i68o2e4z1reffa10icx",
+    "author": "Eric Ries",
+    "category": "Entrepreneurship",
+    "status": "Available"
+  },
+  {
+    "name": "Zero to One",
+    "_id": "mock_inbac7hfw1uvf3m9bk11i",
+    "id": "mock_inbac7hfw1uvf3m9bk11i",
+    "author": "Peter Thiel",
+    "category": "Entrepreneurship",
+    "status": "Available"
+  },
+  {
+    "name": "Wings of Fire",
+    "_id": "mock_pdri5ynt6fybubdxywz1",
+    "id": "mock_pdri5ynt6fybubdxywz1",
+    "author": "A.P.J. Abdul Kalam",
+    "category": "Biography",
+    "status": "Available"
+  },
+  {
+    "name": "The Diary of a Young Girl",
+    "_id": "mock_dckkhlc3ldj2tdq52ulhey",
+    "id": "mock_dckkhlc3ldj2tdq52ulhey",
+    "author": "Anne Frank",
+    "category": "Biography",
+    "status": "Available"
+  },
+  {
+    "name": "The Alchemist",
+    "_id": "mock_4gmegastfdfczcz0tack19",
+    "id": "mock_4gmegastfdfczcz0tack19",
+    "author": "Paulo Coelho",
+    "category": "Fiction",
+    "status": "Available"
+  },
+  {
+    "name": "To Kill a Mockingbird",
+    "_id": "mock_qausn1bvg9i0bnycu2qo",
+    "id": "mock_qausn1bvg9i0bnycu2qo",
+    "author": "Harper Lee",
+    "category": "Fiction",
+    "status": "Available"
+  },
+  {
+    "name": "1984",
+    "_id": "mock_7livmmpwt8eogc38ew4ckf",
+    "id": "mock_7livmmpwt8eogc38ew4ckf",
+    "author": "George Orwell",
+    "category": "Fiction",
+    "status": "Available"
+  },
+  {
+    "name": "The Great Gatsby",
+    "_id": "mock_ypm2vp9t01bm2xc4cjmhdf",
+    "id": "mock_ypm2vp9t01bm2xc4cjmhdf",
+    "author": "F. Scott Fitzgerald",
+    "category": "Fiction",
+    "status": "Available"
+  },
+  {
+    "name": "Pride and Prejudice",
+    "_id": "mock_4a3hc7x65qygsmp72h62sk",
+    "id": "mock_4a3hc7x65qygsmp72h62sk",
+    "author": "Jane Austen",
+    "category": "Fiction",
+    "status": "Available"
+  },
+  {
+    "name": "A Brief History of Time",
+    "_id": "mock_du8tb2mccggactffhl4w2",
+    "id": "mock_du8tb2mccggactffhl4w2",
+    "author": "Stephen Hawking",
+    "category": "Science",
+    "status": "Available"
+  },
+  {
+    "name": "The Selfish Gene",
+    "_id": "mock_e19273bj22bapkx3erd6o5",
+    "id": "mock_e19273bj22bapkx3erd6o5",
+    "author": "Richard Dawkins",
+    "category": "Science",
+    "status": "Available"
+  },
+  {
+    "name": "Concepts of Physics Vol. 1",
+    "_id": "mock_2wditclytdae6qt0m36szh",
+    "id": "mock_2wditclytdae6qt0m36szh",
+    "author": "H.C. Verma",
+    "category": "Science",
+    "status": "Available"
+  },
+  {
+    "name": "Quantitative Aptitude",
+    "_id": "mock_gaxq57y2y3w9krn0s4ivdq",
+    "id": "mock_gaxq57y2y3w9krn0s4ivdq",
+    "author": "R.S. Aggarwal",
+    "category": "Competitive Exams",
+    "status": "Available"
+  },
+  {
+    "name": "A Modern Approach to Verbal Reasoning",
+    "_id": "mock_fi2zu3sg7j5rxn5ynairs",
+    "id": "mock_fi2zu3sg7j5rxn5ynairs",
+    "author": "R.S. Aggarwal",
+    "category": "Competitive Exams",
+    "status": "Available"
+  }
+]

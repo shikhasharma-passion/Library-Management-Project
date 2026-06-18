@@ -1,5 +1,6 @@
 const Book = require("../models/Book");
 const Issue = require("../models/Issue");
+const BorrowRequest = require("../models/BorrowRequest");
 
 function calculateFine(returnDate) {
   const today = new Date();
@@ -97,10 +98,156 @@ async function returnBook(req, res) {
   }
 }
 
+async function requestBorrow(req, res) {
+  try {
+    const { student, book, date, returnDate } = req.body;
+
+    if (!student || !book || !date || !returnDate) {
+      res.status(400).json({ success: false, message: "Please fill all fields" });
+      return;
+    }
+
+    // Check if the book is catalogued and has an Available physical copy
+    const selectedBook = await Book.findOne({
+      name: { $regex: `^${escapeRegex(book.trim())}$`, $options: "i" }
+    });
+
+    if (!selectedBook) {
+      res.status(404).json({ success: false, message: "Book not found in library stock" });
+      return;
+    }
+
+    if (selectedBook.status === "Issued") {
+      res.status(409).json({ success: false, message: "This book is currently issued to someone else" });
+      return;
+    }
+
+    // Check if user already has a pending borrow request for this book
+    const existingRequest = await BorrowRequest.findOne({
+      student: student.trim(),
+      book: selectedBook.name,
+      status: "Pending"
+    });
+
+    if (existingRequest) {
+      res.status(409).json({ success: false, message: "You already have a pending borrow request for this book" });
+      return;
+    }
+
+    const borrowRequest = await BorrowRequest.create({
+      student: student.trim(),
+      book: selectedBook.name,
+      requestDate: date,
+      returnDate: returnDate,
+      status: "Pending"
+    });
+
+    res.status(201).json({ success: true, borrowRequest });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function getBorrowRequests(req, res) {
+  try {
+    const requests = await BorrowRequest.find().sort({ createdAt: -1 });
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function getStudentBorrowRequests(req, res) {
+  try {
+    const studentName = String(req.query.name || "").trim();
+    if (!studentName) {
+      res.status(400).json({ success: false, message: "Student name required" });
+      return;
+    }
+
+    const requests = await BorrowRequest.find({
+      student: { $regex: `^${escapeRegex(studentName)}$`, $options: "i" }
+    }).sort({ createdAt: -1 });
+
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function approveBorrowRequest(req, res) {
+  try {
+    const request = await BorrowRequest.findById(req.params.id);
+
+    if (!request) {
+      res.status(404).json({ success: false, message: "Borrow request not found" });
+      return;
+    }
+
+    const selectedBook = await Book.findOne({
+      name: { $regex: `^${escapeRegex(request.book)}$`, $options: "i" }
+    });
+
+    if (!selectedBook) {
+      res.status(404).json({ success: false, message: "Book no longer found in library stock" });
+      return;
+    }
+
+    if (selectedBook.status === "Issued") {
+      res.status(409).json({ success: false, message: "Book is already issued to someone else" });
+      return;
+    }
+
+    // Set book status to Issued
+    selectedBook.status = "Issued";
+    await selectedBook.save();
+
+    // Create Issue
+    await Issue.create({
+      student: request.student,
+      book: selectedBook.name,
+      bookId: selectedBook._id,
+      date: request.requestDate,
+      returnDate: request.returnDate
+    });
+
+    // Update request status to Approved
+    request.status = "Approved";
+    await request.save();
+
+    res.json({ success: true, message: "Request approved and book issued successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function rejectBorrowRequest(req, res) {
+  try {
+    const request = await BorrowRequest.findById(req.params.id);
+
+    if (!request) {
+      res.status(404).json({ success: false, message: "Borrow request not found" });
+      return;
+    }
+
+    request.status = "Rejected";
+    await request.save();
+
+    res.json({ success: true, message: "Request rejected successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
 module.exports = {
   calculateFine,
   formatIssue,
   getIssues,
   createIssue,
-  returnBook
+  returnBook,
+  requestBorrow,
+  getBorrowRequests,
+  getStudentBorrowRequests,
+  approveBorrowRequest,
+  rejectBorrowRequest
 };

@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initDashboardTheme();
     loadDashboard();
     loadContacts();
+    loadBorrowRequests();
 });
 
 /* THEME SYSTEM (Persistent across Admin Pages) */
@@ -258,3 +259,113 @@ async function deleteContact(id) {
         console.error("Error deleting contact message:", error);
     }
 }
+
+/* BORROW REQUESTS WORKFLOW */
+async function loadBorrowRequests() {
+    const table = document.getElementById("borrowRequestsTable");
+    if (!table) return;
+
+    table.innerHTML = `
+        <tr>
+            <th>Student</th>
+            <th>Book Title</th>
+            <th>Request Date</th>
+            <th>Return Deadline</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    `;
+
+    try {
+        const response = await fetch("/api/issues/requests");
+        if (!response.ok) return;
+        const requests = await response.json();
+
+        // Filter to only show Pending requests in the main action list, or show all with status badges
+        if (requests.length === 0) {
+            table.innerHTML += `
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted);">No borrow requests found</td>
+                </tr>
+            `;
+            return;
+        }
+
+        requests.forEach(req => {
+            let statusClass = "active";
+            if (req.status === "Rejected") statusClass = "overdue";
+            if (req.status === "Approved") statusClass = "returned";
+
+            let actionsHtml = "";
+            if (req.status === "Pending") {
+                actionsHtml = `
+                    <div style="display: flex; gap: 10px;">
+                        <button class="action-btn" style="margin-top: 0; padding: 6px 12px; font-size: 13px;" onclick="approveBorrowRequest('${req.id || req._id}')">
+                            Approve
+                        </button>
+                        <button class="delete-btn" style="margin-top: 0; padding: 6px 12px; font-size: 13px;" onclick="rejectBorrowRequest('${req.id || req._id}')">
+                            Reject
+                        </button>
+                    </div>
+                `;
+            } else {
+                actionsHtml = `<span style="font-size: 13px; color: var(--text-muted);">Processed</span>`;
+            }
+
+            table.innerHTML += `
+                <tr>
+                    <td><strong>${req.student}</strong></td>
+                    <td>${req.book}</td>
+                    <td>${req.requestDate}</td>
+                    <td>${req.returnDate}</td>
+                    <td><span class="status-badge ${statusClass}">${req.status}</span></td>
+                    <td>${actionsHtml}</td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error("Error loading borrow requests:", error);
+    }
+}
+
+async function approveBorrowRequest(id) {
+    if (!confirm("Approve this borrow request and issue the book?")) return;
+
+    try {
+        const response = await fetch(`/api/issues/requests/${id}/approve`, {
+            method: "PUT"
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert("Request approved successfully!");
+            loadBorrowRequests();
+            loadDashboard(); // Refresh stats & issue tables
+        } else {
+            alert(result.message || "Failed to approve request");
+        }
+    } catch (error) {
+        console.error("Error approving request:", error);
+    }
+}
+
+async function rejectBorrowRequest(id) {
+    if (!confirm("Are you sure you want to reject this request?")) return;
+
+    try {
+        const response = await fetch(`/api/issues/requests/${id}/reject`, {
+            method: "PUT"
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert("Request rejected.");
+            loadBorrowRequests();
+        } else {
+            alert(result.message || "Failed to reject request");
+        }
+    } catch (error) {
+        console.error("Error rejecting request:", error);
+    }
+}
+

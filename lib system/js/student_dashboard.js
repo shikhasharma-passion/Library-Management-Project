@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     initStudentTheme();
     loadStudentDashboard();
+    loadStudentBorrowRequests();
 });
 
 /* THEME SYSTEM (Persistent across Student Dashboard) */
@@ -100,3 +101,51 @@ async function loadStudentDashboard() {
         console.error("Error loading student dashboard details:", error);
     }
 }
+
+async function loadStudentBorrowRequests() {
+    const user = localStorage.getItem("user") || "";
+    const table = document.getElementById("studentRequestsTable");
+    if (!table) return;
+
+    table.innerHTML = `
+        <tr>
+            <th>Book Title</th>
+            <th>Request Date</th>
+            <th>Return Deadline</th>
+            <th>Status</th>
+        </tr>
+    `;
+
+    try {
+        const response = await fetch(`/api/issues/requests/student?name=${encodeURIComponent(user)}`);
+        if (!response.ok) return;
+        const requests = await response.json();
+
+        if (requests.length === 0) {
+            table.innerHTML += `
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--text-muted);">No borrow requests submitted yet</td>
+                </tr>
+            `;
+            return;
+        }
+
+        requests.forEach(req => {
+            let statusClass = "active";
+            if (req.status === "Rejected") statusClass = "overdue";
+            if (req.status === "Approved") statusClass = "returned";
+
+            table.innerHTML += `
+                <tr>
+                    <td><strong>${req.book}</strong></td>
+                    <td>${req.requestDate}</td>
+                    <td>${req.returnDate}</td>
+                    <td><span class="status-badge ${statusClass}">${req.status}</span></td>
+                </tr>
+            `;
+        });
+    } catch (error) {
+        console.error("Error loading student borrow requests:", error);
+    }
+}
+

@@ -1,0 +1,184 @@
+[
+  {
+    "roll": "BCA-101",
+    "_id": "mock_5ixvb5ixo2dprnlg4s0wg7",
+    "id": "mock_5ixvb5ixo2dprnlg4s0wg7",
+    "name": "Aarav Sharma",
+    "course": "BCA"
+  },
+  {
+    "roll": "BCA-102",
+    "_id": "mock_ib726h9247imy630zdrs",
+    "id": "mock_ib726h9247imy630zdrs",
+    "name": "Ananya Singh",
+    "course": "BCA"
+  },
+  {
+    "roll": "BCA-103",
+    "_id": "mock_loipmospkgmlz89gql306b",
+    "id": "mock_loipmospkgmlz89gql306b",
+    "name": "Rohan Kumar",
+    "course": "BCA"
+  },
+  {
+    "roll": "BCA-104",
+    "_id": "mock_2ucjf3zuwerf37z7x2ey5c",
+    "id": "mock_2ucjf3zuwerf37z7x2ey5c",
+    "name": "Priya Verma",
+    "course": "BCA"
+  },
+  {
+    "roll": "BCA-105",
+    "_id": "mock_5vbn5y5m9p8pqu2dfwwq8",
+    "id": "mock_5vbn5y5m9p8pqu2dfwwq8",
+    "name": "Neha Gupta",
+    "course": "BCA"
+  },
+  {
+    "roll": "BCA-106",
+    "_id": "mock_e88oycwz2rlrqajundcsp",
+    "id": "mock_e88oycwz2rlrqajundcsp",
+    "name": "Rahul Raj",
+    "course": "BCA"
+  },
+  {
+    "roll": "BCA-107",
+    "_id": "mock_prkmh751b7s0rlrudxwo8pi",
+    "id": "mock_prkmh751b7s0rlrudxwo8pi",
+    "name": "Simran Kaur",
+    "course": "BCA"
+  },
+  {
+    "roll": "BCA-108",
+    "_id": "mock_h0jtqojf86ufx1y9cejtsv",
+    "id": "mock_h0jtqojf86ufx1y9cejtsv",
+    "name": "Aditya Mishra",
+    "course": "BCA"
+  },
+  {
+    "roll": "BBA-201",
+    "_id": "mock_wulv0xjwselgngwg4qa027",
+    "id": "mock_wulv0xjwselgngwg4qa027",
+    "name": "Kritika Sinha",
+    "course": "BBA"
+  },
+  {
+    "roll": "BBA-202",
+    "_id": "mock_igtd02u9ueaxztzijc2kwb",
+    "id": "mock_igtd02u9ueaxztzijc2kwb",
+    "name": "Nikhil Anand",
+    "course": "BBA"
+  },
+  {
+    "roll": "BBA-203",
+    "_id": "mock_fox66nf3f0ks8rupqirwh",
+    "id": "mock_fox66nf3f0ks8rupqirwh",
+    "name": "Sakshi Kumari",
+    "course": "BBA"
+  },
+  {
+    "roll": "BBA-204",
+    "_id": "mock_sjf7aqb3d2t6fkt2ugb5",
+    "id": "mock_sjf7aqb3d2t6fkt2ugb5",
+    "name": "Vivek Tiwari",
+    "course": "BBA"
+  },
+  {
+    "roll": "BBA-205",
+    "_id": "mock_0py24k5arrd8jpwlf9tng",
+    "id": "mock_0py24k5arrd8jpwlf9tng",
+    "name": "Isha Pandey",
+    "course": "BBA"
+  },
+  {
+    "roll": "BBA-206",
+    "_id": "mock_lfmoftqs6bg5w3sy8ttl28",
+    "id": "mock_lfmoftqs6bg5w3sy8ttl28",
+    "name": "Aman Raj",
+    "course": "BBA"
+  },
+  {
+    "roll": "MCA-301",
+    "_id": "mock_h8jhtl4j17751a6xn4dsp",
+    "id": "mock_h8jhtl4j17751a6xn4dsp",
+    "name": "Shreya Jha",
+    "course": "MCA"
+  },
+  {
+    "roll": "MCA-302",
+    "_id": "mock_v3av8cn9pzpuuz8e1s7ger",
+    "id": "mock_v3av8cn9pzpuuz8e1s7ger",
+    "name": "Kunal Sinha",
+    "course": "MCA"
+  },
+  {
+    "roll": "MCA-303",
+    "_id": "mock_yjixor9wpuc6etasfj5twl",
+    "id": "mock_yjixor9wpuc6etasfj5twl",
+    "name": "Ritika Kumari",
+    "course": "MCA"
+  },
+  {
+    "roll": "MCA-304",
+    "_id": "mock_xndpjwtmr8gq9yt8ntdz2s",
+    "id": "mock_xndpjwtmr8gq9yt8ntdz2s",
+    "name": "Harsh Vardhan",
+    "course": "MCA"
+  },
+  {
+    "roll": "MCA-305",
+    "_id": "mock_g963dz6l6yehmq1j81tegt",
+    "id": "mock_g963dz6l6yehmq1j81tegt",
+    "name": "Pooja Yadav",
+    "course": "MCA"
+  },
+  {
+    "roll": "MCA-306",
+    "_id": "mock_klaywpegb7ixmloxspnv3f",
+    "id": "mock_klaywpegb7ixmloxspnv3f",
+    "name": "Saurabh Kumar",
+    "course": "MCA"
+  },
+  {
+    "roll": "MBA-401",
+    "_id": "mock_hpx2gjxyxzahnhwpjl7u7q",
+    "id": "mock_hpx2gjxyxzahnhwpjl7u7q",
+    "name": "Mansi Agarwal",
+    "course": "MBA"
+  },
+  {
+    "roll": "MBA-402",
+    "_id": "mock_eyroezq5trs9ztbtbp4ch4",
+    "id": "mock_eyroezq5trs9ztbtbp4ch4",
+    "name": "Rishabh Jain",
+    "course": "MBA"
+  },
+  {
+    "roll": "MBA-403",
+    "_id": "mock_biaao5na23vf9ewsfmbcbo",
+    "id": "mock_biaao5na23vf9ewsfmbcbo",
+    "name": "Tanya Roy",
+    "course": "MBA"
+  },
+  {
+    "roll": "MBA-404",
+    "_id": "mock_zx11epqmjgsow2imz25mbs",
+    "id": "mock_zx11epqmjgsow2imz25mbs",
+    "name": "Abhishek Prasad",
+    "course": "MBA"
+  },
+  {
+    "roll": "MBA-405",
+    "_id": "mock_vl534mfqv77e6fx63sbzj",
+    "id": "mock_vl534mfqv77e6fx63sbzj",
+    "name": "Sneha Singh",
+    "course": "MBA"
+  },
+  {
+    "roll": "MBA-406",
+    "_id": "mock_yxdquijzm401hbhjpcsxw",
+    "id": "mock_yxdquijzm401hbhjpcsxw",
+    "name": "Yash Gupta",
+    "course": "MBA"
+  }
+]

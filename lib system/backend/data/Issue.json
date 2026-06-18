@@ -1,0 +1,79 @@
+[
+  {
+    "student": "Aarav Sharma",
+    "book": "Atomic Habits",
+    "bookId": "mock_u7vdyro8pnqcp71yyyn6d9",
+    "date": "2026-05-01",
+    "returnDate": "2026-05-15",
+    "_id": "mock_wbrfuw5znbqx5bqfvvcsc",
+    "id": "mock_wbrfuw5znbqx5bqfvvcsc",
+    "updatedAt": "2026-06-17T10:04:28.838Z",
+    "createdAt": "2026-06-17T10:04:28.838Z"
+  },
+  {
+    "student": "Ananya Singh",
+    "book": "Clean Code",
+    "bookId": "mock_xhy5x5cqlzjvz74nuf0qk",
+    "date": "2026-05-05",
+    "returnDate": "2026-05-25",
+    "_id": "mock_b1sfb6zfjdq47ak3dvmtqd",
+    "id": "mock_b1sfb6zfjdq47ak3dvmtqd",
+    "updatedAt": "2026-06-17T10:04:28.841Z",
+    "createdAt": "2026-06-17T10:04:28.841Z"
+  },
+  {
+    "student": "Rohan Kumar",
+    "book": "Operating System Concepts",
+    "bookId": "mock_nfnz7xfxjtdx0xbtle1swe",
+    "date": "2026-04-20",
+    "returnDate": "2026-05-10",
+    "_id": "mock_eaj6y7w3h1dpveyu7kegtj",
+    "id": "mock_eaj6y7w3h1dpveyu7kegtj",
+    "updatedAt": "2026-06-17T10:04:28.845Z",
+    "createdAt": "2026-06-17T10:04:28.845Z"
+  },
+  {
+    "student": "Priya Verma",
+    "book": "Database System Concepts",
+    "bookId": "mock_82qhc4d12mdpa2v4wdp67h",
+    "date": "2026-05-12",
+    "returnDate": "2026-05-28",
+    "_id": "mock_ajtrbmv8q9gmd59zewzop",
+    "id": "mock_ajtrbmv8q9gmd59zewzop",
+    "updatedAt": "2026-06-17T10:04:28.849Z",
+    "createdAt": "2026-06-17T10:04:28.849Z"
+  },
+  {
+    "student": "Neha Gupta",
+    "book": "Python Crash Course",
+    "bookId": "mock_wcecqyi9o1aw6d7ftj8y0o",
+    "date": "2026-05-03",
+    "returnDate": "2026-05-18",
+    "_id": "mock_hjxm1pc9bifvh3pc2wam1",
+    "id": "mock_hjxm1pc9bifvh3pc2wam1",
+    "updatedAt": "2026-06-17T10:04:28.853Z",
+    "createdAt": "2026-06-17T10:04:28.853Z"
+  },
+  {
+    "student": "Rahul Raj",
+    "book": "Computer Networks",
+    "bookId": "mock_eruha5a6hdpmflu0coh9ba",
+    "date": "2026-05-15",
+    "returnDate": "2026-06-01",
+    "_id": "mock_cwodmjjmjbabchkwk6f8",
+    "id": "mock_cwodmjjmjbabchkwk6f8",
+    "updatedAt": "2026-06-17T10:04:28.858Z",
+    "createdAt": "2026-06-17T10:04:28.858Z"
+  },
+  {
+    "student": "Simran Kaur",
+    "book": "The Psychology of Money",
+    "bookId": "mock_e1bw1jd4sad5zjovwah61r",
+    "date": "2026-05-02",
+    "returnDate": "2026-05-16",
+    "_id": "mock_exkwo8raa8crm323q9w0ms",
+    "id": "mock_exkwo8raa8crm323q9w0ms",
+    "updatedAt": "2026-06-17T10:04:28.861Z",
+    "createdAt": "2026-06-17T10:04:28.861Z"
+  }
+]

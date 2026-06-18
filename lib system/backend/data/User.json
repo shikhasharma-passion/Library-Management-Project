@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Admin",
+    "email": "admin@library.com",
+    "course": "Admin",
+    "username": "admin",
+    "password": "$2b$10$cdmEny4P4FndFVEfh6SNn.Y3qU12vKb4TZRPDCLTEl1b5jYoVel4a",
+    "role": "admin",
+    "_id": "mock_mbshpngx7khg9jci37b9t",
+    "id": "mock_mbshpngx7khg9jci37b9t",
+    "updatedAt": "2026-06-17T10:04:28.554Z",
+    "createdAt": "2026-06-17T10:04:28.555Z"
+  }
+]
