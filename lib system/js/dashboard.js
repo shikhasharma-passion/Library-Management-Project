@@ -1,3 +1,13 @@
+// Intercept and route fetch requests on local files to localhost:3000
+const ORIGINAL_FETCH = window.fetch;
+window.fetch = function(url, options) {
+    const API_BASE_URL = window.location.protocol === "file:" ? "http://localhost:3000" : "";
+    if (typeof url === "string" && url.startsWith("/api")) {
+        url = API_BASE_URL + url;
+    }
+    return ORIGINAL_FETCH(url, options);
+};
+
 let libraryChart;
 let categoriesChart;
 
@@ -7,6 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
     loadContacts();
     loadBorrowRequests();
     loadExtensionRequests();
+    loadSuggestions();
+    loadFines();
+    loadOrdersTracker();
 });
 
 /* THEME SYSTEM (Persistent across Admin Pages) */
@@ -49,13 +62,14 @@ function renderRecentIssuedBooks(records) {
             <th>Issue Date</th>
             <th>Return Date</th>
             <th>Status</th>
+            <th>Action</th>
         </tr>
     `;
 
     if (records.length === 0) {
         table.innerHTML += `
             <tr>
-                <td colspan="5" style="text-align: center; color: var(--text-muted);">No issued books yet</td>
+                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 15px;">No active issued books found</td>
             </tr>
         `;
         return;
@@ -76,6 +90,11 @@ function renderRecentIssuedBooks(records) {
                 <td>${record.date}</td>
                 <td>${record.returnDate}</td>
                 <td><span class="status-badge ${statusClass}">${record.status}</span></td>
+                <td>
+                    <button onclick="returnBook('${record.id}')" class="delete-btn" style="margin-top:0; padding:6px 12px; font-size:12px; cursor:pointer;">
+                        ↩️ Return Book
+                    </button>
+                </td>
             </tr>
         `;
     });
@@ -117,7 +136,7 @@ function renderAnalyticsCharts(stats) {
                 datasets: [{
                     label: "Library Activity",
                     data: [stats.totalBooks, stats.totalStudents, stats.issuedBooks, stats.pendingBooks],
-                    backgroundColor: ["#021b3a", "#f1c40f", "#3498db", "#e74c3c"],
+                    backgroundColor: ["#0f172a", "#d97706", "#0284c7", "#ef4444"],
                     borderWidth: 0,
                     borderRadius: 8
                 }]
@@ -159,11 +178,11 @@ function renderAnalyticsCharts(stats) {
                 datasets: [{
                     data: counts.length > 0 ? counts : [0],
                     backgroundColor: [
-                        "#021b3a", "#f1c40f", "#3498db", "#27ae60",
-                        "#9b59b6", "#e67e22", "#1abc9c", "#e74c3c"
+                        "#0f172a", "#d97706", "#0284c7", "#10b981",
+                        "#8b5cf6", "#f97316", "#06b6d4", "#ec4899"
                     ],
                     borderWidth: isDark ? 2 : 1,
-                    borderColor: isDark ? "#151f2b" : "#ffffff"
+                    borderColor: isDark ? "#0f172a" : "#ffffff"
                 }]
             },
             options: {
@@ -475,6 +494,277 @@ async function rejectExtensionRequest(id) {
         }
     } catch (error) {
         console.error("Error rejecting extension request:", error);
+    }
+}
+
+async function loadSuggestions() {
+    const tbody = document.getElementById("suggestionsBody");
+    if (!tbody) return;
+
+    try {
+        const response = await fetch("/api/suggestions");
+        if (!response.ok) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Failed to load suggestions</td></tr>`;
+            return;
+        }
+        const suggestions = await response.json();
+        if (suggestions.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 15px;">No book suggestions from students yet.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = suggestions.map(item => {
+            let badgeColor = "orange";
+            if (item.status.includes("Way")) badgeColor = "#3b82f6";
+            else if (item.status.includes("Added")) badgeColor = "#10b981";
+            else if (item.status === "Refused") badgeColor = "#ef4444";
+
+            let actionsHtml = "";
+            if (item.status === "Pending" || item.status.includes("Way")) {
+                actionsHtml = `
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button onclick="updateSuggestion('${item._id || item.id}', 'Accepted - On the Way')" class="action-btn" style="margin-top:0; padding:6px 12px; font-size:12px; background:#3b82f6; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+                            🚚 On the Way
+                        </button>
+                        <button onclick="updateSuggestion('${item._id || item.id}', 'Accepted - Added')" class="action-btn" style="margin-top:0; padding:6px 12px; font-size:12px; background:#10b981; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+                            ✔️ Add to Catalog
+                        </button>
+                        <button onclick="updateSuggestion('${item._id || item.id}', 'Refused')" class="delete-btn" style="margin-top:0; padding:6px 12px; font-size:12px; background:#ef4444; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+                            ❌ Refuse
+                        </button>
+                    </div>
+                `;
+            } else {
+                actionsHtml = `<span style="font-size:12px; color:var(--text-muted); font-style:italic;">No actions (Finished)</span>`;
+            }
+
+            return `
+                <tr>
+                    <td><strong>${item.student}</strong></td>
+                    <td>${item.bookTitle}</td>
+                    <td>${item.bookAuthor}</td>
+                    <td>${item.category}</td>
+                    <td>
+                        <span style="padding:4px 8px; border-radius:12px; font-size:11px; font-weight:600; background:rgba(0,0,0,0.03); color:${badgeColor}; border:1px solid ${badgeColor}; white-space:nowrap;">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td>
+                        ${actionsHtml}
+                        <div style="font-size:12px; margin-top:5px; color:var(--text-muted);">
+                            <strong>Note:</strong> ${item.adminNotes || "None"}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+    } catch (error) {
+        console.error("Error loading suggestions:", error);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Server error</td></tr>`;
+    }
+}
+
+async function updateSuggestion(id, status) {
+    let notes = "";
+    if (status === "Accepted - On the Way") {
+        notes = prompt("Enter acquirement notes (e.g. ordered, coming in 3 days):", "This book is ordered and on the way towards the college library!");
+        if (notes === null) return; // cancelled
+    } else if (status === "Refused") {
+        notes = prompt("Enter reason for refusal (optional):", "This book is currently out of the scope of our college curriculum.");
+        if (notes === null) return;
+    } else if (status === "Accepted - Added") {
+        notes = "This book has been successfully added to our campus catalog library!";
+    }
+
+    try {
+        const response = await fetch(`/api/suggestions/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status, adminNotes: notes })
+        });
+        const result = await response.json();
+        if (response.ok) {
+            alert(`Suggestion updated to: ${status}`);
+            loadSuggestions();
+        } else {
+            alert(result.message || "Failed to update suggestion");
+        }
+    } catch (error) {
+        console.error("Error updating suggestion:", error);
+        alert("Server connection failed");
+    }
+}
+
+async function returnBook(id) {
+    if (!confirm("Are you sure you want to mark this book as returned?")) return;
+    try {
+        const response = await fetch(`/api/issues/${id}`, {
+            method: "DELETE"
+        });
+        if (response.ok) {
+            alert("Book marked as returned successfully!");
+            loadDashboard(); // reload metrics
+            loadFines(); // reload fines
+        } else {
+            alert("Failed to return book.");
+        }
+    } catch(err) {
+        console.error(err);
+        alert("Server connection failed");
+    }
+}
+
+async function loadFines() {
+    const tbody = document.getElementById("finesBody");
+    if (!tbody) return;
+
+    try {
+        const response = await fetch("/api/issues");
+        if (!response.ok) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Failed to load fines</td></tr>`;
+            return;
+        }
+        const issues = await response.json();
+        const overdueIssues = issues.filter(iss => iss.fine > 0);
+
+        if (overdueIssues.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding: 15px;">No students have outstanding overdue fines. All clear!</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = overdueIssues.map(iss => `
+            <tr>
+                <td><strong>${iss.student}</strong></td>
+                <td>${iss.book}</td>
+                <td>${iss.returnDate}</td>
+                <td><span style="color:#ef4444; font-weight:700;">₹${iss.fine}</span></td>
+                <td>
+                    <button onclick="clearFine('${iss.id}', ${iss.fine})" class="action-btn" style="margin-top:0; padding:6px 12px; font-size:12px; background:#10b981; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+                        💰 Collect & Clear Fine
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+    } catch(err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Server error</td></tr>`;
+    }
+}
+
+async function clearFine(id, amount) {
+    if (!confirm(`Confirm collection of ₹${amount} fine and mark book as returned?`)) return;
+    try {
+        const response = await fetch(`/api/issues/${id}`, {
+            method: "DELETE"
+        });
+        if (response.ok) {
+            alert(`Collected ₹${amount} fine successfully! Book has been returned to campus shelves.`);
+            loadDashboard();
+            loadFines();
+        } else {
+            alert("Failed to clear fine.");
+        }
+    } catch(err) {
+        console.error(err);
+        alert("Server connection failed");
+    }
+}
+
+async function loadOrdersTracker() {
+    const grid = document.getElementById("ordersTrackerGrid");
+    if (!grid) return;
+
+    try {
+        const response = await fetch("/api/suggestions");
+        if (!response.ok) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted);">Failed to load shipments</div>`;
+            return;
+        }
+        const suggestions = await response.json();
+        const ordered = suggestions.filter(item => item.status === "Accepted - On the Way");
+
+        if (ordered.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column:1/-1; text-align:center; color:var(--text-muted); border:1px dashed var(--border-color); border-radius:12px; padding:30px; background:rgba(0,0,0,0.01);">
+                    📦 No active procurement shipments currently. Update student suggestions to "On the Way" to track orders!
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = ordered.map(item => {
+            // Assign a stable mock progress percentage based on name length
+            const nameLen = item.bookTitle.length;
+            const progress = 40 + (nameLen % 6) * 10; // 40% to 90%
+            const daysLeft = Math.max(1, 8 - (nameLen % 6));
+
+            let statusText = "In Transit";
+            let color = "var(--accent-color)";
+            if (progress >= 80) {
+                statusText = "Out for Delivery";
+                color = "#3b82f6";
+            } else if (progress >= 90) {
+                statusText = "Arrived at Hub";
+                color = "#10b981";
+            }
+
+            return `
+                <div class="card" style="padding: 20px; border:1px solid var(--border-color); border-radius:12px; background:var(--card-bg); display:flex; flex-direction:column; justify-content:space-between; gap:12px;">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; padding:3px 8px; border-radius:20px; background:rgba(0,0,0,0.03); color:${color}; border:1px solid ${color};">
+                                ${statusText}
+                            </span>
+                            <span style="font-size:11px; color:var(--text-muted); font-weight:500;">
+                                ETA: ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'}
+                            </span>
+                        </div>
+                        <h3 style="font-size:16px; font-weight:700; margin-bottom:3px; color:var(--text-color);">${item.bookTitle}</h3>
+                        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">By ${item.bookAuthor}</p>
+                        
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; margin-bottom:4px; font-weight:600;">
+                            <span>Shipping Progress</span>
+                            <span>${progress}%</span>
+                        </div>
+                        <div style="width:100%; height:8px; border-radius:10px; background:rgba(0,0,0,0.05); overflow:hidden; border:1px solid var(--border-color);">
+                            <div style="width:${progress}%; height:100%; border-radius:10px; background:linear-gradient(90deg, var(--accent-color), #3b82f6); transition:width 0.5s ease-in-out;"></div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="receiveShipment('${item._id || item.id}')" class="action-btn" style="margin-top:5px; width:100%; padding:10px; border-radius:8px; font-size:12px; font-weight:700; background:#10b981; color:#fff; border:none; cursor:pointer;">
+                        📥 Receive & Add to Catalog
+                    </button>
+                </div>
+            `;
+        }).join("");
+    } catch(err) {
+        console.error(err);
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted);">Server error loading shipments</div>`;
+    }
+}
+
+async function receiveShipment(id) {
+    if (!confirm("Confirm arrival of shipment? This will add the book to campus shelves and mark suggestion as added!")) return;
+    try {
+        const response = await fetch(`/api/suggestions/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                status: "Accepted - Added",
+                adminNotes: "Received shipment! The book has been cataloged and placed on the campus shelves for borrow availability."
+            })
+        });
+        if (response.ok) {
+            alert("Shipment received! Suggestion updated and added to library catalog shelves.");
+            loadSuggestions();
+            loadOrdersTracker();
+            loadDashboard(); // reload metrics
+        } else {
+            alert("Failed to receive shipment.");
+        }
+    } catch(err) {
+        console.error(err);
+        alert("Server connection failed");
     }
 }
 

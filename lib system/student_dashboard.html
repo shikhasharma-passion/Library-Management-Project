@@ -14,13 +14,17 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="logo">
-            <img src="images/logo.jpg" alt="Logo">
-            <h2>Student Panel</h2>
+        <div class="logo" style="cursor: pointer;" onclick="location.href='index.html'">
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+            <h2 style="font-size:18px;">Student Panel</h2>
         </div>
         <ul>
             <li><a href="#" class="active">🏠 Dashboard</a></li>
-            <li><a href="all_books.html">📚 Browse Catalog</a></li>
+            <li><a href="all_books.html">🏫 Campus Library</a></li>
+            <li><a href="digital_library.html">🌐 Digital Library</a></li>
             <li><a href="contact.html">✉ Contact Library</a></li>
             <li><a href="logout.html">🚪 Logout</a></li>
         </ul>
@@ -47,6 +51,24 @@
             <strong>⚠️ Overdue Return Alert:</strong> You have books that are past their return deadline. Please return them to avoid additional daily fines.
         </div>
 
+        <!-- QUICK SHORTCUTS DECK -->
+        <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:20px; margin-bottom:30px; box-shadow:0 10px 25px var(--shadow-color);">
+            <h3 style="font-size:16px; font-weight:700; color:var(--text-color); margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+                ⚡ Fast Track Shortcuts
+            </h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:15px;">
+                <button onclick="location.href='all_books.html'" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border-radius:10px; background:rgba(56, 189, 248, 0.1); border:1px dashed var(--primary-color); color:var(--primary-color); cursor:pointer; font-weight:600; font-size:14px; transition:var(--transition);" onmouseover="this.style.background='var(--primary-color)'; this.style.color='#0f172a';" onmouseout="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.color='var(--primary-color)';">
+                    🏫 Browse Physical Catalog
+                </button>
+                <button onclick="location.href='digital_library.html'" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border-radius:10px; background:rgba(251, 191, 36, 0.1); border:1px dashed var(--accent-color); color:var(--accent-color); cursor:pointer; font-weight:600; font-size:14px; transition:var(--transition);" onmouseover="this.style.background='var(--accent-color)'; this.style.color='#0f172a';" onmouseout="this.style.background='rgba(251, 191, 36, 0.1)'; this.style.color='var(--accent-color)';">
+                    🌐 Open Digital e-Books
+                </button>
+                <button onclick="location.href='learning_hub.html'" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border-radius:10px; background:rgba(16, 185, 129, 0.1); border:1px dashed #10b981; color:#10b981; cursor:pointer; font-weight:600; font-size:14px; transition:var(--transition);" onmouseover="this.style.background='#10b981'; this.style.color='#0f172a';" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.color='#10b981';">
+                    💡 View Global Study Guides
+                </button>
+            </div>
+        </div>
+
         <!-- CARDS -->
         <div class="cards">
             <div class="card">
@@ -62,6 +84,23 @@
             <div class="card">
                 <h2 id="studentFineAmount">Rs. 0</h2>
                 <p>Accumulated Fine</p>
+            </div>
+        </div>
+
+        <!-- DIGITAL READINGS SECTION -->
+        <div class="table-section" id="digitalHistorySection" style="display: none;">
+            <h2>📖 My E-Book Readings (Digital Library)</h2>
+            <div id="digitalReadingHistoryGrid" class="book-grid" style="margin-top: 15px;">
+                <!-- Populated dynamically from localStorage -->
+            </div>
+        </div>
+
+        <!-- AVAILABLE BOOKS SECTION -->
+        <div class="table-section">
+            <h2>🏫 Campus Shelf Inventory (Physical Books)</h2>
+            <input type="text" id="studentBookSearchInput" placeholder="Search available books by title, author or category..." style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:8px; margin-bottom:20px; background:var(--input-bg); color:var(--text-color);">
+            <div id="availableBookList" class="book-grid">
+                <!-- Dynamically populated -->
             </div>
         </div>
 
@@ -91,6 +130,47 @@
             <div class="table-wrapper">
                 <table id="studentExtensionsTable">
                     <!-- Dynamically populated -->
+                </table>
+            </div>
+        </div>
+
+        <!-- BOOK SUGGESTION SECTION -->
+        <div class="table-section">
+            <h2>💡 Suggest a Book to the Library</h2>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 15px;">Can't find a textbook in our campus catalog? Submit a suggestion below. The library administrators will review your request and keep you updated on whether it is ordered or on the way!</p>
+            
+            <form id="suggestionForm" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                <input type="text" id="suggestTitle" placeholder="Book Title (e.g. Deep Learning)" required style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--input-bg); color:var(--text-color);">
+                <input type="text" id="suggestAuthor" placeholder="Book Author (e.g. Ian Goodfellow)" required style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--input-bg); color:var(--text-color);">
+                <select id="suggestCategory" required style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--input-bg); color:var(--text-color);">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="BCA">BCA / MCA</option>
+                    <option value="BBA">BBA / MBA</option>
+                    <option value="Programming">Programming</option>
+                    <option value="Self Improvement">Self Improvement</option>
+                    <option value="Fiction">Fiction / Novels</option>
+                    <option value="Other">Other Reference</option>
+                </select>
+                <button type="submit" class="action-btn" style="margin-top:0; border:none; padding:12px; border-radius:8px; background:var(--accent-color); color:#0f172a; font-weight:600; cursor:pointer;">
+                    Submit Suggestion
+                </button>
+            </form>
+
+            <h3>My Suggestions Log</h3>
+            <div class="table-wrapper" style="margin-top: 15px;">
+                <table id="studentSuggestionsTable">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Admin Feedback / Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentSuggestionsBody">
+                        <!-- Loaded dynamically -->
+                    </tbody>
                 </table>
             </div>
         </div>

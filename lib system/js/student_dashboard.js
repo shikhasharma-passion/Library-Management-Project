@@ -1,8 +1,23 @@
+// Intercept and route fetch requests on local files to localhost:3000
+const ORIGINAL_FETCH = window.fetch;
+window.fetch = function(url, options) {
+    const API_BASE_URL = window.location.protocol === "file:" ? "http://localhost:3000" : "";
+    if (typeof url === "string" && url.startsWith("/api")) {
+        url = API_BASE_URL + url;
+    }
+    return ORIGINAL_FETCH(url, options);
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     initStudentTheme();
     loadStudentDashboard();
+    initAvailableBookSearch();
+    loadAvailableBooks();
     loadStudentBorrowRequests();
     loadStudentExtensionRequests();
+    loadDigitalReadingHistory();
+    initSuggestionForm();
+    loadStudentSuggestions();
 });
 
 /* THEME SYSTEM (Persistent across Student Dashboard) */
@@ -30,6 +45,260 @@ function initStudentTheme() {
             }
         });
     }
+}
+
+function getBookId(book) {
+    return book.id || book._id;
+}
+
+/* CUSTOM MODAL CONFIRMATION DIALOG */
+function showCustomConfirm(message, onConfirm) {
+    const modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100%";
+    modal.style.height = "100%";
+    modal.style.background = "rgba(0,0,0,0.55)";
+    modal.style.display = "flex";
+    modal.style.justifyContent = "center";
+    modal.style.alignItems = "center";
+    modal.style.zIndex = "9999";
+    modal.style.backdropFilter = "blur(4px)";
+    
+    modal.innerHTML = `
+        <div style="background:var(--card-bg); color:var(--text-color); width: 400px; padding: 30px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <h3 style="margin-bottom: 12px; font-weight:800; display:flex; align-items:center; gap:8px;">
+                💡 Action Confirmation
+            </h3>
+            <p style="font-size: 14.5px; line-height: 1.6; margin-bottom: 25px; opacity:0.9;">${message.replace(/\n/g, '<br>')}</p>
+            <div style="display: flex; gap: 10px;">
+                <button id="custConfirmYes" class="action-btn" style="margin-top:0; flex:1; background:var(--accent-color); color:#0f172a; padding:10px;">Confirm</button>
+                <button id="custConfirmNo" class="delete-btn" style="margin-top:0; flex:1; background:rgba(0,0,0,0.05); color:var(--text-color); border:1px solid var(--border-color); padding:10px;">Cancel</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    modal.querySelector("#custConfirmYes").onclick = () => {
+        modal.remove();
+        onConfirm();
+    };
+    modal.querySelector("#custConfirmNo").onclick = () => {
+        modal.remove();
+    };
+}
+
+/* RENDER DIGITAL READING HISTORY */
+function loadDigitalReadingHistory() {
+    const user = localStorage.getItem("user") || "Guest";
+    const historyKey = `digitalReadings_${user}`;
+    const section = document.getElementById("digitalHistorySection");
+    const grid = document.getElementById("digitalReadingHistoryGrid");
+
+    if (!section || !grid) return;
+
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem(historyKey)) || [];
+    } catch(e) {
+        history = [];
+    }
+
+    if (history.length === 0) {
+        section.style.display = "none";
+        return;
+    }
+
+    section.style.display = "block";
+    grid.innerHTML = "";
+
+    history.forEach(item => {
+        const coverImg = item.image || "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=400";
+        grid.innerHTML += `
+            <div class="book-card" style="display:flex; gap:15px; border: 1px solid var(--border-color); background:var(--card-bg); border-radius:12px; padding:18px; transition:var(--transition);">
+                <img src="${coverImg}" alt="${item.name}" style="width:75px; height:105px; border-radius:6px; object-fit:cover; box-shadow:0 4px 10px rgba(0,0,0,0.15); flex-shrink:0;">
+                <div style="display:flex; flex-direction:column; justify-content:space-between; flex:1; min-width:0;">
+                    <div style="min-width:0;">
+                        <span class="status-badge" style="font-size: 10px; margin-bottom: 6px; padding: 2px 8px; background:rgba(217,119,6,0.1); color:var(--accent-color); font-weight:600; text-transform:uppercase; width:fit-content; display:block;">${item.stream}</span>
+                        <h3 style="margin-top: 4px; margin-bottom: 4px; font-size:15.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text-color);">${item.name}</h3>
+                        <p style="font-size: 12.5px; margin-bottom: 3px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><strong>Author:</strong> ${item.author}</p>
+                        <p style="font-size: 12.5px; margin-bottom: 3px; color:var(--accent-color); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            📖 Resume: ${item.lastReadChapterTitle || "Chapter 1"}
+                        </p>
+                    </div>
+                    <a href="e_reader.html?id=${item.id}" class="action-btn" style="text-decoration:none; text-align:center; padding: 7px 12px; margin-top: 10px; background:var(--primary-color); color:#fff; display:block; border-radius:6px; font-weight:600; border:none; transition:var(--transition); font-size:12.5px; width:fit-content;">
+                        Resume Reading
+                    </a>
+                </div>
+            </div>
+        `;
+    });
+}
+
+/* LOAD AVAILABLE PHYSICAL BOOKS FOR RESERVATION */
+async function loadAvailableBooks(searchValue = "") {
+    const list = document.getElementById("availableBookList");
+    if (!list) return;
+
+    list.innerHTML = `
+        <div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-muted);">
+            <h3>Loading available books...</h3>
+        </div>
+    `;
+
+    try {
+        const params = new URLSearchParams();
+        params.set("status", "Available");
+
+        if (searchValue) {
+            params.set("q", searchValue);
+        }
+
+        const response = await fetch(`/api/books?${params.toString()}`);
+        if (!response.ok) {
+            const result = await response.json();
+            list.innerHTML = `
+                <div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-muted);">
+                    <h3>Books not loaded</h3>
+                    <p>${result.message || "Please try again"}</p>
+                </div>
+            `;
+            return;
+        }
+
+        const books = await response.json();
+        renderAvailableBooks(books);
+    } catch (error) {
+        console.error("Error loading available books:", error);
+        list.innerHTML = `
+            <div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-muted);">
+                <h3>Server connection failed</h3>
+                <p>Please make sure the backend is running.</p>
+            </div>
+        `;
+    }
+}
+
+function getRackLocation(category) {
+    const cat = String(category || "").toLowerCase();
+    if (cat.includes("bca") || cat.includes("mca") || cat.includes("operating") || cat.includes("networking") || cat.includes("dbms")) {
+        return "Rack CS-14";
+    }
+    if (cat.includes("bba") || cat.includes("mba") || cat.includes("management")) {
+        return "Rack MG-03";
+    }
+    if (cat.includes("programming") || cat.includes("development")) {
+        return "Rack PR-08";
+    }
+    if (cat.includes("self") || cat.includes("psychology") || cat.includes("finance")) {
+        return "Rack SF-02";
+    }
+    if (cat.includes("fiction")) {
+        return "Rack FC-01";
+    }
+    return "Rack GN-03";
+}
+
+function renderAvailableBooks(books) {
+    const list = document.getElementById("availableBookList");
+    if (!list) return;
+
+    list.innerHTML = "";
+
+    if (books.length === 0) {
+        list.innerHTML = `
+            <div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-muted);">
+                <h3>No Available Shelf Books</h3>
+                <p>Try another search or check again later.</p>
+            </div>
+        `;
+        return;
+    }
+
+    books.forEach((book) => {
+        const rack = getRackLocation(book.category);
+        list.innerHTML += `
+            <div class="book-card" style="display:flex; flex-direction:column; justify-content:space-between; border: 1px solid var(--border-color); background:var(--card-bg); border-radius:12px; padding:20px;">
+                <div>
+                    <h3 style="font-size:17px; font-weight:700; margin-bottom:6px;">${book.name}</h3>
+                    <p style="font-size:13.5px; margin-bottom:4px; color:var(--text-muted);"><strong>Author:</strong> ${book.author}</p>
+                    <p style="font-size:13.5px; margin-bottom:4px; color:var(--text-muted);"><strong>Category:</strong> ${book.category}</p>
+                    <p style="font-size:13.5px; margin-bottom:4px; color:var(--text-color);">Loc: <strong style="color:var(--text-color);">${rack}</strong></p>
+                    <p style="font-size:13.5px; margin-bottom:4px;"><span class="status-badge active" style="font-size:11px;">Shelf Available</span></p>
+                </div>
+                <button class="action-btn" onclick="requestIssueFromDashboard('${getBookId(book)}', '${encodeURIComponent(book.name)}')" style="width:100%; margin-top:15px; padding:9px 14px; border-radius:8px; font-weight:600; border:none; transition:var(--transition);">
+                    Request Issue
+                </button>
+            </div>
+        `;
+    });
+}
+
+function initAvailableBookSearch() {
+    const input = document.getElementById("studentBookSearchInput");
+    if (!input) return;
+
+    let timer;
+    input.addEventListener("input", () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            loadAvailableBooks(input.value.trim());
+        }, 250);
+    });
+}
+
+async function requestIssueFromDashboard(bookId, encodedBookName) {
+    const user = localStorage.getItem("user") || "";
+    const bookName = decodeURIComponent(encodedBookName);
+
+    if (!user) {
+        alert("Please login first");
+        window.location.href = "login.html";
+        return;
+    }
+
+    if (!bookId || !bookName) {
+        alert("Book details missing");
+        return;
+    }
+
+    const today = new Date();
+    const requestDate = today.toISOString().split("T")[0];
+    const dueDate = new Date(today);
+    dueDate.setDate(today.getDate() + 14);
+    const returnDate = dueDate.toISOString().split("T")[0];
+
+    showCustomConfirm(`Request physical borrow issue for "${bookName}"?\nReturn deadline will be ${returnDate}.`, async () => {
+        try {
+            const response = await fetch("/api/issues/requests", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    student: user,
+                    book: bookName,
+                    date: requestDate,
+                    returnDate
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Issue request submitted successfully! Admin approval is pending.");
+                loadAvailableBooks(document.getElementById("studentBookSearchInput")?.value.trim() || "");
+                loadStudentBorrowRequests();
+            } else {
+                alert(result.message || "Issue request failed");
+            }
+        } catch (error) {
+            console.error("Error submitting issue request:", error);
+            alert("Server connection failed");
+        }
+    });
 }
 
 /* LOAD STUDENT METRICS & ISSUED BOOKS */
@@ -203,45 +472,172 @@ async function loadStudentExtensionRequests() {
     }
 }
 
-async function requestBookExtension(issueId, bookName, currentReturnDate) {
-    // Calculate default return date: +7 days from current return date
+/* REQUEST BOOK EXTENSION WITH CUSTOM DATE-PICKER MODAL */
+function requestBookExtension(issueId, bookName, currentReturnDate) {
     const current = new Date(currentReturnDate);
     const extended = new Date(current);
     extended.setDate(current.getDate() + 7);
     const defaultDateStr = extended.toISOString().split("T")[0];
 
-    const newDateStr = prompt(`Enter new return date (YYYY-MM-DD) for "${bookName}":\n(Current Deadline: ${currentReturnDate})`, defaultDateStr);
-    if (!newDateStr) return;
-
-    // Simple date format check
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(newDateStr.trim())) {
-        alert("Invalid date format. Please use YYYY-MM-DD.");
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/issues/${issueId}/extension`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                requestedReturnDate: newDateStr.trim()
-            })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            alert("Extension request submitted successfully!");
-            loadStudentDashboard();
-            loadStudentExtensionRequests();
-        } else {
-            alert(result.message || "Failed to submit extension request");
+    const modal = document.createElement("div");
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100%";
+    modal.style.height = "100%";
+    modal.style.background = "rgba(0,0,0,0.55)";
+    modal.style.display = "flex";
+    modal.style.justifyContent = "center";
+    modal.style.alignItems = "center";
+    modal.style.zIndex = "9999";
+    modal.style.backdropFilter = "blur(4px)";
+    
+    modal.innerHTML = `
+        <div style="background:var(--card-bg); color:var(--text-color); width: 420px; padding: 30px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <h3 style="margin-bottom: 8px; font-weight:800; display:flex; align-items:center; gap:8px;">
+                📅 Request Return Extension
+            </h3>
+            <p style="font-size: 13.5px; color:var(--text-muted); margin-bottom: 20px; line-height:1.5;">
+                Book: <strong>${bookName}</strong><br>
+                Current Deadline: <strong>${currentReturnDate}</strong>
+            </p>
+            
+            <div style="margin-bottom: 25px;">
+                <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">New Requested Return Date</label>
+                <input type="date" id="newExtDate" value="${defaultDateStr}" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-color); background:var(--input-bg); color:var(--text-color);">
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button id="custExtSubmit" class="action-btn" style="margin-top:0; flex:1; background:var(--accent-color); color:#0f172a; padding:10px;">Submit Request</button>
+                <button id="custExtCancel" class="delete-btn" style="margin-top:0; flex:1; background:rgba(0,0,0,0.05); color:var(--text-color); border:1px solid var(--border-color); padding:10px;">Cancel</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    modal.querySelector("#custExtSubmit").onclick = async () => {
+        const newDateStr = modal.querySelector("#newExtDate").value;
+        if (!newDateStr) return;
+        
+        // Simple date format check
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(newDateStr.trim())) {
+            alert("Invalid date format. Please use YYYY-MM-DD.");
+            return;
         }
-    } catch (error) {
-        console.error("Error requesting book extension:", error);
-        alert("Server connection failed");
-    }
+        
+        modal.remove();
+        
+        try {
+            const response = await fetch(`/api/issues/${issueId}/extension`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    requestedReturnDate: newDateStr.trim()
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Extension request submitted successfully!");
+                loadStudentDashboard();
+                loadStudentExtensionRequests();
+            } else {
+                alert(result.message || "Failed to submit extension request");
+            }
+        } catch (error) {
+            console.error("Error requesting book extension:", error);
+            alert("Server connection failed");
+        }
+    };
+    
+    modal.querySelector("#custExtCancel").onclick = () => {
+        modal.remove();
+    };
 }
 
+function initSuggestionForm() {
+    const form = document.getElementById("suggestionForm");
+    if (!form) return;
+    
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const title = document.getElementById("suggestTitle").value.trim();
+        const author = document.getElementById("suggestAuthor").value.trim();
+        const category = document.getElementById("suggestCategory").value;
+        const user = localStorage.getItem("user") || "Guest";
+        
+        try {
+            const response = await fetch("/api/suggestions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    student: user,
+                    bookTitle: title,
+                    bookAuthor: author,
+                    category: category
+                })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert("Book suggestion submitted successfully!");
+                form.reset();
+                loadStudentSuggestions();
+            } else {
+                alert(result.message || "Failed to submit suggestion");
+            }
+        } catch(err) {
+            console.error(err);
+            alert("Server connection failed");
+        }
+    });
+}
+
+async function loadStudentSuggestions() {
+    const tbody = document.getElementById("studentSuggestionsBody");
+    if (!tbody) return;
+    
+    const user = localStorage.getItem("user") || "Guest";
+    
+    try {
+        const response = await fetch(`/api/suggestions/student?student=${encodeURIComponent(user)}`);
+        if (!response.ok) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Failed to load suggestions</td></tr>`;
+            return;
+        }
+        const data = await response.json();
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding: 15px;">No suggestions submitted yet.</td></tr>`;
+            return;
+        }
+        
+        tbody.innerHTML = data.map(item => {
+            let badgeColor = "orange";
+            if (item.status.includes("Way")) badgeColor = "#3b82f6";
+            else if (item.status.includes("Added")) badgeColor = "#10b981";
+            else if (item.status === "Refused") badgeColor = "#ef4444";
+            
+            return `
+                <tr>
+                    <td><strong>${item.bookTitle}</strong></td>
+                    <td>${item.bookAuthor}</td>
+                    <td>${item.category}</td>
+                    <td>
+                        <span style="padding:4px 8px; border-radius:12px; font-size:11px; font-weight:600; background:rgba(0,0,0,0.03); color:${badgeColor}; border: 1px solid ${badgeColor}; white-space:nowrap;">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td style="font-style:italic; color:${item.adminNotes ? 'var(--text-color)' : 'var(--text-muted)'};">
+                        ${item.adminNotes || "Waiting for admin review..."}
+                    </td>
+                </tr>
+            `;
+        }).join("");
+    } catch(err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Server error</td></tr>`;
+    }
+}

@@ -1,5 +1,6 @@
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
+const API_BASE_URL = window.location.protocol === "file:" ? "http://localhost:3000" : "";
 
 if(loginForm){
 
@@ -16,7 +17,7 @@ if(loginForm){
         }
 
         try{
-            const response = await fetch("/api/login", {
+            const response = await fetch(`${API_BASE_URL}/api/login`, {
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json"
@@ -35,7 +36,7 @@ if(loginForm){
             localStorage.setItem("userEmail", result.user.email || username);
             localStorage.setItem("userRole", result.user.role || "student");
         }catch(error){
-            alert("Server is not running");
+            alert("Server is not running. Please open the app from http://localhost:3000");
             return;
         }
 
@@ -68,7 +69,7 @@ if(registerForm){
         }
 
         try{
-            const response = await fetch("/api/register", {
+            const response = await fetch(`${API_BASE_URL}/api/register`, {
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json"
@@ -86,7 +87,7 @@ if(registerForm){
             alert("Registration Successful");
             window.location.href = "login.html";
         }catch(error){
-            alert("Server is not running");
+            alert("Server is not running. Please open the app from http://localhost:3000");
         }
 
     });

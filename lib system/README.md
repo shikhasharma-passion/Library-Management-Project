@@ -116,6 +116,26 @@ If the URI is correct, you will see:
 MongoDB Atlas connected successfully.
 ```
 
+If Atlas says your IP is not whitelisted, run:
+
+```powershell
+npm run my-ip
+```
+
+Then open MongoDB Atlas:
+
+```text
+Network Access > Add IP Address
+```
+
+Add the shown public IP. For college/demo submission, you can temporarily use:
+
+```text
+0.0.0.0/0
+```
+
+If it still fails, switch to a mobile hotspot because some college/office Wi-Fi networks block MongoDB's `27017` port.
+
 ## Add Demo Data
 
 To add realistic project demo data into MongoDB Atlas, run:

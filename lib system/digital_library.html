@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital World Library</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        .digital-hero {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.85)), url('images/background.jpg') no-repeat center center/cover;
+            padding: 80px 8% 50px 8%;
+            text-align: center;
+            color: #fff;
+        }
+        .digital-hero h1 {
+            font-size: 46px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+        .digital-hero p {
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .grid-container {
+            padding: 40px 8% 80px 8%;
+            background: var(--bg-color);
+            transition: var(--transition);
+        }
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        .filter-btn {
+            padding: 10px 22px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            transition: var(--transition);
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-color);
+            color: #0f172a;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            font-weight: 600;
+        }
+        .e-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .e-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 10px 25px var(--shadow-color);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .e-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px var(--shadow-hover);
+            border-color: var(--accent-color);
+        }
+        .e-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        .e-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+        }
+        .e-card h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+        .e-card p.author {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .e-card p.desc {
+            font-size: 14px;
+            color: var(--text-color);
+            opacity: 0.85;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .e-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            margin-top: 10px;
+        }
+        .e-reads {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .e-read-btn {
+            padding: 8px 18px;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13.5px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            text-align: center;
+        }
+        .e-read-btn:hover {
+            background: var(--accent-color);
+            color: #0f172a;
+            transform: translateY(-1px);
+        }
+        [data-theme="dark"] .e-read-btn {
+            background: var(--accent-color);
+            color: #0f172a;
+        }
+        [data-theme="dark"] .e-read-btn:hover {
+            background: #fff;
+            color: #0f172a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER / NAVIGATION -->
+    <header>
+        <nav class="navbar">
+            <div class="logo-section" style="cursor: pointer;" onclick="location.href='index.html'">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color); filter: drop-shadow(0 0 4px rgba(217,119,6,0.35));">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+                <h2 style="font-weight: 800; font-size: 24px; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SmartLib</h2>
+            </div>
+            
+            <div class="nav-right" style="display: flex; align-items: center; gap: 20px;">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="all_books.html">Campus Library</a></li>
+                    <li><a href="digital_library.html" class="active">Digital Library</a></li>
+                    <li><a href="learning_hub.html">Learning Hub</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li id="authLink"><a href="login.html">Login</a></li>
+                </ul>
+
+                <!-- Theme Switcher -->
+                <button class="theme-switch" id="themeToggleBtn" title="Toggle Theme">
+                    🌙
+                </button>
+
+                <!-- Hamburger menu for Mobile -->
+                <button class="hamburger" id="menuToggleBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="digital-hero">
+        <h1>Digital World Library</h1>
+        <p>Browse global streams of e-books, computer manuals, and academic research papers. Instantly access, read chapters, and continue learning in a fullscreen premium e-reader.</p>
+    </section>
+
+    <!-- SEARCH -->
+    <section class="search-section" style="padding: 40px 8% 10px 8%;">
+        <div class="search-box" style="max-width: 650px; box-shadow: 0 8px 24px var(--shadow-color);">
+            <input type="text" id="digitalSearchInput" placeholder="Search digital books, author, category...">
+            <button id="digitalSearchBtn" style="background: var(--primary-color);">Search</button>
+        </div>
+    </section>
+
+    <!-- STREAM FILTER TABS -->
+    <section class="grid-container" style="padding-top: 20px;">
+        <div class="filter-tabs" id="streamTabs">
+            <button class="filter-btn active" data-stream="All">All Resources</button>
+            <button class="filter-btn" data-stream="Computer Science">Computer Science</button>
+            <button class="filter-btn" data-stream="Business Administration">Business & MBA</button>
+            <button class="filter-btn" data-stream="Self Improvement">Self Improvement</button>
+            <button class="filter-btn" data-stream="Science">Natural Sciences</button>
+            <button class="filter-btn" data-stream="Fiction">Fiction & Arts</button>
+        </div>
+
+        <!-- DIGITAL BOOKS GRID -->
+        <div class="e-grid" id="digitalBookGrid">
+            <!-- Populated dynamically via JS -->
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+                <h3>Loading e-resources...</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h2>SmartLib</h2>
+                <p>Modern digital library management system for schools and colleges.</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="all_books.html">Campus Library</a>
+                <a href="digital_library.html">Digital Library</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact</h3>
+                <p>📍 Patna, Bihar</p>
+                <p>📞 +91 9876543210</p>
+                <p>✉ support@libraryms.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 SmartLib | Designed By Shikha Sharma
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/digital_library.js"></script>
+    <script src="js/script.js"></script>
+
+</body>
+</html>

@@ -1,35 +1,35 @@
 /* Dashboard Styling (Admin & Student Dashboard) */
 
 :root {
-    --primary-color: #021b3a;
-    --accent-color: #f1c40f;
-    --sidebar-bg: #021b3a;
-    --bg-color: #f4f7fb;
+    --primary-color: #0f172a;
+    --accent-color: #d97706;
+    --sidebar-bg: #0f172a;
+    --bg-color: #f8fafc;
     --card-bg: #ffffff;
-    --text-color: #2c3e50;
-    --text-muted: #7f8c8d;
+    --text-color: #0f172a;
+    --text-muted: #64748b;
     --border-color: #e2e8f0;
-    --shadow-color: rgba(2, 27, 58, 0.05);
-    --shadow-hover: rgba(2, 27, 58, 0.1);
+    --shadow-color: rgba(15, 23, 42, 0.04);
+    --shadow-hover: rgba(15, 23, 42, 0.08);
     --input-bg: #ffffff;
-    --table-header-bg: #021b3a;
+    --table-header-bg: #0f172a;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Dark Mode Variables */
 body.dark-mode {
-    --primary-color: #f1c40f;
-    --accent-color: #021b3a;
-    --sidebar-bg: #0b131f;
-    --bg-color: #0d131a;
-    --card-bg: #151f2b;
-    --text-color: #f4f7fb;
-    --text-muted: #a0aec0;
-    --border-color: #243347;
-    --shadow-color: rgba(0, 0, 0, 0.2);
-    --shadow-hover: rgba(0, 0, 0, 0.35);
-    --input-bg: #1a2635;
-    --table-header-bg: #1a2635;
+    --primary-color: #38bdf8;
+    --accent-color: #fbbf24;
+    --sidebar-bg: #030712;
+    --bg-color: #030712;
+    --card-bg: #0f172a;
+    --text-color: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #1e293b;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --shadow-hover: rgba(0, 0, 0, 0.5);
+    --input-bg: #1e293b;
+    --table-header-bg: #1e293b;
 }
 
 * {

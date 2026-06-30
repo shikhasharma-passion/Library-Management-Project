@@ -21,7 +21,7 @@ async function connectDB() {
 
   await mongoose.connect(uri, {
     dbName: process.env.DB_NAME || "libraryms",
-    serverSelectionTimeoutMS: 3000
+    serverSelectionTimeoutMS: 10000
   });
   console.log("MongoDB Atlas connected");
 }

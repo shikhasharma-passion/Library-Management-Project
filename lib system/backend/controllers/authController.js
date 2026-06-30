@@ -28,13 +28,15 @@ function createToken(user) {
 }
 
 async function ensureAdminUser() {
+  const hashedPassword = await bcrypt.hash("admin123", 10);
   const admin = await User.findOne({ username: "admin" });
 
   if (admin) {
+    admin.password = hashedPassword;
+    admin.role = "admin";
+    await admin.save();
     return;
   }
-
-  const hashedPassword = await bcrypt.hash("admin123", 10);
 
   await User.create({
     name: "Admin",

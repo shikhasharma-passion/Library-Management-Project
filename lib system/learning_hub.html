@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Learning Hub | Study Resources</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        .hub-hero {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.85)), url('images/background.jpg') no-repeat center center/cover;
+            padding: 85px 8% 55px 8%;
+            text-align: center;
+            color: #fff;
+        }
+        .hub-hero h1 {
+            font-size: 46px;
+            font-weight: 850;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+        .hub-hero p {
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.82);
+            max-width: 750px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .grid-container {
+            padding: 40px 8% 80px 8%;
+            background: var(--bg-color);
+            transition: var(--transition);
+        }
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        .filter-btn {
+            padding: 11px 24px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            transition: var(--transition);
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-color);
+            color: #0f172a;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            font-weight: 600;
+        }
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        .resource-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 10px 25px var(--shadow-color);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .resource-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 45px var(--shadow-hover);
+            border-color: var(--accent-color);
+        }
+        .resource-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .resource-type-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+        .resource-type-badge.youtube {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .resource-type-badge.google {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        .resource-type-badge.library {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        .resource-icon {
+            font-size: 32px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.06));
+        }
+        .resource-card h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-color);
+            line-height: 1.4;
+        }
+        .resource-card p.provider {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+        }
+        .resource-card p.desc {
+            font-size: 14.5px;
+            color: var(--text-color);
+            opacity: 0.85;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        .resource-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+            padding-top: 18px;
+        }
+        .resource-stream-tag {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .resource-link {
+            padding: 9px 20px;
+            background: var(--primary-color);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13.5px;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .resource-link:hover {
+            background: var(--accent-color);
+            color: #0f172a;
+            transform: translateY(-1px);
+        }
+        [data-theme="dark"] .resource-link {
+            background: var(--accent-color);
+            color: #0f172a;
+        }
+        [data-theme="dark"] .resource-link:hover {
+            background: #fff;
+            color: #0f172a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER / NAVIGATION -->
+    <header>
+        <nav class="navbar">
+            <div class="logo-section" style="cursor: pointer;" onclick="location.href='index.html'">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color); filter: drop-shadow(0 0 4px rgba(217,119,6,0.35));">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+                <h2 style="font-weight: 800; font-size: 24px; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SmartLib</h2>
+            </div>
+            
+            <div class="nav-right" style="display: flex; align-items: center; gap: 20px;">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="all_books.html">Campus Library</a></li>
+                    <li><a href="digital_library.html">Digital Library</a></li>
+                    <li><a href="learning_hub.html" class="active">Learning Hub</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li id="authLink"><a href="login.html">Login</a></li>
+                </ul>
+
+                <!-- Theme Switcher -->
+                <button class="theme-switch" id="themeToggleBtn" title="Toggle Theme">
+                    🌙
+                </button>
+
+                <!-- Hamburger menu for Mobile -->
+                <button class="hamburger" id="menuToggleBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hub-hero">
+        <h1>Global Learning Hub</h1>
+        <p>Your gateway to world-class educational guides. We have collected top-tier video playlists, reference drives, and academic toolkits organized by stream to help you master any subject.</p>
+    </section>
+
+    <!-- STREAM FILTER TABS -->
+    <section class="grid-container">
+        <div class="filter-tabs" id="hubTabs">
+            <button class="filter-btn active" data-stream="All">All Resources</button>
+            <button class="filter-btn" data-stream="Computer Science">Computer Science</button>
+            <button class="filter-btn" data-stream="Business Administration">Business & MBA</button>
+            <button class="filter-btn" data-stream="Natural Sciences">Natural Sciences</button>
+            <button class="filter-btn" data-stream="General Studies">General & Literature</button>
+        </div>
+
+        <!-- RESOURCES GRID -->
+        <div class="resource-grid" id="resourceGrid">
+            <!-- Loaded dynamically from learning_hub.js -->
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h2>SmartLib</h2>
+                <p>Modern digital library management system for schools and colleges.</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="all_books.html">Campus Library</a>
+                <a href="digital_library.html">Digital Library</a>
+                <a href="learning_hub.html">Learning Hub</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact</h3>
+                <p>📍 Patna, Bihar</p>
+                <p>📞 +91 9876543210</p>
+                <p>✉ support@libraryms.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 SmartLib | Designed By Shikha Sharma
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/learning_hub.js"></script>
+    <script src="js/script.js"></script>
+
+</body>
+</html>

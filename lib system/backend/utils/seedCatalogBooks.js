@@ -3,8 +3,10 @@ const Book = require("../models/Book");
 const Student = require("../models/Student");
 const Issue = require("../models/Issue");
 const Contact = require("../models/Contact");
+const DigitalBook = require("../models/DigitalBook");
 const { ensureAdminUser } = require("../controllers/authController");
 const catalogData = require("./catalogData");
+const digitalBooksData = require("./digitalBooksData");
 
 const books = [
   { name: "Atomic Habits", author: "James Clear", category: "Self Improvement" },
@@ -131,74 +133,69 @@ function imageForBook(book) {
 async function seedCatalogBooks() {
   await ensureAdminUser();
 
-  const countCatalog = await CatalogBook.countDocuments();
-  if (countCatalog === 0) {
-    await CatalogBook.insertMany(catalogData);
-    console.log("Catalog books seeded");
+  console.log("Refreshing database catalog and digital e-book tables...");
+  
+  // Clear collections to force update covers and lists
+  await CatalogBook.deleteMany({});
+  await DigitalBook.deleteMany({});
+  await Book.deleteMany({});
+
+  // Seed Catalog books (physical catalog metadata)
+  await CatalogBook.insertMany(catalogData);
+  console.log("Catalog books seeded successfully.");
+
+  // Seed Digital e-books
+  await DigitalBook.insertMany(digitalBooksData);
+  console.log("Digital e-books seeded successfully.");
+
+  // Seed Physical Stock Inventory
+  console.log("Seeding physical book inventory stock...");
+  const bookMap = new Map();
+  for (const item of catalogData) {
+    const book = await Book.create({
+      name: item.name,
+      author: item.author,
+      category: item.category,
+      status: "Available"
+    });
+    bookMap.set(book.name, book);
   }
 
-  const countBooks = await Book.countDocuments();
-  if (countBooks === 0) {
-    console.log("Seeding books, students, issues, and contacts...");
-    const bookMap = new Map();
-
-    for (const item of books) {
-      const book = await Book.findOneAndUpdate(
-        { name: item.name },
-        { $setOnInsert: { status: "Available" }, $set: { author: item.author, category: item.category } },
-        { upsert: true, new: true }
-      );
-      bookMap.set(book.name, book);
-    }
-
+  // Seed default students if empty
+  const countStudents = await Student.countDocuments();
+  if (countStudents === 0) {
     for (const item of students) {
-      await Student.findOneAndUpdate(
-        { roll: item.roll },
-        { $set: item },
-        { upsert: true, new: true }
-      );
+      await Student.create(item);
     }
+    console.log("Default students seeded.");
+  }
 
-    for (const item of books) {
-      await CatalogBook.findOneAndUpdate(
-        { name: item.name },
-        { $set: { ...item, image: imageForBook(item) } },
-        { upsert: true, new: true }
-      );
-    }
+  // Clear previous issue transactions to keep inventory counts accurate on reset
+  await Issue.deleteMany({});
 
-    for (const item of issuePlans) {
-      const book = bookMap.get(item.book) || await Book.findOne({ name: item.book });
-      if (!book) continue;
+  // Re-seed default issues
+  for (const item of issuePlans) {
+    const book = bookMap.get(item.book);
+    if (!book) continue;
 
-      const exists = await Issue.findOne({
-        student: item.student,
-        book: item.book,
-        date: item.date
-      });
+    await Issue.create({
+      student: item.student,
+      book: book.name,
+      bookId: book._id,
+      date: item.date,
+      returnDate: item.returnDate
+    });
 
-      if (!exists) {
-        await Issue.create({
-          student: item.student,
-          book: item.book,
-          bookId: book._id,
-          date: item.date,
-          returnDate: item.returnDate
-        });
-      }
+    await Book.findByIdAndUpdate(book._id, { status: "Issued" });
+  }
+  console.log("Default borrow issues seeded.");
 
-      await Book.findByIdAndUpdate(book._id, { status: "Issued" });
-    }
-
+  // Seed contacts if empty
+  const countContacts = await Contact.countDocuments();
+  if (countContacts === 0) {
     for (const item of contacts) {
-      await Contact.findOneAndUpdate(
-        { email: item.email, message: item.message },
-        { $setOnInsert: item },
-        { upsert: true, new: true }
-      );
+      await Contact.create(item);
     }
-
-    console.log("All startup sample data seeded successfully.");
   }
 }
 

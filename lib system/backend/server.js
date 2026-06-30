@@ -31,7 +31,9 @@ function registerAppRoutes() {
   app.use("/api/students", require("./routes/studentRoutes"));
   app.use("/api/issues", require("./routes/issueRoutes"));
   app.use("/api/catalog", require("./routes/catalogRoutes"));
+  app.use("/api/digital-books", require("./routes/digitalBookRoutes"));
   app.use("/api/contact", require("./routes/contactRoutes"));
+  app.use("/api/suggestions", require("./routes/suggestionRoutes"));
   app.use("/api", require("./routes/dashboardRoutes"));
 
   app.post("/api/login", require("./controllers/authController").login);

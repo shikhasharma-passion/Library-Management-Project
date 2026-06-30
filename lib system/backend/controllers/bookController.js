@@ -8,6 +8,7 @@ function escapeRegex(value) {
 async function getBooks(req, res) {
   try {
     const query = String(req.query.q || "").trim();
+    const status = String(req.query.status || "").trim();
     const safeQuery = escapeRegex(query);
     const filter = query
       ? {
@@ -19,6 +20,11 @@ async function getBooks(req, res) {
           ]
         }
       : {};
+
+    if (status) {
+      filter.status = status;
+    }
+
     const books = await Book.find(filter).sort({ createdAt: -1 });
     res.json(books);
   } catch (error) {
