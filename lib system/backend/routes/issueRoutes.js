@@ -12,7 +12,14 @@ const {
   getExtensionRequests,
   getStudentExtensionRequests,
   approveExtensionRequest,
-  rejectExtensionRequest
+  rejectExtensionRequest,
+  reserveBook,
+  getReservations,
+  cancelReservation,
+  getFines,
+  payFine,
+  getNotifications,
+  readNotification
 } = require("../controllers/issueController");
 
 const router = express.Router();
@@ -34,6 +41,19 @@ router.get("/extensions/list", getExtensionRequests);
 router.get("/extensions/student", getStudentExtensionRequests);
 router.put("/extensions/:id/approve", approveExtensionRequest);
 router.put("/extensions/:id/reject", rejectExtensionRequest);
+
+// Reservations
+router.post("/reserve", reserveBook);
+router.get("/reservations", getReservations);
+router.delete("/reservations/:id", cancelReservation);
+
+// Fines
+router.get("/fines", getFines);
+router.put("/fines/:id/pay", payFine);
+
+// Notifications
+router.get("/notifications", getNotifications);
+router.put("/notifications/:id/read", readNotification);
 
 module.exports = router;
 

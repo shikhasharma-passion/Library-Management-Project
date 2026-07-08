@@ -16,6 +16,31 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true
+    },
+    studentId: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    semester: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    email: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    phone: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    session: {
+      type: String,
+      trim: true,
+      default: ""
     }
   },
   { timestamps: true }

@@ -1,0 +1,110 @@
+[
+  {
+    "studentId": "STU-2026-1004",
+    "studentName": "Neha Pathak",
+    "bookTitle": "High School English Grammar and Composition (Wren & Martin)",
+    "issueId": "mock_isyszpmq52bmwa9epaezx9",
+    "amount": 140,
+    "status": "Unpaid",
+    "_id": "mock_ypis3k9aw2xqk33mfvvfi",
+    "id": "mock_ypis3k9aw2xqk33mfvvfi",
+    "updatedAt": "2026-07-08T16:20:00.148Z",
+    "createdAt": "2026-07-08T16:20:00.148Z"
+  },
+  {
+    "studentId": "STU-2026-1008",
+    "studentName": "Kritika Reddy",
+    "bookTitle": "Objective General English for Competitive Exams",
+    "issueId": "mock_78l03cgw6brq9y135iexc",
+    "amount": 140,
+    "status": "Unpaid",
+    "_id": "mock_9xkbstm3q7i8qviert2kw6",
+    "id": "mock_9xkbstm3q7i8qviert2kw6",
+    "updatedAt": "2026-07-08T16:20:00.213Z",
+    "createdAt": "2026-07-08T16:20:00.213Z"
+  },
+  {
+    "studentId": "STU-2026-1010",
+    "studentName": "Shreya Gupta",
+    "bookTitle": "C++ Primer",
+    "issueId": "mock_h9t5101rgnop22nar5346",
+    "amount": 140,
+    "status": "Unpaid",
+    "_id": "mock_qgio0j0nx3lyzl0k8jwuf",
+    "id": "mock_qgio0j0nx3lyzl0k8jwuf",
+    "updatedAt": "2026-07-08T16:20:00.301Z",
+    "createdAt": "2026-07-08T16:20:00.301Z"
+  },
+  {
+    "studentId": "STU-2026-1012",
+    "studentName": "Vivek Jha",
+    "bookTitle": "Core Java An Integrated Approach",
+    "issueId": "mock_5ue9bl8va0xyq14skagrwb",
+    "amount": 140,
+    "status": "Unpaid",
+    "_id": "mock_2bg3xtfcda7kfkbota9xbe",
+    "id": "mock_2bg3xtfcda7kfkbota9xbe",
+    "updatedAt": "2026-07-08T16:20:00.392Z",
+    "createdAt": "2026-07-08T16:20:00.392Z"
+  },
+  {
+    "studentId": "STU-2026-1014",
+    "studentName": "Manish Das",
+    "bookTitle": "HTML5 and CSS3 Responsive Web Design",
+    "issueId": "mock_xc2s4zq021usrttlkf80g",
+    "amount": 140,
+    "status": "Unpaid",
+    "_id": "mock_h9v79dc1u84g3yib1x6ez8",
+    "id": "mock_h9v79dc1u84g3yib1x6ez8",
+    "updatedAt": "2026-07-08T16:20:00.479Z",
+    "createdAt": "2026-07-08T16:20:00.479Z"
+  },
+  {
+    "studentId": "STU-2026-1016",
+    "studentName": "Raj Joshi",
+    "bookTitle": "Beginning HTML5 and CSS3",
+    "issueId": "mock_zc6y33099yfjuz1gzkjhzl",
+    "amount": 140,
+    "status": "Unpaid",
+    "_id": "mock_6scm11552suba8bl24pss9",
+    "id": "mock_6scm11552suba8bl24pss9",
+    "updatedAt": "2026-07-08T16:20:00.633Z",
+    "createdAt": "2026-07-08T16:20:00.633Z"
+  },
+  {
+    "studentId": "STU-2026-1018",
+    "studentName": "Ishita Kumar",
+    "bookTitle": "You Don't Know JS",
+    "issueId": "mock_z8d3ij70vdsbv3cu037psk",
+    "amount": 140,
+    "status": "Unpaid",
+    "_id": "mock_qewv6xz9suowwi283dhktd",
+    "id": "mock_qewv6xz9suowwi283dhktd",
+    "updatedAt": "2026-07-08T16:20:00.716Z",
+    "createdAt": "2026-07-08T16:20:00.716Z"
+  },
+  {
+    "studentId": "STU-2026-1020",
+    "studentName": "Karan Sinha",
+    "bookTitle": "Core Java Fundamentals",
+    "issueId": "mock_5ob7hwovlouslxxot56mv",
+    "amount": 140,
+    "status": "Unpaid",
+    "_id": "mock_sb9ipye97xj08922bdrnyqj",
+    "id": "mock_sb9ipye97xj08922bdrnyqj",
+    "updatedAt": "2026-07-08T16:20:00.840Z",
+    "createdAt": "2026-07-08T16:20:00.840Z"
+  },
+  {
+    "studentId": "STU-2026-1022",
+    "studentName": "Varun Choudhary",
+    "bookTitle": "Data Communication Principles",
+    "issueId": "mock_fnad5ncyvv7q3by1n64a8",
+    "amount": 140,
+    "status": "Unpaid",
+    "_id": "mock_dpy224arxj3b1p9k5hkwh",
+    "id": "mock_dpy224arxj3b1p9k5hkwh",
+    "updatedAt": "2026-07-08T16:20:00.935Z",
+    "createdAt": "2026-07-08T16:20:00.935Z"
+  }
+]

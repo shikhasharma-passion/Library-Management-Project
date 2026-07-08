@@ -15,6 +15,7 @@ const publicSearchInput = document.getElementById("publicSearchInput");
 let publicCatalogBooks = [];
 let physicalInventory = [];
 let activeCategory = "All";
+let activeSemester = "All";
 
 /* RACK LOCATION MAPPING */
 function getRackLocation(category) {
@@ -38,20 +39,9 @@ function getRackLocation(category) {
 }
 
 /* DISPLAY BOOKS */
-function displayPublicBooks(catalogBooks) {
-    publicBookList.innerHTML = "";
-
-    if (catalogBooks.length === 0) {
-        publicBookList.innerHTML = `
-            <div class="book-item" style="grid-column: 1/-1; padding: 40px; text-align: center;">
-                <h3>No Books Found</h3>
-                <p>Try another category or search query.</p>
-            </div>
-        `;
-        return;
-    }
-
-    catalogBooks.forEach((book) => {
+function renderBookListHtml(booksList) {
+    let listHtml = "";
+    booksList.forEach((book) => {
         // Calculate average rating
         const reviews = book.reviews || [];
         let avgRating = 0;
@@ -73,21 +63,35 @@ function displayPublicBooks(catalogBooks) {
             : `<span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">No reviews yet</span>`;
 
         // Check real-time physical availability from physical inventory
-        const matchedPhysical = physicalInventory.find(p => p.name.toLowerCase() === book.name.toLowerCase());
-        const isIssued = matchedPhysical && matchedPhysical.status === "Issued";
+        const copies = physicalInventory.filter(p => p.name.toLowerCase() === book.name.toLowerCase());
+        const hasAvailable = copies.length > 0 && copies.some(p => p.status === "Available");
+        const isOutOfStock = copies.length === 0 || !hasAvailable;
         
-        const availabilityBadge = isIssued
+        const availabilityBadge = isOutOfStock
             ? `<span style="display:inline-block; font-size:11px; padding:3px 8px; border-radius:12px; background:rgba(231,76,60,0.12); color:#e74c3c; font-weight:600; text-transform:uppercase;">Out of Stock</span>`
             : `<span style="display:inline-block; font-size:11px; padding:3px 8px; border-radius:12px; background:rgba(39,174,96,0.12); color:#27ae60; font-weight:600; text-transform:uppercase;">On Shelf</span>`;
 
         const rack = getRackLocation(book.category);
 
-        const price = 249 + (book.name.length % 5) * 50;
+        // Content/category related fallback image
+        let fallbackImage = 'images/book1 cover.jpg';
+        const catLower = String(book.category || '').toLowerCase();
+        if (catLower.includes('bca') || catLower.includes('mca') || catLower.includes('computer') || catLower.includes('programming') || catLower.includes('operating') || catLower.includes('networking') || catLower.includes('dbms') || catLower.includes('algorithm')) {
+            fallbackImage = 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&q=80&w=400';
+        } else if (catLower.includes('bba') || catLower.includes('mba') || catLower.includes('management') || catLower.includes('business')) {
+            fallbackImage = 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=400';
+        } else if (catLower.includes('fiction') || catLower.includes('sci')) {
+            fallbackImage = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=400';
+        } else if (catLower.includes('psychology')) {
+            fallbackImage = 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=400';
+        } else if (catLower.includes('self') || catLower.includes('development') || catLower.includes('habit') || catLower.includes('focus')) {
+            fallbackImage = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400';
+        }
 
-        publicBookList.innerHTML += `
+        listHtml += `
             <div class="book-item">
                 <div style="position: relative; width: 100%; display: flex; justify-content: center;">
-                    <img src="${book.image}" alt="${book.name}" onerror="this.src='images/book1 cover.jpg'">
+                    <img src="${book.image}" alt="${book.name}" onerror="this.onerror=null; this.src='${fallbackImage}';">
                     <div style="position: absolute; bottom: 10px; right: 10px;">
                         ${availabilityBadge}
                     </div>
@@ -96,25 +100,41 @@ function displayPublicBooks(catalogBooks) {
                 <p>By ${book.author}</p>
                 <div style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500;">Loc: <span style="color: var(--text-color); font-weight: 600;">${rack}</span></div>
                 <div style="margin-bottom: 15px;">${reviewsText}</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;">
-                    <button class="access-btn" onclick="openBookDetails('${book.id || book._id}')" style="background: var(--primary-color); margin-top:0;">
-                        Details & Issue
-                    </button>
-                    <button class="access-btn" onclick="triggerPurchase('${book.name.replace(/'/g, "\\'")}', ${price})" style="background: var(--accent-color); color: #0f172a; border-color: var(--accent-color); font-weight:700; margin-top:0;">
-                        ₹${price} Buy Copy
+                <div style="display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px;">
+                    <button class="access-btn" onclick="openBookDetails('${book.id || book._id}')" style="background: var(--accent-color); color: #0f172a; font-weight: 700; margin-top:0; width:100%;">
+                        Details & Request Issue
                     </button>
                 </div>
             </div>
         `;
     });
+    return listHtml;
+}
+
+function displayPublicBooks(catalogBooks) {
+    if (catalogBooks.length === 0) {
+        publicBookList.innerHTML = `
+            <div class="book-item" style="grid-column: 1/-1; padding: 40px; text-align: center; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-color);">
+                <h3>No Books Found</h3>
+                <p>Try another category or search query.</p>
+            </div>
+        `;
+        return;
+    }
+
+    publicBookList.innerHTML = renderBookListHtml(catalogBooks);
 }
 
 async function loadPublicBooks(category = "All", searchValue = "") {
     activeCategory = category;
 
     try {
+        const semDropdown = document.getElementById("semesterFilter");
+        const semesterValue = semDropdown ? semDropdown.value : "All";
+
         const params = new URLSearchParams();
         if (category !== "All") params.set("category", category);
+        if (semesterValue !== "All") params.set("semester", semesterValue);
         if (searchValue) params.set("q", searchValue);
 
         const catalogUrl = params.toString() ? `/api/catalog?${params.toString()}` : "/api/catalog";
@@ -146,20 +166,64 @@ async function loadPublicBooks(category = "All", searchValue = "") {
     }
 }
 
+/* SELECT SEMESTER PILL BUTTON */
+function selectSemester(semesterValue) {
+    activeSemester = semesterValue;
+    
+    // Update active class on semester buttons
+    const container = document.getElementById("semesterFilterContainer");
+    if (container) {
+        const buttons = container.querySelectorAll(".sem-btn");
+        buttons.forEach(btn => {
+            const btnOnClick = btn.getAttribute("onclick");
+            if (btnOnClick && btnOnClick.includes(`'${semesterValue}'`)) {
+                btn.classList.add("active");
+                btn.style.background = "var(--primary-color)";
+                btn.style.color = "var(--accent-color)";
+                btn.style.borderColor = "transparent";
+            } else {
+                btn.classList.remove("active");
+                btn.style.background = "var(--bg-color)";
+                btn.style.color = "var(--text-color)";
+                btn.style.borderColor = "var(--border-color)";
+            }
+        });
+    }
+
+    loadPublicBooks(activeCategory, publicSearchInput ? publicSearchInput.value.trim() : "");
+}
+
 /* FILTER */
 function filterBooks(category) {
     const container = document.getElementById("categoryFilterContainer");
     if (container) {
         const buttons = container.querySelectorAll("button");
         buttons.forEach(btn => {
-            const btnText = btn.innerText.trim();
-            if (btnText === category) {
+            const btnOnClick = btn.getAttribute("onclick");
+            if (btnOnClick && btnOnClick.includes(`'${category}'`)) {
                 btn.classList.add("active");
+                btn.style.background = "var(--primary-color)";
+                btn.style.color = "var(--accent-color)";
+                btn.style.borderColor = "transparent";
             } else {
                 btn.classList.remove("active");
+                btn.style.background = "var(--bg-color)";
+                btn.style.color = "var(--text-color)";
+                btn.style.borderColor = "var(--border-color)";
             }
         });
     }
+
+    // Toggle visibility and value of semester filter select based on category type
+    const semDropdown = document.getElementById("semesterFilter");
+    if (semDropdown) {
+        const isAcademic = ["All", "BCA", "BBA", "MCA", "MBA", "Computer", "Management"].includes(category);
+        semDropdown.style.display = isAcademic ? "block" : "none";
+        if (!isAcademic) {
+            semDropdown.value = "All";
+        }
+    }
+
     loadPublicBooks(category, publicSearchInput ? publicSearchInput.value.trim() : "");
 }
 
@@ -175,8 +239,11 @@ function openBookDetails(bookId) {
     if (!book) return;
 
     const user = localStorage.getItem("user");
-    const matchedPhysical = physicalInventory.find(p => p.name.toLowerCase() === book.name.toLowerCase());
-    const isIssued = matchedPhysical && matchedPhysical.status === "Issued";
+    const copies = physicalInventory.filter(p => p.name.toLowerCase() === book.name.toLowerCase());
+    const hasAvailable = copies.length > 0 && copies.some(p => p.status === "Available");
+    const isIssued = copies.length === 0 || !hasAvailable;
+    const totalCopies = copies.length || book.quantity || 1;
+    const availableCopies = copies.filter(p => p.status === "Available").length;
     const rack = getRackLocation(book.category);
     
     // Create details modal dynamically
@@ -229,29 +296,29 @@ function openBookDetails(bookId) {
     let formHtml = "";
     if (user) {
         formHtml = `
-            <form id="reviewSubmitForm" style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 20px; text-align: left;">
-                <h4 style="margin-bottom: 12px;">Add Your Review</h4>
-                <div style="margin-bottom: 12px;">
-                    <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px;">Rating</label>
-                    <select id="reviewRating" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color);" required>
-                        <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
-                        <option value="4">⭐⭐⭐⭐ (4/5)</option>
-                        <option value="3">⭐⭐⭐ (3/5)</option>
-                        <option value="2">⭐⭐ (2/5)</option>
-                        <option value="1">⭐ (1/5)</option>
-                    </select>
+            <form id="reviewSubmitForm" style="margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 8px; text-align: left; font-size: 12.5px;">
+                <h5 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 600; color: var(--text-color);">Add Your Review</h5>
+                <div style="display: flex; gap: 10px; margin-bottom: 6px;">
+                    <div style="flex: 1;">
+                        <select id="reviewRating" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-size: 12px;" required>
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                    <div style="flex: 2;">
+                        <input type="text" id="reviewComment" placeholder="Write a comment..." style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-size: 12px; box-sizing: border-box;" required>
+                    </div>
                 </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px;">Comment</label>
-                    <textarea id="reviewComment" placeholder="Write your review here..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); height: 80px; resize: none;" required></textarea>
-                </div>
-                <button type="submit" class="btn" style="width: 100%; border-radius: 8px; margin: 0;">Submit Review</button>
+                <button type="submit" class="btn" style="width: 100%; border-radius: 6px; margin: 0; padding: 8px; font-size: 12.5px;">Submit Review</button>
             </form>
         `;
     } else {
         formHtml = `
-            <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 20px; text-align: center;">
-                <p style="color: var(--text-muted); font-size: 14px;">Please <a href="login.html" style="color: var(--primary-color); font-weight: 600; text-decoration: none;">Login</a> to submit a review.</p>
+            <div style="margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 8px; text-align: center; font-size: 12.5px;">
+                <p style="color: var(--text-muted); margin: 0;">Please <a href="login.html" style="color: var(--primary-color); font-weight: 600; text-decoration: none;">Login</a> to submit a review.</p>
             </div>
         `;
     }
@@ -260,45 +327,57 @@ function openBookDetails(bookId) {
     const borrowButtonDisabledAttr = isIssued ? "disabled style='background:var(--text-muted); cursor:not-allowed; opacity:0.6;'" : "";
 
     modal.innerHTML = `
-        <div class="popup-content" style="width: 600px; max-height: 90vh; overflow-y: auto; text-align: center; border-radius:20px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color); padding:30px;">
-            <h2 style="margin-bottom: 6px; font-weight:800;">${book.name}</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">By ${book.author} | Category: ${book.category}</p>
+        <div class="popup-content" style="position: relative; width: 500px; max-height: 90vh; overflow-y: auto; text-align: center; border-radius:16px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-color); padding:25px; box-sizing: border-box; display: flex; flex-direction: column; gap: 15px;">
+            <button onclick="closeDetailsModal()" style="position: absolute; top: 12px; right: 15px; background: transparent; border: none; font-size: 24px; color: var(--text-color); cursor: pointer; opacity: 0.7; transition: var(--transition); line-height: 1;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">&times;</button>
             
-            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 25px;">
-                <div style="flex: 1; min-width: 180px;">
-                    <img src="${book.image}" alt="${book.name}" style="width: 100%; max-width: 180px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.12);">
+            <div>
+                <h2 style="margin: 0 0 4px 0; font-weight:800; font-size: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${book.name}</h2>
+                <p style="color: var(--text-muted); margin: 0 0 12px 0; font-size: 12.5px;">By ${book.author} | Category: ${book.category}</p>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-bottom: 10px; text-align: left;">
+                <div style="flex: 1; max-width: 110px;">
+                    <img src="${book.image}" alt="${book.name}" style="width: 100%; max-height: 140px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); object-fit: cover;">
                 </div>
-                <div style="flex: 1.5; min-width: 220px; text-align: left; display:flex; flex-direction:column; justify-content:space-between;">
+                <div style="flex: 1.5; text-align: left; display:flex; flex-direction:column; justify-content:space-between;">
                     <div>
-                        <h4 style="font-weight:600; margin-bottom:8px;">Availability & Location</h4>
-                        <p style="margin-bottom: 8px; font-size:14.5px;">
+                        <h5 style="font-weight:600; margin: 0 0 4px 0; font-size: 13px;">Availability & Location</h5>
+                        <p style="margin: 0 0 4px 0; font-size: 12.5px;">
                             Status: ${isIssued 
-                                ? `<strong style="color:#e74c3c;">Issued (Checked Out)</strong>` 
+                                ? `<strong style="color:#e74c3c;">Out of Stock</strong>` 
                                 : `<strong style="color:#27ae60;">Available on Shelf</strong>`}
                         </p>
-                        <p style="margin-bottom: 8px; font-size:14.5px;">
-                            Shelf Location: <strong style="color:var(--text-color);">${rack}</strong>
+                        <p style="margin: 0 0 4px 0; font-size: 12.5px;">
+                            <strong>Available Copies:</strong> <span style="color:#27ae60; font-weight:700;">${availableCopies}</span> / ${totalCopies} copies
                         </p>
-                        <div style="font-size: 20px; color: var(--accent-color); margin: 10px 0;">
-                            ${starHtml} <span style="font-size: 14px; color: var(--text-color); font-weight: 600;">(${avgRating}/5)</span>
+                        <div style="font-size: 15px; color: var(--accent-color); margin: 2px 0;">
+                            ${starHtml} <span style="font-size: 12px; color: var(--text-color); font-weight: 600;">(${avgRating}/5)</span>
                         </div>
                     </div>
-                    <button class="access-btn" style="width: 100%; margin-top: 15px; padding: 10px 16px; border-radius: 8px; background:var(--primary-color);" ${borrowButtonDisabledAttr} onclick="openBorrowModal('${book.name}')">
-                        ${borrowButtonText}
-                    </button>
+                    
+                    <div style="margin-top: 6px; border-top: 1px solid var(--border-color); padding-top: 6px;">
+                        <h5 style="font-weight:600; margin: 0 0 4px 0; font-size: 13px;">Bibliographic Details</h5>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 2px; font-size: 11.5px; line-height: 1.4;">
+                            <div><strong>ISBN:</strong> ${book.isbn || 'N/A'}</div>
+                            <div><strong>Publisher:</strong> ${book.publisher || 'N/A'}</div>
+                            <div><strong>Rack & Shelf:</strong> ${book.rackNo || rack}, ${book.shelfNo || 'Shelf 1'}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div style="text-align: left; margin-top: 20px;">
-                <h4 style="font-weight:600; margin-bottom:10px;">Reviews (${reviews.length})</h4>
-                <div style="max-height: 200px; overflow-y: auto; margin-top: 10px; padding-right: 5px;">
+            <button class="access-btn" style="width: 100%; margin-bottom: 10px; padding: 10px 16px; border-radius: 8px; background:var(--accent-color); color: #0f172a; font-weight: 700; font-size: 13px; border: none; cursor: pointer;" ${borrowButtonDisabledAttr} onclick="openBorrowModal('${book.name.replace(/'/g, "\\'")}')">
+                ${borrowButtonText}
+            </button>
+
+            <div style="text-align: left; border-top: 1px solid var(--border-color); padding-top: 8px;">
+                <h5 style="font-weight:600; margin: 0 0 4px 0; font-size: 13px; color: var(--text-color);">Reviews (${reviews.length})</h5>
+                <div style="max-height: 55px; overflow-y: auto; margin-top: 4px; padding-right: 5px;">
                     ${reviewsListHtml}
                 </div>
             </div>
 
             ${formHtml}
-
-            <button onclick="closeDetailsModal()" class="close-btn" style="margin-top: 20px; width: 100%; border-radius: 8px; background:rgba(0,0,0,0.05); color:var(--text-color); border:1px solid var(--border-color);">Close Details</button>
         </div>
     `;
 
@@ -367,7 +446,7 @@ function openBorrowModal(bookName) {
                 📖 Issue Book Request
             </h3>
             <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">
-                Confirm details to send a request for physical pick-up at the campus counter.
+                Confirm details to send a request for physical pick-up or home delivery from the library counter.
             </p>
             
             <div style="margin-bottom:15px;">
@@ -441,16 +520,98 @@ async function submitBorrowRequest(bookName) {
         const result = await response.json();
 
         if (response.ok) {
-            alert(`Success! Borrow Request sent for "${bookName}". Keep track of approval on your student dashboard.`);
+            showBorrowSuccessPopup(bookName);
             closeBorrowModal();
             loadPublicBooks(activeCategory, publicSearchInput ? publicSearchInput.value.trim() : "");
         } else {
-            alert(result.message || "Failed to submit borrow request");
+            if (response.status === 400 || (result.message && result.message.includes("limit")) || (result.message && result.message.includes("3 books"))) {
+                showLimitWarningPopup(result.message || "You already have issued 3 books. You can issue further after returning old issues.");
+            } else {
+                alert(result.message || "Failed to submit borrow request");
+            }
         }
     } catch (error) {
         console.error("Error submitting borrow request:", error);
         alert("Server connection failed");
     }
+}
+
+function showBorrowSuccessPopup(bookName) {
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0, 34, 68, 0.4)";
+    overlay.style.backdropFilter = "blur(4px)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "100000";
+    overlay.id = "borrowSuccessPopupOverlay";
+
+    overlay.innerHTML = `
+        <div style="width: 350px; background: var(--card-bg); border: 2.5px solid #10b981; border-radius: 16px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; justify-content: space-between; gap: 15px; animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-sizing: border-box;">
+            <div>
+                <div style="font-size: 50px; margin-bottom: 8px; color: #10b981; display: inline-block; animation: tickBounce 0.5s ease;">✔️</div>
+                <h3 style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 800; color: #10b981; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">Request Submitted</h3>
+                <p style="font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text-color); line-height: 1.5; margin: 0; font-weight: 500;">
+                    Your borrow request for <strong>"${bookName}"</strong> has been sent successfully. Please keep track of approval on your student dashboard.
+                </p>
+            </div>
+            <button onclick="document.getElementById('borrowSuccessPopupOverlay').remove()" style="width: 100%; padding: 12px; border-radius: 8px; background: #10b981; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
+                Awesome!
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+}
+
+function showLimitWarningPopup(message) {
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0, 34, 68, 0.4)";
+    overlay.style.backdropFilter = "blur(4px)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "99999";
+    overlay.id = "limitWarningPopupOverlay";
+
+    overlay.innerHTML = `
+        <div style="width: 350px; background: var(--card-bg); border: 2.5px solid #d97706; border-radius: 16px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; justify-content: space-between; gap: 15px; animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-sizing: border-box;">
+            <div>
+                <div style="font-size: 50px; margin-bottom: 8px;">🛑</div>
+                <h3 style="font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 800; color: #d97706; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">Borrow Limit Breached</h3>
+                <p style="font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text-color); line-height: 1.5; margin: 0; font-weight: 500;">
+                    ${message}
+                </p>
+            </div>
+            <button onclick="document.getElementById('limitWarningPopupOverlay').remove()" style="width: 100%; padding: 12px; border-radius: 8px; background: #d97706; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#b45309'" onmouseout="this.style.background='#d97706'">
+                Understood & Close
+            </button>
+        </div>
+    `;
+    
+    if (!document.getElementById("popupAnimationStyles")) {
+        const style = document.createElement("style");
+        style.id = "popupAnimationStyles";
+        style.innerHTML = `
+            @keyframes popupScaleIn {
+                from { transform: scale(0.8); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    document.body.appendChild(overlay);
 }
 
 function closeBorrowModal() {
@@ -471,7 +632,13 @@ function closePopup() {
 /* INITIAL SETUP */
 const initialParams = new URLSearchParams(window.location.search);
 const initialSearch = initialParams.get("q") || "";
-const initialCat = initialParams.get("cat") || "All";
+let initialCat = initialParams.get("cat") || "All";
+
+if (initialCat === "Computer") {
+    initialCat = "BCA";
+} else if (initialCat === "Management") {
+    initialCat = "BBA";
+}
 
 if (publicSearchInput) {
     publicSearchInput.value = initialSearch;
@@ -548,4 +715,9 @@ function processPaymentDirect() {
         document.getElementById("payLoader").style.display = "none";
         document.getElementById("successReceipt").style.display = "block";
     }, 2000);
+}
+
+function filterSemester() {
+    const searchInput = document.getElementById("publicSearchInput");
+    loadPublicBooks(activeCategory, searchInput ? searchInput.value.trim() : "");
 }

@@ -1,35 +1,35 @@
 /* Dashboard Styling (Admin & Student Dashboard) */
 
 :root {
-    --primary-color: #0f172a;
-    --accent-color: #d97706;
-    --sidebar-bg: #0f172a;
-    --bg-color: #f8fafc;
+    --primary-color: #003366;
+    --accent-color: #d48c00;
+    --sidebar-bg: #002244;
+    --bg-color: #f4f6fa;
     --card-bg: #ffffff;
-    --text-color: #0f172a;
-    --text-muted: #64748b;
-    --border-color: #e2e8f0;
-    --shadow-color: rgba(15, 23, 42, 0.04);
-    --shadow-hover: rgba(15, 23, 42, 0.08);
+    --text-color: #002244;
+    --text-muted: #5c6f84;
+    --border-color: #d1dbe5;
+    --shadow-color: rgba(0, 34, 68, 0.04);
+    --shadow-hover: rgba(0, 34, 68, 0.08);
     --input-bg: #ffffff;
-    --table-header-bg: #0f172a;
+    --table-header-bg: #002244;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Dark Mode Variables */
 body.dark-mode {
-    --primary-color: #38bdf8;
+    --primary-color: #60a5fa;
     --accent-color: #fbbf24;
-    --sidebar-bg: #030712;
-    --bg-color: #030712;
-    --card-bg: #0f172a;
+    --sidebar-bg: #070d1c;
+    --bg-color: #0b1329;
+    --card-bg: #111e38;
     --text-color: #f8fafc;
     --text-muted: #94a3b8;
-    --border-color: #1e293b;
+    --border-color: #1e2e4f;
     --shadow-color: rgba(0, 0, 0, 0.3);
     --shadow-hover: rgba(0, 0, 0, 0.5);
-    --input-bg: #1e293b;
-    --table-header-bg: #1e293b;
+    --input-bg: #1a2a4a;
+    --table-header-bg: #111e38;
 }
 
 * {
@@ -39,12 +39,17 @@ body.dark-mode {
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', 'Poppins', sans-serif;
     display: flex;
     background: var(--bg-color);
     color: var(--text-color);
     transition: var(--transition);
     min-height: 100vh;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .logo h2 {
+    font-family: 'Montserrat', 'Poppins', sans-serif;
 }
 
 /* SIDEBAR */
@@ -117,7 +122,8 @@ body {
 /* MAIN CONTENT */
 .main-content {
     margin-left: 260px;
-    width: calc(100% - 260px);
+    flex: 1;
+    min-width: 0;
     padding: 40px;
     transition: var(--transition);
 }
@@ -298,19 +304,24 @@ table tr:last-child td {
 }
 
 .form-grid button {
-    background: var(--primary-color);
-    color: #ffffff;
+    background: var(--accent-color);
+    color: #0f172a;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 15px;
     transition: var(--transition);
+    padding: 14px;
 }
 
 .form-grid button:hover {
-    background: var(--accent-color);
-    color: #021b3a;
+    filter: brightness(1.15);
+    transform: translateY(-2px);
+}
+
+.form-grid button:active {
+    filter: brightness(0.9);
 }
 
 /* SEARCH FIELD */

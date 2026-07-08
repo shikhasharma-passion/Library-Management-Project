@@ -10,15 +10,32 @@ function escapeRegex(value) {
 async function getStats(req, res) {
   try {
     const todayStr = new Date().toISOString().split("T")[0];
-    const [totalBooks, totalStudents, totalIssued, overdueCount, issues, categoryStats] = await Promise.all([
+    const Faculty = require("../models/Faculty");
+    const Reservation = require("../models/Reservation");
+    const Fine = require("../models/Fine");
+
+    const [
+      totalBooks,
+      totalStudents,
+      totalFaculty,
+      totalIssued,
+      overdueCount,
+      reservedCount,
+      issues,
+      categoryStats,
+      finePayments
+    ] = await Promise.all([
       Book.countDocuments(),
       Student.countDocuments(),
-      Issue.countDocuments(),
-      Issue.countDocuments({ returnDate: { $lt: todayStr } }),
-      Issue.find().sort({ createdAt: -1 }).limit(5),
+      Faculty.countDocuments(),
+      Issue.countDocuments({ status: { $ne: "Returned" } }),
+      Issue.countDocuments({ status: "Overdue" }),
+      Reservation.countDocuments({ status: "Pending" }),
+      Issue.find().sort({ createdAt: -1 }).limit(15),
       Book.aggregate([
         { $group: { _id: "$category", count: { $sum: 1 } } }
-      ])
+      ]),
+      Fine.find({ status: "Paid" })
     ]);
 
     const recentIssuedBooks = issues.map(formatIssue);
@@ -27,11 +44,16 @@ async function getStats(req, res) {
       count: c.count
     }));
 
+    const fineCollected = finePayments.reduce((sum, f) => sum + f.amount, 0);
+
     res.json({
       totalBooks,
       totalStudents,
+      totalFaculty,
       issuedBooks: totalIssued,
       pendingBooks: overdueCount,
+      reservedBooks: reservedCount,
+      fineCollected,
       recentIssuedBooks,
       categories
     });
@@ -44,16 +66,39 @@ async function getStudentDashboard(req, res) {
   try {
     const studentName = String(req.query.name || "").trim();
     const filter = studentName ? { student: { $regex: `^${escapeRegex(studentName)}$`, $options: "i" } } : {};
+    
     const issues = await Issue.find(filter).sort({ createdAt: -1 });
-    const issuedBooks = issues.map(formatIssue);
+    const formattedIssues = issues.map(formatIssue);
+    
+    const activeIssued = formattedIssues.filter(i => i.status !== "Returned");
+    const returnHistory = formattedIssues.filter(i => i.status === "Returned");
+    
     const todayStr = new Date().toISOString().split("T")[0];
-    const pendingReturns = issuedBooks.filter(issue => issue.returnDate < todayStr).length;
+    const pendingReturns = activeIssued.filter(issue => issue.returnDate < todayStr).length;
+
+    const Fine = require("../models/Fine");
+    const Reservation = require("../models/Reservation");
+    const Notification = require("../models/Notification");
+    const Student = require("../models/Student");
+
+    const studentInfo = await Student.findOne({ name: { $regex: `^${escapeRegex(studentName)}$`, $options: "i" } });
+    const studentId = studentInfo ? studentInfo.studentId : "";
+
+    const fineFilter = studentId ? { studentId } : { studentName: { $regex: `^${escapeRegex(studentName)}$`, $options: "i" } };
+    const fines = await Fine.find(fineFilter).sort({ createdAt: -1 });
+    const reservations = await Reservation.find(fineFilter).sort({ createdAt: -1 });
+    const notifications = await Notification.find({ userId: studentId }).sort({ createdAt: -1 });
 
     res.json({
-      issuedBooks,
-      totalIssued: issuedBooks.length,
+      issuedBooks: activeIssued,
+      history: returnHistory,
+      fines,
+      reservations,
+      notifications,
+      totalIssued: activeIssued.length,
       pendingReturns,
-      fineAmount: issuedBooks.reduce((sum, issue) => sum + issue.fine, 0)
+      fineAmount: fines.filter(f => f.status === "Unpaid").reduce((sum, f) => sum + f.amount, 0),
+      studentInfo
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

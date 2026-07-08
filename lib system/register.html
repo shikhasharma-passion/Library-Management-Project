@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/auth.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -17,16 +17,13 @@
     <header>
         <nav class="navbar">
             <div class="logo-section" style="cursor: pointer;" onclick="location.href='index.html'">
-                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color); filter: drop-shadow(0 0 4px rgba(217,119,6,0.35));">
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-                </svg>
-                <h2 style="font-weight: 800; font-size: 24px; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SmartLib</h2>
+                <img src="images/Dr_Zakir_Husain_Institute_Patna_Logo.avif" alt="ZHI Logo">
+                <h2>ZHI Library</h2>
             </div>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="all_books.html">Campus Library</a></li>
-                <li><a href="digital_library.html">Digital Library</a></li>
+                <li><a href="all_books.html">College Library</a></li>
+                <li><a href="digital_library.html">Digital Resources</a></li>
                 <li><a href="learning_hub.html">Learning Hub</a></li>
                 <li><a href="contact.html">Contact</a></li>
                 <li><a href="login.html">Login</a></li>
@@ -53,13 +50,22 @@
                 </div>
 
                 <div class="input-group">
-                    <label>Course</label>
-                    <input type="text" id="registerCourse" placeholder="e.g. BCA, BBA, MCA" required>
+                    <label>Occupation / City Area</label>
+                    <input type="text" id="registerCourse" placeholder="e.g. Professional, Reader, Sector 4" required>
                 </div>
 
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="registerPassword" placeholder="Minimum 6 characters" required>
+                    <div class="password-wrapper">
+                        <input type="password" id="registerPassword" placeholder="Minimum 6 characters" required>
+                        <button type="button" class="password-toggle-btn" id="toggleRegisterPasswordBtn"></button>
+                    </div>
+                </div>
+
+                <div class="form-options-row">
+                    <label style="color: var(--text-color); font-weight: 500; font-size: 13.5px;">
+                        <input type="checkbox" id="registerTerms" required> I agree to the Library terms & privacy policy.
+                    </label>
                 </div>
 
                 <button class="auth-btn">
@@ -82,12 +88,12 @@
         <div class="footer-container">
             <div class="footer-box">
                 <h2>LibraryMS</h2>
-                <p>Modern digital library management system for schools and colleges.</p>
+                <p>Modern digital library management system for Dr. Zakir Husain Institute, Patna.</p>
             </div>
             <div class="footer-box">
                 <h3>Quick Links</h3>
                 <a href="index.html">Home</a>
-                <a href="all_books.html">Books</a>
+                <a href="all_books.html">College Library</a>
                 <a href="contact.html">Contact</a>
             </div>
             <div class="footer-box">

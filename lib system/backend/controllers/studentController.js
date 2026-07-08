@@ -13,7 +13,9 @@ async function getStudents(req, res) {
           $or: [
             { name: { $regex: safeQuery, $options: "i" } },
             { course: { $regex: safeQuery, $options: "i" } },
-            { roll: { $regex: safeQuery, $options: "i" } }
+            { roll: { $regex: safeQuery, $options: "i" } },
+            { studentId: { $regex: safeQuery, $options: "i" } },
+            { semester: { $regex: safeQuery, $options: "i" } }
           ]
         }
       : {};
@@ -26,9 +28,9 @@ async function getStudents(req, res) {
 
 async function createStudent(req, res) {
   try {
-    const { name, course, roll } = req.body;
+    const { name, course, roll, studentId, semester, email, phone, session } = req.body;
 
-    if (!name || !course || !roll) {
+    if (!name || !course || !roll || !studentId || !semester) {
       res.status(400).json({ success: false, message: "Please fill all fields" });
       return;
     }
@@ -36,7 +38,12 @@ async function createStudent(req, res) {
     const student = await Student.create({
       name: name.trim(),
       course: course.trim(),
-      roll: roll.trim()
+      roll: roll.trim(),
+      studentId: studentId.trim(),
+      semester: semester.trim(),
+      email: (email || "").trim(),
+      phone: (phone || "").trim(),
+      session: (session || "").trim()
     });
 
     res.status(201).json(student);

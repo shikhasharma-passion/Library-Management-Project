@@ -2,6 +2,10 @@ const Book = require("../models/Book");
 const Issue = require("../models/Issue");
 const BorrowRequest = require("../models/BorrowRequest");
 const ExtensionRequest = require("../models/ExtensionRequest");
+const Reservation = require("../models/Reservation");
+const Fine = require("../models/Fine");
+const Notification = require("../models/Notification");
+const Transaction = require("../models/Transaction");
 
 function calculateFine(returnDate) {
   const today = new Date();
@@ -15,24 +19,44 @@ function escapeRegex(value) {
 }
 
 function formatIssue(issue) {
-  const fine = calculateFine(issue.returnDate);
   const plainIssue = issue.toObject ? issue.toObject() : issue;
   const id = plainIssue._id;
 
   delete plainIssue._id;
   delete plainIssue.__v;
 
+  let currentStatus = plainIssue.status || "Active";
+  let fine = 0;
+
+  if (currentStatus !== "Returned") {
+    fine = calculateFine(plainIssue.returnDate);
+    currentStatus = fine > 0 ? "Overdue" : "Active";
+  }
+
   return {
     ...plainIssue,
     id,
     fine,
-    status: fine > 0 ? "Overdue" : "Issued"
+    status: currentStatus
   };
 }
 
 async function getIssues(req, res) {
   try {
-    const issues = await Issue.find().sort({ createdAt: -1 });
+    const { status, studentId } = req.query;
+    const filter = {};
+    
+    if (status) {
+      filter.status = status;
+    } else {
+      filter.status = { $ne: "Returned" };
+    }
+    
+    if (studentId) {
+      filter.studentId = { $regex: `^${escapeRegex(studentId)}$`, $options: "i" };
+    }
+    
+    const issues = await Issue.find(filter).sort({ createdAt: -1 });
     res.json(issues.map(formatIssue));
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -41,24 +65,44 @@ async function getIssues(req, res) {
 
 async function createIssue(req, res) {
   try {
-    const { student, book, date, returnDate } = req.body;
+    const { student, book, date, returnDate, studentId, accessionNo, remarks } = req.body;
 
     if (!student || !book || !date || !returnDate) {
       res.status(400).json({ success: false, message: "Please fill all fields" });
       return;
     }
 
-    const selectedBook = await Book.findOne({
-      name: { $regex: `^${escapeRegex(book.trim())}$`, $options: "i" }
+    const activeIssuesCount = await Issue.countDocuments({
+      student: { $regex: `^${escapeRegex(student.trim())}$`, $options: "i" }
     });
 
+    if (activeIssuesCount >= 3) {
+      res.status(400).json({ success: false, message: "You already have issued 3 books. You can issue further after returning old issues." });
+      return;
+    }
+
+    // Lookup by accession number if supplied, or find an available copy by name
+    let selectedBook;
+    if (accessionNo) {
+      selectedBook = await Book.findOne({
+        accessionNo: { $regex: `^${escapeRegex(accessionNo.trim())}$`, $options: "i" }
+      });
+    }
+    
     if (!selectedBook) {
-      res.status(404).json({ success: false, message: "Book not found. Please add book first." });
+      selectedBook = await Book.findOne({
+        name: { $regex: `^${escapeRegex(book.trim())}$`, $options: "i" },
+        status: "Available"
+      });
+    }
+
+    if (!selectedBook) {
+      res.status(404).json({ success: false, message: "No available copy of this book was found. Please check title or accession number." });
       return;
     }
 
     if (selectedBook.status === "Issued") {
-      res.status(409).json({ success: false, message: "Book is already issued" });
+      res.status(409).json({ success: false, message: `Book copy with Accession No. ${selectedBook.accessionNo} is already issued` });
       return;
     }
 
@@ -70,7 +114,11 @@ async function createIssue(req, res) {
       book: selectedBook.name,
       bookId: selectedBook._id,
       date,
-      returnDate
+      returnDate,
+      studentId: (studentId || "").trim(),
+      accessionNo: selectedBook.accessionNo,
+      remarks: (remarks || "").trim(),
+      issueType: "Admin Manual"
     });
 
     res.status(201).json(formatIssue(issue));
@@ -92,7 +140,40 @@ async function returnBook(req, res) {
       await Book.findByIdAndUpdate(issue.bookId, { status: "Available" });
     }
 
-    await issue.deleteOne();
+    issue.status = "Returned";
+    await issue.save();
+
+    // Check if overdue, calculate fine
+    const fineAmount = calculateFine(issue.returnDate);
+    if (fineAmount > 0) {
+      const Fine = require("../models/Fine");
+      await Fine.create({
+        studentId: issue.studentId || "N/A",
+        studentName: issue.student,
+        bookTitle: issue.book,
+        issueId: issue._id.toString(),
+        amount: fineAmount,
+        status: "Unpaid"
+      });
+
+      const Notification = require("../models/Notification");
+      await Notification.create({
+        userId: issue.studentId || "N/A",
+        message: `Overdue Return: Fine of ₹${fineAmount} has been generated for returning "${issue.book}".`,
+        type: "Fine"
+      });
+    }
+
+    // Save transaction log
+    const Transaction = require("../models/Transaction");
+    await Transaction.create({
+      userId: issue.studentId || "Admin",
+      userName: issue.student,
+      actionType: "Return",
+      description: `Returned book "${issue.book}" (Accession: ${issue.accessionNo})`,
+      accessionNo: issue.accessionNo
+    });
+
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -108,18 +189,29 @@ async function requestBorrow(req, res) {
       return;
     }
 
-    // Check if the book is catalogued and has an Available physical copy
+    // Check if the book is catalogued and has at least one Available physical copy
     const selectedBook = await Book.findOne({
-      name: { $regex: `^${escapeRegex(book.trim())}$`, $options: "i" }
+      name: { $regex: `^${escapeRegex(book.trim())}$`, $options: "i" },
+      status: "Available"
     });
 
     if (!selectedBook) {
-      res.status(404).json({ success: false, message: "Book not found in library stock" });
+      res.status(404).json({ success: false, message: "This book is currently out of stock (no copies available)" });
       return;
     }
 
-    if (selectedBook.status === "Issued") {
-      res.status(409).json({ success: false, message: "This book is currently issued to someone else" });
+    // Check if the student has reached their limit of 3 books (issues + pending requests)
+    const activeIssuesCount = await Issue.countDocuments({
+      student: { $regex: `^${escapeRegex(student.trim())}$`, $options: "i" },
+      status: { $ne: "Returned" }
+    });
+    const pendingRequestsCount = await BorrowRequest.countDocuments({
+      student: { $regex: `^${escapeRegex(student.trim())}$`, $options: "i" },
+      status: "Pending"
+    });
+
+    if (activeIssuesCount + pendingRequestsCount >= 3) {
+      res.status(400).json({ success: false, message: "You already have issued 3 books. You can issue further after returning old issues." });
       return;
     }
 
@@ -186,16 +278,21 @@ async function approveBorrowRequest(req, res) {
     }
 
     const selectedBook = await Book.findOne({
-      name: { $regex: `^${escapeRegex(request.book)}$`, $options: "i" }
+      name: { $regex: `^${escapeRegex(request.book)}$`, $options: "i" },
+      status: "Available"
     });
 
     if (!selectedBook) {
-      res.status(404).json({ success: false, message: "Book no longer found in library stock" });
+      res.status(404).json({ success: false, message: "No copies of this book are currently available for checkout" });
       return;
     }
 
-    if (selectedBook.status === "Issued") {
-      res.status(409).json({ success: false, message: "Book is already issued to someone else" });
+    const activeIssuesCount = await Issue.countDocuments({
+      student: { $regex: `^${escapeRegex(request.student)}$`, $options: "i" }
+    });
+
+    if (activeIssuesCount >= 3) {
+      res.status(400).json({ success: false, message: "This student already has 3 active issues. Cannot approve another borrow request." });
       return;
     }
 
@@ -209,7 +306,9 @@ async function approveBorrowRequest(req, res) {
       book: selectedBook.name,
       bookId: selectedBook._id,
       date: request.requestDate,
-      returnDate: request.returnDate
+      returnDate: request.returnDate,
+      accessionNo: selectedBook.accessionNo,
+      issueType: "Student Online"
     });
 
     // Update request status to Approved
@@ -357,6 +456,140 @@ async function rejectExtensionRequest(req, res) {
   }
 }
 
+async function reserveBook(req, res) {
+  try {
+    const { studentId, studentName, bookTitle, accessionNo } = req.body;
+    if (!studentId || !studentName || !bookTitle) {
+      res.status(400).json({ success: false, message: "Please fill all fields" });
+      return;
+    }
+
+    const reservation = await Reservation.create({
+      studentId: studentId.trim(),
+      studentName: studentName.trim(),
+      bookTitle: bookTitle.trim(),
+      accessionNo: (accessionNo || "").trim(),
+      reserveDate: new Date().toISOString().split("T")[0],
+      status: "Pending"
+    });
+
+    await Transaction.create({
+      userId: studentId,
+      userName: studentName,
+      actionType: "Reserve",
+      description: `Reserved book "${bookTitle}"`,
+      accessionNo: accessionNo || ""
+    });
+
+    await Notification.create({
+      userId: studentId,
+      message: `Reservation placed successfully for book "${bookTitle}".`,
+      type: "Reservation"
+    });
+
+    res.status(201).json({ success: true, reservation });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function getReservations(req, res) {
+  try {
+    const { studentId } = req.query;
+    const filter = studentId ? { studentId: { $regex: `^${escapeRegex(studentId)}$`, $options: "i" } } : {};
+    const list = await Reservation.find(filter).sort({ createdAt: -1 });
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function cancelReservation(req, res) {
+  try {
+    const reservation = await Reservation.findById(req.params.id);
+    if (!reservation) {
+      res.status(404).json({ success: false, message: "Reservation not found" });
+      return;
+    }
+
+    reservation.status = "Cancelled";
+    await reservation.save();
+
+    await Transaction.create({
+      userId: reservation.studentId,
+      userName: reservation.studentName,
+      actionType: "Cancel Reservation",
+      description: `Cancelled reservation for "${reservation.bookTitle}"`
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function getFines(req, res) {
+  try {
+    const { studentId } = req.query;
+    const filter = studentId ? { studentId: { $regex: `^${escapeRegex(studentId)}$`, $options: "i" } } : {};
+    const list = await Fine.find(filter).sort({ createdAt: -1 });
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function payFine(req, res) {
+  try {
+    const fine = await Fine.findById(req.params.id);
+    if (!fine) {
+      res.status(404).json({ success: false, message: "Fine record not found" });
+      return;
+    }
+
+    fine.status = "Paid";
+    fine.paidDate = new Date().toISOString().split("T")[0];
+    await fine.save();
+
+    await Transaction.create({
+      userId: fine.studentId,
+      userName: fine.studentName,
+      actionType: "Fine Payment",
+      description: `Paid fine of ₹${fine.amount} for "${fine.bookTitle}"`
+    });
+
+    await Notification.create({
+      userId: fine.studentId,
+      message: `Payment Confirmed: Fine of ₹${fine.amount} for "${fine.bookTitle}" has been cleared.`,
+      type: "Fine"
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function getNotifications(req, res) {
+  try {
+    const { userId } = req.query;
+    const filter = userId ? { userId: { $regex: `^${escapeRegex(userId)}$`, $options: "i" } } : {};
+    const list = await Notification.find(filter).sort({ createdAt: -1 });
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function readNotification(req, res) {
+  try {
+    await Notification.findByIdAndUpdate(req.params.id, { isRead: true });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
 module.exports = {
   calculateFine,
   formatIssue,
@@ -372,5 +605,12 @@ module.exports = {
   getExtensionRequests,
   getStudentExtensionRequests,
   approveExtensionRequest,
-  rejectExtensionRequest
+  rejectExtensionRequest,
+  reserveBook,
+  getReservations,
+  cancelReservation,
+  getFines,
+  payFine,
+  getNotifications,
+  readNotification
 };

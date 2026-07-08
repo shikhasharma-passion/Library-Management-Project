@@ -32,8 +32,18 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "student"],
+      enum: ["admin", "librarian", "student", "faculty"],
       default: "student"
+    },
+    phone: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    memberId: {
+      type: String,
+      trim: true,
+      default: ""
     }
   },
   { timestamps: true }

@@ -6,11 +6,15 @@ function escapeRegex(value) {
 
 async function getDigitalBooks(req, res) {
   try {
-    const { stream, q } = req.query;
+    const { stream, semester, q } = req.query;
     const filter = {};
 
     if (stream && stream !== "All") {
       filter.stream = stream;
+    }
+
+    if (semester && semester !== "All") {
+      filter.semester = semester;
     }
 
     if (q) {
@@ -19,7 +23,8 @@ async function getDigitalBooks(req, res) {
         { name: { $regex: safeQuery, $options: "i" } },
         { author: { $regex: safeQuery, $options: "i" } },
         { category: { $regex: safeQuery, $options: "i" } },
-        { description: { $regex: safeQuery, $options: "i" } }
+        { description: { $regex: safeQuery, $options: "i" } },
+        { semester: { $regex: safeQuery, $options: "i" } }
       ];
     }
 

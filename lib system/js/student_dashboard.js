@@ -8,6 +8,64 @@ window.fetch = function(url, options) {
     return ORIGINAL_FETCH(url, options);
 };
 
+// Global Custom Centered Warning/Success Alert Override
+window.alert = function(message) {
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0, 34, 68, 0.4)";
+    overlay.style.backdropFilter = "blur(4px)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "100000";
+    overlay.id = "customAlertOverlay";
+
+    const msgLower = String(message).toLowerCase();
+    const isSuccess = !msgLower.includes("fail") && 
+                      !msgLower.includes("error") && 
+                      !msgLower.includes("invalid") && 
+                      !msgLower.includes("reject") && 
+                      !msgLower.includes("limit") && 
+                      !msgLower.includes("offline");
+
+    const icon = isSuccess ? "✔️" : "⚠️";
+    const color = isSuccess ? "#10b981" : "#ef4444";
+    const title = isSuccess ? "Action Successful" : "System Warning";
+
+    overlay.innerHTML = `
+        <div style="width: 350px; background: var(--card-bg); border: 2.5px solid ${color}; border-radius: 16px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; justify-content: space-between; gap: 15px; animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-sizing: border-box;">
+            <div>
+                <div style="font-size: 40px; margin-bottom: 8px;">${icon}</div>
+                <h3 style="font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 800; color: ${color}; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">${title}</h3>
+                <p style="font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text-color); line-height: 1.5; margin: 0; font-weight: 500;">
+                    ${message}
+                </p>
+            </div>
+            <button onclick="document.getElementById('customAlertOverlay').remove()" style="width: 100%; padding: 12px; border-radius: 8px; background: ${color}; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.filter='brightness(0.9)';" onmouseout="this.style.filter='none';">
+                Close Window
+            </button>
+        </div>
+    `;
+
+    if (!document.getElementById("popupAnimationStyles")) {
+        const style = document.createElement("style");
+        style.id = "popupAnimationStyles";
+        style.innerHTML = `
+            @keyframes popupScaleIn {
+                from { transform: scale(0.8); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    document.body.appendChild(overlay);
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     initStudentTheme();
     loadStudentDashboard();
@@ -128,7 +186,7 @@ function loadDigitalReadingHistory() {
                             📖 Resume: ${item.lastReadChapterTitle || "Chapter 1"}
                         </p>
                     </div>
-                    <a href="e_reader.html?id=${item.id}" class="action-btn" style="text-decoration:none; text-align:center; padding: 7px 12px; margin-top: 10px; background:var(--primary-color); color:#fff; display:block; border-radius:6px; font-weight:600; border:none; transition:var(--transition); font-size:12.5px; width:fit-content;">
+                    <a href="e_reader.html?id=${item.id}" class="action-btn" style="text-decoration:none; text-align:center; padding: 7px 12px; margin-top: 10px; background:var(--accent-color); color:#0f172a; display:block; border-radius:6px; font-weight:700; border:none; transition:var(--transition); font-size:12.5px; width:fit-content;">
                         Resume Reading
                     </a>
                 </div>
@@ -169,7 +227,7 @@ async function loadAvailableBooks(searchValue = "") {
         }
 
         const books = await response.json();
-        renderAvailableBooks(books);
+        renderAvailableBooks(books, !!searchValue);
     } catch (error) {
         console.error("Error loading available books:", error);
         list.innerHTML = `
@@ -201,8 +259,9 @@ function getRackLocation(category) {
     return "Rack GN-03";
 }
 
-function renderAvailableBooks(books) {
+function renderAvailableBooks(books, isSearchActive) {
     const list = document.getElementById("availableBookList");
+    const viewMoreContainer = document.getElementById("viewMoreBooksContainer");
     if (!list) return;
 
     list.innerHTML = "";
@@ -214,10 +273,26 @@ function renderAvailableBooks(books) {
                 <p>Try another search or check again later.</p>
             </div>
         `;
+        if (viewMoreContainer) viewMoreContainer.innerHTML = "";
         return;
     }
 
-    books.forEach((book) => {
+    // Limit to 8 books initially on page load if search is inactive
+    let booksToRender = books;
+    if (!isSearchActive && books.length > 8) {
+        booksToRender = books.slice(0, 8);
+        if (viewMoreContainer) {
+            viewMoreContainer.innerHTML = `
+                <button onclick="location.href='all_books.html'" style="padding:12px 28px; border-radius:10px; background:var(--accent-color); color:#0f172a; border:none; cursor:pointer; font-weight:700; font-size:14.5px; transition:var(--transition); box-shadow:0 8px 20px var(--shadow-color);" onmouseover="this.style.filter='brightness(1.15)';" onmouseout="this.style.filter='none';">
+                    📚 View More Campus Catalog Books
+                </button>
+            `;
+        }
+    } else {
+        if (viewMoreContainer) viewMoreContainer.innerHTML = "";
+    }
+
+    booksToRender.forEach((book) => {
         const rack = getRackLocation(book.category);
         list.innerHTML += `
             <div class="book-card" style="display:flex; flex-direction:column; justify-content:space-between; border: 1px solid var(--border-color); background:var(--card-bg); border-radius:12px; padding:20px;">
@@ -288,11 +363,15 @@ async function requestIssueFromDashboard(bookId, encodedBookName) {
             const result = await response.json();
 
             if (response.ok) {
-                alert("Issue request submitted successfully! Admin approval is pending.");
+                showBorrowSuccessPopup(bookName);
                 loadAvailableBooks(document.getElementById("studentBookSearchInput")?.value.trim() || "");
                 loadStudentBorrowRequests();
             } else {
-                alert(result.message || "Issue request failed");
+                if (response.status === 400 || (result.message && result.message.includes("limit")) || (result.message && result.message.includes("3 books"))) {
+                    showLimitWarningPopup(result.message || "You already have issued 3 books. You can issue further after returning old issues.");
+                } else {
+                    alert(result.message || "Issue request failed");
+                }
             }
         } catch (error) {
             console.error("Error submitting issue request:", error);
@@ -640,4 +719,82 @@ async function loadStudentSuggestions() {
         console.error(err);
         tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Server error</td></tr>`;
     }
+}
+
+function showBorrowSuccessPopup(bookName) {
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0, 34, 68, 0.4)";
+    overlay.style.backdropFilter = "blur(4px)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "100000";
+    overlay.id = "borrowSuccessPopupOverlay";
+
+    overlay.innerHTML = `
+        <div style="width: 350px; background: var(--card-bg); border: 2.5px solid #10b981; border-radius: 16px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; justify-content: space-between; gap: 15px; animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-sizing: border-box;">
+            <div>
+                <div style="font-size: 50px; margin-bottom: 8px; color: #10b981; display: inline-block; animation: tickBounce 0.5s ease;">✔️</div>
+                <h3 style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 800; color: #10b981; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">Request Submitted</h3>
+                <p style="font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text-color); line-height: 1.5; margin: 0; font-weight: 500;">
+                    Your borrow request for <strong>"${bookName}"</strong> has been sent successfully. Please keep track of approval on your student dashboard.
+                </p>
+            </div>
+            <button onclick="document.getElementById('borrowSuccessPopupOverlay').remove()" style="width: 100%; padding: 12px; border-radius: 8px; background: #10b981; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
+                Awesome!
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+}
+
+function showLimitWarningPopup(message) {
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0, 34, 68, 0.4)";
+    overlay.style.backdropFilter = "blur(4px)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "99999";
+    overlay.id = "limitWarningPopupOverlay";
+
+    overlay.innerHTML = `
+        <div style="width: 350px; background: var(--card-bg); border: 2.5px solid #d97706; border-radius: 16px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; justify-content: space-between; gap: 15px; animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-sizing: border-box;">
+            <div>
+                <div style="font-size: 50px; margin-bottom: 8px;">🛑</div>
+                <h3 style="font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 800; color: #d97706; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">Borrow Limit Breached</h3>
+                <p style="font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text-color); line-height: 1.5; margin: 0; font-weight: 500;">
+                    ${message}
+                </p>
+            </div>
+            <button onclick="document.getElementById('limitWarningPopupOverlay').remove()" style="width: 100%; padding: 12px; border-radius: 8px; background: #d97706; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#b45309'" onmouseout="this.style.background='#d97706'">
+                Understood & Close
+            </button>
+        </div>
+    `;
+    
+    if (!document.getElementById("popupAnimationStyles")) {
+        const style = document.createElement("style");
+        style.id = "popupAnimationStyles";
+        style.innerHTML = `
+            @keyframes popupScaleIn {
+                from { transform: scale(0.8); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    document.body.appendChild(overlay);
 }

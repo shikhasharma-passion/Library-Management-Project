@@ -1,202 +1,523 @@
 const CatalogBook = require("../models/CatalogBook");
 const Book = require("../models/Book");
 const Student = require("../models/Student");
+const Faculty = require("../models/Faculty");
+const User = require("../models/User");
 const Issue = require("../models/Issue");
+const Fine = require("../models/Fine");
+const Reservation = require("../models/Reservation");
+const Transaction = require("../models/Transaction");
+const Notification = require("../models/Notification");
 const Contact = require("../models/Contact");
 const DigitalBook = require("../models/DigitalBook");
+const BorrowRequest = require("../models/BorrowRequest");
+const ExtensionRequest = require("../models/ExtensionRequest");
+const Suggestion = require("../models/Suggestion");
 const { ensureAdminUser } = require("../controllers/authController");
 const catalogData = require("./catalogData");
 const digitalBooksData = require("./digitalBooksData");
+const fs = require("fs");
+const path = require("path");
+const bcrypt = require("bcryptjs");
 
-const books = [
-  { name: "Atomic Habits", author: "James Clear", category: "Self Improvement" },
-  { name: "The Psychology of Money", author: "Morgan Housel", category: "Finance" },
-  { name: "Rich Dad Poor Dad", author: "Robert Kiyosaki", category: "Finance" },
-  { name: "Ikigai", author: "Hector Garcia", category: "Self Improvement" },
-  { name: "Think and Grow Rich", author: "Napoleon Hill", category: "Self Improvement" },
-  { name: "Clean Code", author: "Robert C. Martin", category: "Programming" },
-  { name: "The Pragmatic Programmer", author: "Andrew Hunt", category: "Programming" },
-  { name: "JavaScript: The Good Parts", author: "Douglas Crockford", category: "Programming" },
-  { name: "Eloquent JavaScript", author: "Marijn Haverbeke", category: "Programming" },
-  { name: "You Don't Know JS", author: "Kyle Simpson", category: "Programming" },
-  { name: "Python Crash Course", author: "Eric Matthes", category: "Programming" },
-  { name: "Automate the Boring Stuff with Python", author: "Al Sweigart", category: "Programming" },
-  { name: "Head First Java", author: "Kathy Sierra", category: "Programming" },
-  { name: "Let Us C", author: "Yashavant Kanetkar", category: "Programming" },
-  { name: "Data Structures Through C", author: "Yashavant Kanetkar", category: "BCA" },
-  { name: "Computer Fundamentals", author: "P.K. Sinha", category: "BCA" },
-  { name: "Fundamentals of Computers", author: "V. Rajaraman", category: "BCA" },
-  { name: "Operating System Concepts", author: "Silberschatz, Galvin, Gagne", category: "Operating System" },
-  { name: "Modern Operating Systems", author: "Andrew S. Tanenbaum", category: "Operating System" },
-  { name: "Database System Concepts", author: "Abraham Silberschatz", category: "DBMS" },
-  { name: "Database Management Systems", author: "Raghu Ramakrishnan", category: "DBMS" },
-  { name: "Computer Networks", author: "Andrew S. Tanenbaum", category: "Networking" },
-  { name: "Data Communications and Networking", author: "Behrouz A. Forouzan", category: "Networking" },
-  { name: "Artificial Intelligence: A Modern Approach", author: "Stuart Russell", category: "Artificial Intelligence" },
-  { name: "Machine Learning", author: "Tom M. Mitchell", category: "Artificial Intelligence" },
-  { name: "Hands-On Machine Learning", author: "Aurelien Geron", category: "Data Science" },
-  { name: "Data Science from Scratch", author: "Joel Grus", category: "Data Science" },
-  { name: "Introduction to Algorithms", author: "Thomas H. Cormen", category: "Algorithms" },
-  { name: "Design and Analysis of Algorithms", author: "Anany Levitin", category: "Algorithms" },
-  { name: "Software Engineering", author: "Ian Sommerville", category: "Software Engineering" },
-  { name: "Software Engineering: A Practitioner's Approach", author: "Roger S. Pressman", category: "Software Engineering" },
-  { name: "HTML and CSS", author: "Jon Duckett", category: "Web Development" },
-  { name: "JavaScript and JQuery", author: "Jon Duckett", category: "Web Development" },
-  { name: "Learning React", author: "Alex Banks", category: "Web Development" },
-  { name: "Node.js Design Patterns", author: "Mario Casciaro", category: "Web Development" },
-  { name: "Express in Action", author: "Evan Hahn", category: "Web Development" },
-  { name: "MongoDB: The Definitive Guide", author: "Shannon Bradshaw", category: "Database" },
-  { name: "SQL Fundamentals", author: "John J. Patrick", category: "Database" },
-  { name: "Principles of Management", author: "Harold Koontz", category: "BBA" },
-  { name: "Business Communication", author: "Meenakshi Raman", category: "BBA" },
-  { name: "Financial Accounting", author: "T.S. Grewal", category: "BBA" },
-  { name: "Marketing Management", author: "Philip Kotler", category: "BBA" },
-  { name: "Human Resource Management", author: "Gary Dessler", category: "BBA" },
-  { name: "Strategic Management", author: "Michael Porter", category: "MBA" },
-  { name: "Business Analytics", author: "James R. Evans", category: "MBA" },
-  { name: "Corporate Finance", author: "Ross, Westerfield, Jaffe", category: "MBA" },
-  { name: "The Lean Startup", author: "Eric Ries", category: "Entrepreneurship" },
-  { name: "Zero to One", author: "Peter Thiel", category: "Entrepreneurship" },
-  { name: "Wings of Fire", author: "A.P.J. Abdul Kalam", category: "Biography" },
-  { name: "The Diary of a Young Girl", author: "Anne Frank", category: "Biography" },
-  { name: "The Alchemist", author: "Paulo Coelho", category: "Fiction" },
-  { name: "To Kill a Mockingbird", author: "Harper Lee", category: "Fiction" },
-  { name: "1984", author: "George Orwell", category: "Fiction" },
-  { name: "The Great Gatsby", author: "F. Scott Fitzgerald", category: "Fiction" },
-  { name: "Pride and Prejudice", author: "Jane Austen", category: "Fiction" },
-  { name: "A Brief History of Time", author: "Stephen Hawking", category: "Science" },
-  { name: "The Selfish Gene", author: "Richard Dawkins", category: "Science" },
-  { name: "Concepts of Physics Vol. 1", author: "H.C. Verma", category: "Science" },
-  { name: "Quantitative Aptitude", author: "R.S. Aggarwal", category: "Competitive Exams" },
-  { name: "A Modern Approach to Verbal Reasoning", author: "R.S. Aggarwal", category: "Competitive Exams" }
-];
+const booksDataPath = path.join(__dirname, "..", "..", "books.json");
+let booksData = [];
+try {
+  if (fs.existsSync(booksDataPath)) {
+    booksData = JSON.parse(fs.readFileSync(booksDataPath, "utf8"));
+  }
+} catch (err) {
+  console.warn("Failed to load books.json, falling back to empty:", err.message);
+}
 
-const students = [
-  { name: "Aarav Sharma", course: "BCA", roll: "BCA-101" },
-  { name: "Ananya Singh", course: "BCA", roll: "BCA-102" },
-  { name: "Rohan Kumar", course: "BCA", roll: "BCA-103" },
-  { name: "Priya Verma", course: "BCA", roll: "BCA-104" },
-  { name: "Neha Gupta", course: "BCA", roll: "BCA-105" },
-  { name: "Rahul Raj", course: "BCA", roll: "BCA-106" },
-  { name: "Simran Kaur", course: "BCA", roll: "BCA-107" },
-  { name: "Aditya Mishra", course: "BCA", roll: "BCA-108" },
-  { name: "Kritika Sinha", course: "BBA", roll: "BBA-201" },
-  { name: "Nikhil Anand", course: "BBA", roll: "BBA-202" },
-  { name: "Sakshi Kumari", course: "BBA", roll: "BBA-203" },
-  { name: "Vivek Tiwari", course: "BBA", roll: "BBA-204" },
-  { name: "Isha Pandey", course: "BBA", roll: "BBA-205" },
-  { name: "Aman Raj", course: "BBA", roll: "BBA-206" },
-  { name: "Shreya Jha", course: "MCA", roll: "MCA-301" },
-  { name: "Kunal Sinha", course: "MCA", roll: "MCA-302" },
-  { name: "Ritika Kumari", course: "MCA", roll: "MCA-303" },
-  { name: "Harsh Vardhan", course: "MCA", roll: "MCA-304" },
-  { name: "Pooja Yadav", course: "MCA", roll: "MCA-305" },
-  { name: "Saurabh Kumar", course: "MCA", roll: "MCA-306" },
-  { name: "Mansi Agarwal", course: "MBA", roll: "MBA-401" },
-  { name: "Rishabh Jain", course: "MBA", roll: "MBA-402" },
-  { name: "Tanya Roy", course: "MBA", roll: "MBA-403" },
-  { name: "Abhishek Prasad", course: "MBA", roll: "MBA-404" },
-  { name: "Sneha Singh", course: "MBA", roll: "MBA-405" },
-  { name: "Yash Gupta", course: "MBA", roll: "MBA-406" }
-];
-
-const issuePlans = [
-  { student: "Aarav Sharma", book: "Atomic Habits", date: "2026-05-01", returnDate: "2026-05-15" },
-  { student: "Ananya Singh", book: "Clean Code", date: "2026-05-05", returnDate: "2026-05-25" },
-  { student: "Rohan Kumar", book: "Operating System Concepts", date: "2026-04-20", returnDate: "2026-05-10" },
-  { student: "Priya Verma", book: "Database System Concepts", date: "2026-05-12", returnDate: "2026-05-28" },
-  { student: "Neha Gupta", book: "Python Crash Course", date: "2026-05-03", returnDate: "2026-05-18" },
-  { student: "Rahul Raj", book: "Computer Networks", date: "2026-05-15", returnDate: "2026-06-01" },
-  { student: "Simran Kaur", book: "The Psychology of Money", date: "2026-05-02", returnDate: "2026-05-16" }
-];
-
-const contacts = [
-  { name: "Aarav Sharma", email: "aarav.sharma@example.com", message: "Please reserve Clean Code if it becomes available." },
-  { name: "Priya Verma", email: "priya.verma@example.com", message: "I need DBMS reference books for semester exam preparation." }
-];
-
-function imageForBook(book) {
-  const lowerName = book.name.toLowerCase();
-  const lowerCategory = book.category.toLowerCase();
-
-  if (lowerName.includes("atomic")) return "images/atomic habit.jpg";
-  if (lowerName.includes("psychology")) return "images/psychology of money.jpg";
-  if (lowerName.includes("rich dad")) return "images/rich dad poor dad.jpg";
-  if (lowerName.includes("python")) return "images/python book cover.jpg";
-  if (lowerName.includes("operating")) return "images/os.jpg";
-  if (lowerName.includes("database") || lowerCategory.includes("dbms")) return "images/rdbms.png";
-  if (lowerCategory.includes("self") || lowerCategory.includes("finance")) return "images/book2.jpg";
-
-  return "images/book1 cover.jpg";
+function getDepartmentForCategory(category) {
+  const cat = String(category || "").toLowerCase();
+  if (cat.includes("bca") || cat.includes("mca") || cat.includes("computer") || cat.includes("operating") || cat.includes("networking") || cat.includes("dbms") || cat.includes("algorithm") || cat.includes("programming") || cat.includes("ai") || cat.includes("intelligence") || cat.includes("data science") || cat.includes("web") || cat.includes("database")) {
+    return "Computer Science";
+  }
+  if (cat.includes("bba") || cat.includes("mba") || cat.includes("management") || cat.includes("business") || cat.includes("finance") || cat.includes("accounting") || cat.includes("marketing") || cat.includes("human resource") || cat.includes("strategic") || cat.includes("entrepreneurship")) {
+    return "Management Studies";
+  }
+  if (cat.includes("competitive") || cat.includes("exams")) {
+    return "Competitive Exams";
+  }
+  if (cat.includes("biography") || cat.includes("fiction") || cat.includes("self") || cat.includes("habit") || cat.includes("psychology") || cat.includes("english")) {
+    return "Science & Humanities";
+  }
+  return "General Education";
 }
 
 async function seedCatalogBooks() {
   await ensureAdminUser();
 
-  console.log("Refreshing database catalog and digital e-book tables...");
-  
-  // Clear collections to force update covers and lists
-  await CatalogBook.deleteMany({});
-  await DigitalBook.deleteMany({});
-  await Book.deleteMany({});
+  console.log("Cleaning database collections...");
+  await Promise.all([
+    CatalogBook.deleteMany({}),
+    Book.deleteMany({}),
+    DigitalBook.deleteMany({}),
+    Student.deleteMany({}),
+    Faculty.deleteMany({}),
+    Issue.deleteMany({}),
+    Fine.deleteMany({}),
+    Reservation.deleteMany({}),
+    Transaction.deleteMany({}),
+    Notification.deleteMany({}),
+    Contact.deleteMany({}),
+    BorrowRequest.deleteMany({}),
+    ExtensionRequest.deleteMany({}),
+    Suggestion.deleteMany({})
+  ]);
 
-  // Seed Catalog books (physical catalog metadata)
-  await CatalogBook.insertMany(catalogData);
+  const sourceBooks = (booksData && booksData.length > 0) ? booksData : catalogData;
+  console.log(`Processing ${sourceBooks.length} titles for catalog and inventory...`);
+
+  // 1. Process & Seed Catalog Books
+  const catalogBooksToInsert = sourceBooks.map((b, index) => {
+    const dept = getDepartmentForCategory(b.category);
+    const year = String(2015 + (index % 10));
+    return {
+      name: b.name,
+      author: b.author,
+      publisher: b.publisher || "Tata McGraw Hill",
+      edition: b.edition || "1st Edition",
+      isbn: b.isbn || `978-81-${100000 + index}-${index % 10}`,
+      subjectCode: b.subjectCode || `SUB-${100 + index}`,
+      category: b.category,
+      semester: b.semester || "All Semesters",
+      language: b.language || "English",
+      image: b.image || "images/book1 cover.jpg",
+      pubYear: year,
+      department: dept,
+      description: `Standard reference textbook for ${b.name} by ${b.author}. Mapped to college curriculum.`,
+      rating: 4.0 + ((index % 11) / 10) * 1.0,
+      quantity: b.quantity || 5,
+      availableCopies: b.quantity || 5,
+      issuedCopies: 0
+    };
+  });
+
+  await CatalogBook.insertMany(catalogBooksToInsert);
   console.log("Catalog books seeded successfully.");
 
-  // Seed Digital e-books
-  await DigitalBook.insertMany(digitalBooksData);
-  console.log("Digital e-books seeded successfully.");
-
-  // Seed Physical Stock Inventory
-  console.log("Seeding physical book inventory stock...");
-  const bookMap = new Map();
-  for (const item of catalogData) {
-    const book = await Book.create({
-      name: item.name,
-      author: item.author,
-      category: item.category,
-      status: "Available"
-    });
-    bookMap.set(book.name, book);
-  }
-
-  // Seed default students if empty
-  const countStudents = await Student.countDocuments();
-  if (countStudents === 0) {
-    for (const item of students) {
-      await Student.create(item);
+  // 2. Process & Seed Physical Book Inventory (Copy-by-Copy)
+  const physicalBooksToInsert = [];
+  catalogBooksToInsert.forEach(b => {
+    const copiesCount = b.quantity;
+    const baseAccession = b.isbn.replace(/-/g, "").substring(3, 8) || "36001";
+    for (let c = 1; c <= copiesCount; c++) {
+      physicalBooksToInsert.push({
+        name: b.name,
+        author: b.author,
+        publisher: b.publisher,
+        edition: b.edition,
+        isbn: b.isbn,
+        subjectCode: b.subjectCode,
+        category: b.category,
+        semester: b.semester,
+        accessionNo: `ACC-${baseAccession}-${String(c).padStart(2, "0")}`,
+        rackNo: b.rackNo || `Rack ${b.category.substring(0, 2).toUpperCase()}-0${(c % 3) + 1}`,
+        shelfNo: b.shelfNo || `Shelf ${(c % 4) + 1}`,
+        quantity: 1,
+        availableCopies: 1,
+        issuedCopies: 0,
+        language: b.language,
+        status: "Available",
+        pubYear: b.pubYear,
+        department: b.department,
+        description: b.description,
+        rating: b.rating
+      });
     }
-    console.log("Default students seeded.");
+  });
+
+  const seededPhysicalBooks = await Book.insertMany(physicalBooksToInsert);
+  console.log(`Seeded ${seededPhysicalBooks.length} physical copies in stock.`);
+
+  // 3. Seed Digital Library
+  const digitalBooksToInsert = digitalBooksData.map((d, index) => ({
+    ...d,
+    pubYear: String(2018 + (index % 7)),
+    description: `Professional reference guide for ${d.title}. Available as digital e-book.`
+  }));
+  await DigitalBook.insertMany(digitalBooksToInsert);
+  console.log("Digital library seeded successfully.");
+
+  // 4. Generate 500 Students
+  console.log("Generating 500 students...");
+  const courses = ["BCA", "BBA", "MCA", "MBA"];
+  const firstNames = ["Aarav", "Ananya", "Rohan", "Priya", "Neha", "Rahul", "Simran", "Aditya", "Kritika", "Nikhil", "Shreya", "Mansi", "Vivek", "Pooja", "Manish", "Amit", "Raj", "Siddharth", "Ishita", "Sneha", "Karan", "Riya", "Varun", "Anjali", "Sanjay", "Deepak", "Tanvi", "Ramesh", "Sunita", "Harish"];
+  const lastNames = ["Sharma", "Singh", "Kumar", "Verma", "Gupta", "Raj", "Kaur", "Mishra", "Sinha", "Anand", "Jha", "Agarwal", "Pathak", "Roy", "Choudhary", "Patel", "Das", "Sen", "Bose", "Mehta", "Malhotra", "Kapoor", "Joshi", "Trivedi", "Reddy", "Nair"];
+
+  const seededStudents = [];
+  for (let i = 1; i <= 500; i++) {
+    const fn = firstNames[i % firstNames.length];
+    const ln = lastNames[(i * 3) % lastNames.length];
+    const roll = String(1000 + i);
+    const stuId = `STU-2026-${roll}`;
+    const course = courses[i % courses.length];
+    const sem = `Semester ${(i % 6) + 1}`;
+    seededStudents.push({
+      name: `${fn} ${ln}`,
+      course: course,
+      roll: roll,
+      studentId: stuId,
+      semester: sem,
+      email: `${fn.toLowerCase()}.${ln.toLowerCase()}${i}@zhi.edu.in`,
+      phone: `98765${String(10000 + i).substring(1)}`,
+      session: course.endsWith("CA") ? "2024-27" : "2025-27"
+    });
   }
+  await Student.insertMany(seededStudents);
+  console.log("500 Students populated.");
 
-  // Clear previous issue transactions to keep inventory counts accurate on reset
-  await Issue.deleteMany({});
+  // 5. Generate 50 Faculty Members
+  console.log("Generating 50 faculty members...");
+  const facultyNames = ["Dr. S. K. Singh", "Prof. R. P. Verma", "Dr. Shalini Mehta", "Prof. Anil Jha", "Dr. Vandana Rao", "Dr. Manoj Pathak", "Prof. Swati Sen", "Dr. Rajesh Das", "Prof. Preeti Roy", "Dr. Vikram Seth", "Prof. Alka Gupta", "Dr. Nishant Mishra", "Prof. Sanjay Datta", "Dr. Ritu Bhalla", "Prof. Devendra Pal"];
+  const departments = ["Computer Science", "Management Studies", "Science & Humanities", "Business Administration"];
+  const designations = ["Professor", "Associate Professor", "Assistant Professor", "Senior Lecturer"];
 
-  // Re-seed default issues
-  for (const item of issuePlans) {
-    const book = bookMap.get(item.book);
-    if (!book) continue;
+  const seededFaculty = [];
+  for (let i = 1; i <= 50; i++) {
+    const name = facultyNames[i % facultyNames.length];
+    const dept = departments[i % departments.length];
+    const des = designations[i % designations.length];
+    const facId = `FAC-2026-${300 + i}`;
+    seededFaculty.push({
+      name: `${name} (${i})`,
+      department: dept,
+      facultyId: facId,
+      email: `faculty.${i}@zhi.edu.in`,
+      phone: `98766${String(10000 + i).substring(1)}`,
+      designation: des
+    });
+  }
+  await Faculty.insertMany(seededFaculty);
+  console.log("50 Faculty members populated.");
+
+  // 6. Generate and Seed Corresponding User Credentials (for Role-Based Login)
+  console.log("Seeding user credentials collection...");
+  await User.deleteMany({});
+  const defaultHashedPassword = await bcrypt.hash("password123", 10);
+  const usersToInsert = [];
+
+  // Seed default Admin credentials
+  const adminHashed = await bcrypt.hash("admin123", 10);
+  usersToInsert.push({
+    name: "Admin User",
+    email: "admin@library.com",
+    course: "Admin",
+    username: "admin",
+    password: adminHashed,
+    role: "admin",
+    phone: "9876543200",
+    memberId: "ADM-001"
+  });
+
+  // Seed default Librarian credentials
+  usersToInsert.push({
+    name: "Librarian User",
+    email: "librarian@library.com",
+    course: "Library Science",
+    username: "librarian",
+    password: defaultHashedPassword,
+    role: "librarian",
+    phone: "9876543299",
+    memberId: "LIB-001"
+  });
+
+  // Seed student credentials
+  seededStudents.forEach(stu => {
+    usersToInsert.push({
+      name: stu.name,
+      email: stu.email,
+      course: stu.course,
+      username: stu.email.split("@")[0],
+      password: defaultHashedPassword,
+      role: "student",
+      phone: stu.phone,
+      memberId: stu.studentId
+    });
+  });
+
+  // Seed faculty credentials
+  seededFaculty.forEach(fac => {
+    usersToInsert.push({
+      name: fac.name,
+      email: fac.email,
+      course: fac.department,
+      username: fac.email.split("@")[0],
+      password: defaultHashedPassword,
+      role: "faculty",
+      phone: fac.phone,
+      memberId: fac.facultyId
+    });
+  });
+
+  await User.insertMany(usersToInsert);
+  console.log(`User collection populated with ${usersToInsert.length} accounts.`);
+
+  // 7. Seed Active, Completed, and Overdue Issues with Fines & Notifications
+  console.log("Generating transaction history, active borrows, and overdue fines...");
+  
+  // Select a subset of users to create records
+  const sampleStudents = seededStudents.slice(0, 40);
+  const sampleFaculty = seededFaculty.slice(0, 10);
+  const activeIssues = [];
+
+  // Generate 80 completed historical issues
+  for (let i = 0; i < 80; i++) {
+    const student = sampleStudents[i % sampleStudents.length];
+    const bookIndex = (i * 7) % seededPhysicalBooks.length;
+    const book = seededPhysicalBooks[bookIndex];
+
+    const issueDateStr = `2026-05-${String((i % 28) + 1).padStart(2, "0")}`;
+    const returnDateStr = `2026-06-${String((i % 28) + 1).padStart(2, "0")}`;
 
     await Issue.create({
-      student: item.student,
+      student: student.name,
+      studentId: student.studentId,
       book: book.name,
       bookId: book._id,
-      date: item.date,
-      returnDate: item.returnDate
+      accessionNo: book.accessionNo,
+      date: issueDateStr,
+      returnDate: returnDateStr,
+      status: "Returned",
+      issueType: i % 2 === 0 ? "Admin Manual" : "Student Online"
     });
 
-    await Book.findByIdAndUpdate(book._id, { status: "Issued" });
-  }
-  console.log("Default borrow issues seeded.");
+    await Transaction.create({
+      userId: student.studentId,
+      userName: student.name,
+      actionType: "Issue",
+      description: `Issued book ${book.name} (Accession: ${book.accessionNo})`,
+      accessionNo: book.accessionNo,
+      timestamp: new Date(`${issueDateStr}T10:00:00Z`)
+    });
 
-  // Seed contacts if empty
-  const countContacts = await Contact.countDocuments();
-  if (countContacts === 0) {
-    for (const item of contacts) {
-      await Contact.create(item);
-    }
+    await Transaction.create({
+      userId: student.studentId,
+      userName: student.name,
+      actionType: "Return",
+      description: `Returned book ${book.name} (Accession: ${book.accessionNo})`,
+      accessionNo: book.accessionNo,
+      timestamp: new Date(`${returnDateStr}T14:00:00Z`)
+    });
   }
+
+  // Generate 25 Active Pending Issues (these books become "Issued")
+  for (let i = 0; i < 25; i++) {
+    const student = sampleStudents[(i + 5) % sampleStudents.length];
+    // Pick different books
+    const bookIndex = (i * 13 + 10) % seededPhysicalBooks.length;
+    const book = seededPhysicalBooks[bookIndex];
+
+    if (book.status !== "Available") continue;
+
+    const issueDateStr = "2026-07-01";
+    const returnDateStr = "2026-07-15";
+
+    const issue = await Issue.create({
+      student: student.name,
+      studentId: student.studentId,
+      book: book.name,
+      bookId: book._id,
+      accessionNo: book.accessionNo,
+      date: issueDateStr,
+      returnDate: returnDateStr,
+      status: "Active",
+      issueType: "Student Online"
+    });
+
+    book.status = "Issued";
+    await book.save();
+
+    await Transaction.create({
+      userId: student.studentId,
+      userName: student.name,
+      actionType: "Issue",
+      description: `Issued active copy of ${book.name} (Accession: ${book.accessionNo})`,
+      accessionNo: book.accessionNo,
+      timestamp: new Date()
+    });
+  }
+
+  // Generate 10 Overdue Issues with Active Fines
+  for (let i = 0; i < 10; i++) {
+    const student = sampleStudents[(i * 2 + 3) % sampleStudents.length];
+    const bookIndex = (i * 27 + 100) % seededPhysicalBooks.length;
+    const book = seededPhysicalBooks[bookIndex];
+
+    if (book.status !== "Available") continue;
+
+    const issueDateStr = "2026-06-10";
+    const returnDateStr = "2026-06-24"; // Overdue as of today (July 8)
+
+    const issue = await Issue.create({
+      student: student.name,
+      studentId: student.studentId,
+      book: book.name,
+      bookId: book._id,
+      accessionNo: book.accessionNo,
+      date: issueDateStr,
+      returnDate: returnDateStr,
+      status: "Overdue",
+      issueType: "Admin Manual"
+    });
+
+    book.status = "Issued";
+    await book.save();
+
+    // Fine: 14 days overdue (June 24 to July 8 = 14 days) * ₹10 = ₹140
+    await Fine.create({
+      studentId: student.studentId,
+      studentName: student.name,
+      bookTitle: book.name,
+      issueId: issue._id.toString(),
+      amount: 140,
+      status: "Unpaid"
+    });
+
+    await Notification.create({
+      userId: student.studentId,
+      message: `ALERT: Book "${book.name}" is overdue. Please return immediately. Fine accumulated: ₹140.`,
+      type: "Due"
+    });
+  }
+
+  // 8. Generate 5 Active Book Reservations
+  for (let i = 0; i < 5; i++) {
+    const student = sampleStudents[(i + 12) % sampleStudents.length];
+    const book = seededPhysicalBooks[(i * 3) % seededPhysicalBooks.length];
+    await Reservation.create({
+      studentId: student.studentId,
+      studentName: student.name,
+      bookTitle: book.name,
+      accessionNo: book.accessionNo,
+      reserveDate: new Date().toISOString().split("T")[0],
+      status: "Pending"
+    });
+
+    await Notification.create({
+      userId: student.studentId,
+      message: `Reservation request for "${book.name}" is placed in the queue.`,
+      type: "Reservation"
+    });
+  }
+
+  // Seed contact messages
+  await Contact.insertMany([
+    { name: "Aarav Sharma", email: "aarav.sharma@example.com", message: "Please purchase the new 8th edition of Core Java book." },
+    { name: "Prof. R. P. Verma", email: "faculty.2@zhi.edu.in", message: "Need additional copies of MBA Strategic Management case studies." },
+    { name: "Neha Gupta", email: "neha.gupta@example.com", message: "Can we access IEEE journals from home via the library portal?" }
+  ]);
+
+  // Seed pending borrow requests
+  console.log("Seeding pending student borrow requests...");
+  await BorrowRequest.create([
+    {
+      student: "Aarav Sharma",
+      book: "Let Us C++",
+      requestDate: new Date().toISOString().split("T")[0],
+      returnDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      status: "Pending"
+    },
+    {
+      student: "Neha Gupta",
+      book: "Indian Polity for Civil Services and State Examinations",
+      requestDate: new Date().toISOString().split("T")[0],
+      returnDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      status: "Pending"
+    },
+    {
+      student: "Rohan Verma",
+      book: "Database System Concepts",
+      requestDate: new Date().toISOString().split("T")[0],
+      returnDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      status: "Pending"
+    }
+  ]);
+
+  // Seed return extension requests
+  console.log("Seeding pending return extension requests...");
+  const activeIssuesList = await Issue.find({ status: "Active" }).limit(3);
+  if (activeIssuesList.length >= 3) {
+    await ExtensionRequest.create([
+      {
+        issueId: activeIssuesList[0]._id,
+        student: activeIssuesList[0].student,
+        book: activeIssuesList[0].book,
+        currentReturnDate: activeIssuesList[0].returnDate,
+        requestedReturnDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        status: "Pending"
+      },
+      {
+        issueId: activeIssuesList[1]._id,
+        student: activeIssuesList[1].student,
+        book: activeIssuesList[1].book,
+        currentReturnDate: activeIssuesList[1].returnDate,
+        requestedReturnDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        status: "Pending"
+      },
+      {
+        issueId: activeIssuesList[2]._id,
+        student: activeIssuesList[2].student,
+        book: activeIssuesList[2].book,
+        currentReturnDate: activeIssuesList[2].returnDate,
+        requestedReturnDate: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        status: "Pending"
+      }
+    ]);
+  }
+
+  // Seed user suggestions (including Procurement / On the Way)
+  console.log("Seeding book suggestions and procurement tracker records...");
+  await Suggestion.create([
+    {
+      student: "Aarav Sharma",
+      bookTitle: "Introduction to Artificial Intelligence",
+      bookAuthor: "Stuart Russell",
+      category: "BCA",
+      status: "Pending"
+    },
+    {
+      student: "Ananya Mishra",
+      bookTitle: "Operating System Concepts (10th Edition)",
+      bookAuthor: "Silberschatz",
+      category: "MCA",
+      status: "Pending"
+    },
+    {
+      student: "Rohan Verma",
+      bookTitle: "Discrete Mathematics and its Applications",
+      bookAuthor: "Kenneth H. Rosen",
+      category: "BCA",
+      status: "Accepted - On the Way",
+      adminNotes: "Ordered via Tata McGraw Hill, ETA 3 days."
+    },
+    {
+      student: "Shreya Roy",
+      bookTitle: "Design Patterns: Elements of Reusable Object-Oriented Software",
+      bookAuthor: "Erich Gamma",
+      category: "MCA",
+      status: "Accepted - On the Way",
+      adminNotes: "Acquirement approved. Direct procurement in transit."
+    }
+  ]);
+
+  // Synchronize available copies and counts on CatalogBook models
+  console.log("Synchronizing CatalogBook copies counts...");
+  const catalogList = await CatalogBook.find({});
+  for (const catBook of catalogList) {
+    const physicalCopies = await Book.find({ name: catBook.name });
+    const available = physicalCopies.filter(c => c.status === "Available").length;
+    const issued = physicalCopies.filter(c => c.status === "Issued").length;
+    catBook.quantity = physicalCopies.length;
+    catBook.availableCopies = available;
+    catBook.issuedCopies = issued;
+    await catBook.save();
+  }
+
+  console.log("Database seeded successfully with professional data metrics!");
 }
 
 module.exports = seedCatalogBooks;

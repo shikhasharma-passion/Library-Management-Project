@@ -21,51 +21,40 @@ function text(value){
 /* SHOW BOOKS */
 
 function displayBooks(filteredBooks = books){
-
-    bookList.innerHTML = "";
-
     if(filteredBooks.length === 0){
-
         bookList.innerHTML = `
-
         <div class="book-card">
-
             <h3>No Books Found</h3>
-
             <p>Try another search or add a new book.</p>
-
         </div>
-
         `;
-
         return;
-
     }
 
+    let cardsHtml = "";
+
     filteredBooks.forEach((book)=>{
-
-        bookList.innerHTML += `
-
+        cardsHtml += `
         <div class="book-card">
-
             <h3>${book.name}</h3>
-
             <p><strong>Author:</strong> ${book.author}</p>
-
-            <p><strong>Category:</strong> ${book.category}</p>
-            
+            <p><strong>Subject Code:</strong> ${book.subjectCode || 'N/A'}</p>
+            <p><strong>Accession No:</strong> ${book.accessionNo || 'N/A'}</p>
+            <p><strong>ISBN:</strong> ${book.isbn || 'N/A'}</p>
+            <p><strong>Category:</strong> ${book.category} | ${book.semester || 'N/A'}</p>
+            <p><strong>Publisher:</strong> ${book.publisher || 'N/A'}</p>
+            <p><strong>Edition:</strong> ${book.edition || 'N/A'}</p>
+            <p><strong>Location:</strong> ${book.rackNo || 'N/A'}, ${book.shelfNo || 'N/A'}</p>
+            <p><strong>Language:</strong> ${book.language || 'English'}</p>
             <p><strong>Status:</strong> ${book.status}</p>
-            
             <button class="delete-btn" onclick="deleteBook('${getId(book)}')">
                 Delete
             </button>
-
         </div>
-
         `;
-
     });
 
+    bookList.innerHTML = cardsHtml;
 }
 
 async function loadBooks(searchValue = ""){
@@ -103,7 +92,25 @@ bookForm.addEventListener("submit", async function(e){
 
     let category = document.getElementById("bookCategory").value.trim();
 
-    if(name === "" || author === "" || category === ""){
+    let subjectCodeVal = document.getElementById("subjectCode").value.trim();
+
+    let isbnVal = document.getElementById("isbn").value.trim();
+
+    let publisherVal = document.getElementById("publisher").value.trim();
+
+    let editionVal = document.getElementById("edition").value.trim();
+
+    let languageVal = document.getElementById("language").value.trim();
+
+    let accessionNoVal = document.getElementById("accessionNo").value.trim();
+
+    let rackNoVal = document.getElementById("rackNo").value.trim();
+
+    let shelfNoVal = document.getElementById("shelfNo").value.trim();
+
+    let semesterVal = document.getElementById("bookSemester").value;
+
+    if(name === "" || author === "" || category === "" || subjectCodeVal === "" || isbnVal === "" || accessionNoVal === ""){
 
         alert("Please fill all fields");
 
@@ -117,7 +124,20 @@ bookForm.addEventListener("submit", async function(e){
             headers:{
                 "Content-Type":"application/json"
             },
-            body:JSON.stringify({ name, author, category })
+            body:JSON.stringify({ 
+                name, 
+                author, 
+                category, 
+                subjectCode: subjectCodeVal,
+                isbn: isbnVal,
+                publisher: publisherVal,
+                edition: editionVal,
+                language: languageVal,
+                accessionNo: accessionNoVal,
+                rackNo: rackNoVal,
+                shelfNo: shelfNoVal,
+                semester: semesterVal
+            })
         });
 
         const result = await response.json();

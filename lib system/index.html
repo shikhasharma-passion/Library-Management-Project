@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/style.css">
     
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -19,18 +19,15 @@
     <header>
         <nav class="navbar">
             <div class="logo-section" style="cursor: pointer;" onclick="location.href='index.html'">
-                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color); filter: drop-shadow(0 0 4px rgba(217,119,6,0.35));">
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-                </svg>
-                <h2 style="font-weight: 800; font-size: 24px; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SmartLib</h2>
+                <img src="images/Dr_Zakir_Husain_Institute_Patna_Logo.avif" alt="ZHI Logo">
+                <h2>ZHI Library</h2>
             </div>
             
             <div class="nav-right" style="display: flex; align-items: center; gap: 20px;">
                 <ul class="nav-links" id="navLinks">
                     <li><a href="index.html" class="active">Home</a></li>
-                    <li><a href="all_books.html">Campus Library</a></li>
-                    <li><a href="digital_library.html">Digital Library</a></li>
+                    <li><a href="all_books.html">College Library</a></li>
+                    <li><a href="digital_library.html">Digital Resources</a></li>
                     <li><a href="learning_hub.html">Learning Hub</a></li>
                     <li><a href="contact.html">Contact</a></li>
                     <li id="authLink"><a href="login.html">Login</a></li>
@@ -54,42 +51,42 @@
 
     <section class="hero" style="height: auto; min-height: 90vh; padding: 60px 20px;">
         <div class="hero-content" style="max-width: 1200px; width: 100%;">
-            <h1 style="margin-bottom: 12px; font-weight: 850;">Smart Library Ecosystem</h1>
+            <h1 style="margin-bottom: 12px; font-weight: 850;">Dr. Zakir Husain Institute Library</h1>
             <p style="margin-bottom: 45px; font-size: 18px; color: rgba(255,255,255,0.85); max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
-                Access thousands of global digital resources and e-books online from anywhere, or browse and issue physical textbook inventories directly from your campus shelves.
+                Access thousands of global digital resources and syllabus textbooks online, or browse and issue physical books directly from the Dr. Zakir Husain Institute library shelves.
             </p>
             
-            <div class="pathways-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 20px; text-align: left;">
+            <div class="pathways-grid" style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 30px; width: 100%; text-align: center;">
                 
                 <!-- DIGITAL PATHWAY -->
-                <div class="pathway-card" style="background: rgba(15, 23, 42, 0.55); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 35px; backdrop-filter: blur(16px); box-shadow: 0 20px 40px rgba(0,0,0,0.25); transition: var(--transition);">
-                    <div style="font-size: 42px; margin-bottom: 15px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));">🌐</div>
-                    <h3 style="font-size: 21px; font-weight: 700; color: #fff; margin-bottom: 12px; letter-spacing: -0.3px;">Digital World Library</h3>
-                    <p style="font-size: 14.5px; color: rgba(255,255,255,0.7); line-height: 1.65; margin-bottom: 25px; min-height: 75px;">
-                        Explore a world-wide collection of e-books, software manuals, and academic research papers. Built with stream filtering and a premium fullscreen interactive reading environment.
+                <div class="pathway-card" style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 35px; backdrop-filter: blur(16px); box-shadow: 0 20px 40px rgba(0,0,0,0.25); transition: var(--transition); max-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
+                    <div style="font-size: 44px; margin-bottom: 15px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));">🌐</div>
+                    <h3 style="font-size: 21px; font-weight: 700; color: #fff; margin-bottom: 12px; letter-spacing: -0.3px;">Digital Resources</h3>
+                    <p style="font-size: 14.5px; color: rgba(255,255,255,0.75); line-height: 1.65; margin-bottom: 25px; min-height: 75px;">
+                        Explore a world-wide collection of e-books, software manuals, and educational resources. Built with stream filtering and a premium fullscreen interactive reading environment.
                     </p>
                     <a href="digital_library.html" class="btn" style="display: block; text-align: center; border-radius: 12px; padding: 13px 20px; width: 100%;">
-                        Access Digital Library
+                        Access Digital Resources
                     </a>
                 </div>
 
                 <!-- PHYSICAL PATHWAY -->
-                <div class="pathway-card" style="background: rgba(15, 23, 42, 0.55); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 35px; backdrop-filter: blur(16px); box-shadow: 0 20px 40px rgba(0,0,0,0.25); transition: var(--transition);">
-                    <div style="font-size: 42px; margin-bottom: 15px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));">🏫</div>
-                    <h3 style="font-size: 21px; font-weight: 700; color: #fff; margin-bottom: 12px; letter-spacing: -0.3px;">Campus Physical Library</h3>
-                    <p style="font-size: 14.5px; color: rgba(255,255,255,0.7); line-height: 1.65; margin-bottom: 25px; min-height: 75px;">
-                        Browse campus textbook inventories, check real-time availability status and specific shelf rack spots, and submit issue requests online to pick them up in person.
+                <div class="pathway-card" style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 35px; backdrop-filter: blur(16px); box-shadow: 0 20px 40px rgba(0,0,0,0.25); transition: var(--transition); max-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
+                    <div style="font-size: 44px; margin-bottom: 15px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));">🏫</div>
+                    <h3 style="font-size: 21px; font-weight: 700; color: #fff; margin-bottom: 12px; letter-spacing: -0.3px;">ZHI College Library</h3>
+                    <p style="font-size: 14.5px; color: rgba(255,255,255,0.75); line-height: 1.65; margin-bottom: 25px; min-height: 75px;">
+                        Browse college textbook inventories, check real-time availability status and specific shelf rack spots, and submit issue requests online to pick them up.
                     </p>
                     <a href="all_books.html" class="btn secondary-btn" style="display: block; text-align: center; border-radius: 12px; padding: 13px 20px; width: 100%; border: 2px solid var(--accent-color); color: var(--accent-color); background: transparent; box-shadow: none;">
-                        Access Campus Library
+                        Access College Library
                     </a>
                 </div>
 
                 <!-- GLOBAL RESOURCES PATHWAY -->
-                <div class="pathway-card" style="background: rgba(15, 23, 42, 0.55); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 35px; backdrop-filter: blur(16px); box-shadow: 0 20px 40px rgba(0,0,0,0.25); transition: var(--transition);">
-                    <div style="font-size: 42px; margin-bottom: 15px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));">💡</div>
+                <div class="pathway-card" style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 35px; backdrop-filter: blur(16px); box-shadow: 0 20px 40px rgba(0,0,0,0.25); transition: var(--transition); max-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
+                    <div style="font-size: 44px; margin-bottom: 15px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));">💡</div>
                     <h3 style="font-size: 21px; font-weight: 700; color: #fff; margin-bottom: 12px; letter-spacing: -0.3px;">Global Learning Hub</h3>
-                    <p style="font-size: 14.5px; color: rgba(255,255,255,0.7); line-height: 1.65; margin-bottom: 25px; min-height: 75px;">
+                    <p style="font-size: 14.5px; color: rgba(255,255,255,0.75); line-height: 1.65; margin-bottom: 25px; min-height: 75px;">
                         Unlock global resource catalogs, YouTube tutorials, and Google research indexes, structured stream-wise to access reference folders, lectures, and free databases.
                     </p>
                     <a href="learning_hub.html" class="btn" style="display: block; text-align: center; border-radius: 12px; padding: 13px 20px; width: 100%; background: linear-gradient(135deg, var(--accent-color), #f59e0b); border: none; color: #0f172a;">
@@ -99,360 +96,301 @@
             </div>
         </div>
     </section>
-
-   
-    <section class="search-section">
-        <h2>Search Your Favorite Books</h2>
+     <section class="search-section">
+        <h2>Search Campus Textbook Catalog</h2>
         <div class="search-box">
-            <input type="text" id="homeSearchInput" placeholder="Search books, authors, categories...">
+            <input type="text" id="homeSearchInput" placeholder="Search syllabus books, authors, courses...">
             <button id="homeSearchBtn">Search</button>
         </div>
     </section>
 
-   
+    <!-- SEARCH RESULTS SECTION -->
+    <section id="homeSearchResultsSection" style="display:none; padding: 60px 8% 20px 8%; border-bottom: 1px solid var(--border-color);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1.5px solid var(--border-color); padding-bottom: 15px; width: 100%;">
+            <h2 style="font-size:28px; font-weight:800; color:var(--text-color); margin:0;">🔍 Search Results</h2>
+            <button onclick="clearHomeSearch()" style="background:transparent; border:1.5px solid var(--border-color); color:var(--text-color); padding:8px 20px; border-radius:10px; cursor:pointer; font-weight:700; font-size:14px; transition:all 0.2s;">Clear Results</button>
+        </div>
+        <div id="homeSearchResultsContainer" class="book-container" style="margin-top: 25px;">
+            <!-- Dynamic search results will go here -->
+        </div>
+    </section>
+
+    
     <section class="featured-books">
-        <h2>Featured Books</h2>
+        <h2>Recommended Course Textbooks</h2>
         <div class="book-container">
             <div class="book-item">
-                <img src="images/atomic habit.jpg" alt="Atomic Habits">
-                <h3>Atomic Habits</h3>
-                <p>James Clear</p>
+                <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400" alt="Software Engineering">
+                <h3>Software Engineering</h3>
+                <p>Roger S. Pressman</p>
             </div>
             <div class="book-item">
-                <img src="images/rich dad poor dad.jpg" alt="Rich Dad Poor Dad">
-                <h3>Rich Dad Poor Dad</h3>
-                <p>Robert Kiyosaki</p>
+                <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=400" alt="Marketing Management">
+                <h3>Marketing Management</h3>
+                <p>Philip Kotler</p>
             </div>
             <div class="book-item">
-                <img src="images/psychology of money.jpg" alt="The Psychology of Money">
-                <h3>The Psychology of Money</h3>
-                <p>Morgan Housel</p>
+                <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=400" alt="Introduction to Algorithms">
+                <h3>Introduction to Algorithms</h3>
+                <p>Thomas H. Cormen</p>
             </div>
              <div class="book-item">
-                <img src="images/psychology of money.jpg" alt="The Psychology of Money">
-                <h3>The Psychology of Money</h3>
-                <p>Morgan Housel</p>
+                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=400" alt="Financial Accounting">
+                <h3>Financial Accounting</h3>
+                <p>Dr. S. N. Maheshwari</p>
             </div>
         </div>
     </section>
 
 
     <section class="category-section">
-        <h2>Popular Categories</h2>
+        <h2>Syllabus Categories</h2>
         <div class="category-container">
-            <div class="category-card" onclick="location.href='all_books.html?cat=BCA'">BCA</div>
-            <div class="category-card" onclick="location.href='all_books.html?cat=BBA'">BBA</div>
-            <div class="category-card" onclick="location.href='all_books.html?cat=MCA'">MCA</div>
-            <div class="category-card" onclick="location.href='all_books.html?cat=MBA'">MBA</div>
-            <div class="category-card" onclick="location.href='all_books.html?cat=Programming'">Programming</div>
-            <div class="category-card" onclick="location.href='all_books.html?cat=Self Improvement'">Self Improvement</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=BCA'">BCA Syllabus</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=MCA'">MCA Syllabus</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=BBA'">BBA Syllabus</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=MBA'">MBA Syllabus</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=Computer'">Computer Science</div>
+            <div class="category-card" onclick="location.href='all_books.html?cat=Management'">Management Studies</div>
         </div>
     </section>
 
     
     <section class="features">
         <div class="card">
-            <h3>📚 Book Management</h3>
-            <p>Easily catalog, organize, update status, and manage book inventories in real-time.</p>
+            <h3>📚 Syllabus Reference</h3>
+            <p>Access reference guides, textbooks, and syllabus files mapped directly to semesters.</p>
         </div>
         <div class="card">
-            <h3>👨‍🎓 Student Records</h3>
-            <p>Access enrollment records, logs, student courses, and academic data with security.</p>
+            <h3>🖥️ Digital Learning Lab</h3>
+            <p>Access high-speed research PCs, digital archives, and educational video toolkits.</p>
         </div>
         <div class="card">
-            <h3>🔄 Issue & Return</h3>
-            <p>Track student borrows, return deadlines, overdue statuses, and calculate automated fines.</p>
+            <h3>🔄 Easy Reservation</h3>
+            <p>Search book availability online, place reservation requests, and pick them up at the counter.</p>
         </div>
     </section>
 
     
     <section class="stats-section">
         <div class="stat-box">
-            <h2>10K+</h2>
-            <p>Books Available</p>
+            <h2>25K+</h2>
+            <p>Syllabus Volumes</p>
         </div>
         <div class="stat-box">
-            <h2>5K+</h2>
-            <p>Active Students</p>
+            <h2>4K+</h2>
+            <p>Enrolled Students</p>
         </div>
         <div class="stat-box">
-            <h2>500+</h2>
-            <p>Daily Visitors</p>
+            <h2>150+</h2>
+            <p>Study Room Seats</p>
         </div>
         <div class="stat-box">
-            <h2>99%</h2>
-            <p>Satisfaction Rate</p>
+            <h2>100%</h2>
+            <p>Academic Support</p>
         </div>
     </section>
 
     
     <section class="about-section">
         <div class="about-image">
-            <img src="images/modern lib image.jpg" alt="Modern Library">
+            <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=600" alt="ZHI College Central Library">
         </div>
         <div class="about-content">
-            <h2>About Our Library</h2>
+            <h2>About Our Central Library</h2>
             <p>
-                Our digital Library Management System (LibraryMS) serves as a modern digital repository designed to bridge students and physical books seamlessly. 
+                The Central Library of Dr. Zakir Husain Institute serves as the academic backbone for our BCA, MCA, BBA, and MBA programs. We provide students with extensive print textbooks, research journals, and online digital learning spaces.
             </p>
             <p>
-                With automated tracking, instant alerts, and customizable reports, librarians and administrators can ensure optimal circulation metrics.
+                Equipped with high-speed internet, computerized catalog indexing, and quiet study areas, we support students in achieving their academic goals.
             </p>
-            <a href="all_books.html" class="btn">Explore Books</a>
+            <a href="all_books.html" class="btn">Explore College Library</a>
         </div>
     </section>
 
- 
+    <!-- RECOMMENDED ACADEMIC TOP READS -->
+    <section class="why-section" style="padding: 60px 8% 20px 8%; border-top: 1px solid var(--border-color);">
+        <div style="text-align:center; margin-bottom:40px;">
+            <h2 style="font-size:32px; font-weight:800; color:var(--text-color); margin-bottom:10px;">🔥 Popular Academic Reads</h2>
+            <p style="color:var(--text-muted); max-width:600px; margin:0 auto; font-size:15px;">Most issued recommended textbooks by students this semester.</p>
+        </div>
+        <div class="why-container" style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:20px;">
+            <!-- Book 1 -->
+            <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:18px; padding:25px; box-shadow:0 10px 25px var(--shadow-color); width:280px; display:flex; flex-direction:column; justify-content:space-between; text-align:left;">
+                <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400" alt="Core Java" style="width:100%; height:180px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
+                <h3 style="font-size:17px; font-weight:700; margin:0 0 5px 0; color:var(--text-color);">Core Java: Volume I</h3>
+                <p style="font-size:13px; color:var(--text-muted); margin:0 0 10px 0;">Cay S. Horstmann</p>
+                <div style="color:var(--accent-color); font-size:13px; margin-bottom:10px;">⭐⭐⭐⭐⭐ (4.9/5)</div>
+                <div style="display:flex; justify-content:center; align-items:center; margin-top:auto; width:100%;">
+                    <a href="all_books.html" style="display:block; width:100%; text-align:center; background:var(--primary-color); color:#fff; text-decoration:none; padding:10px; border-radius:8px; font-weight:700; font-size:14px; transition:all 0.2s;">
+                        Check Availability
+                    </a>
+                </div>
+            </div>
+            <!-- Book 2 -->
+            <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:18px; padding:25px; box-shadow:0 10px 25px var(--shadow-color); width:280px; display:flex; flex-direction:column; justify-content:space-between; text-align:left;">
+                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=400" alt="Organizational Behavior" style="width:100%; height:180px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
+                <h3 style="font-size:17px; font-weight:700; margin:0 0 5px 0; color:var(--text-color);">Organizational Behavior</h3>
+                <p style="font-size:13px; color:var(--text-muted); margin:0 0 10px 0;">Stephen P. Robbins</p>
+                <div style="color:var(--accent-color); font-size:13px; margin-bottom:10px;">⭐⭐⭐⭐⭐ (4.8/5)</div>
+                <div style="display:flex; justify-content:center; align-items:center; margin-top:auto; width:100%;">
+                    <a href="all_books.html" style="display:block; width:100%; text-align:center; background:var(--primary-color); color:#fff; text-decoration:none; padding:10px; border-radius:8px; font-weight:700; font-size:14px; transition:all 0.2s;">
+                        Check Availability
+                    </a>
+                </div>
+            </div>
+            <!-- Book 3 -->
+            <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:18px; padding:25px; box-shadow:0 10px 25px var(--shadow-color); width:280px; display:flex; flex-direction:column; justify-content:space-between; text-align:left;">
+                <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&q=80&w=400" alt="Operating Systems" style="width:100%; height:180px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
+                <h3 style="font-size:17px; font-weight:700; margin:0 0 5px 0; color:var(--text-color);">Operating System Concepts</h3>
+                <p style="font-size:13px; color:var(--text-muted); margin:0 0 10px 0;">Abraham Silberschatz</p>
+                <div style="color:var(--accent-color); font-size:13px; margin-bottom:10px;">⭐⭐⭐⭐⭐ (4.7/5)</div>
+                <div style="display:flex; justify-content:center; align-items:center; margin-top:auto; width:100%;">
+                    <a href="all_books.html" style="display:block; width:100%; text-align:center; background:var(--primary-color); color:#fff; text-decoration:none; padding:10px; border-radius:8px; font-weight:700; font-size:14px; transition:all 0.2s;">
+                        Check Availability
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="why-section">
-        <h2>Why Choose Our Library?</h2>
+        <h2>Why Choose ZHI Library?</h2>
         <div class="why-container">
             <div class="why-card">
-                <h3>⚡ Fast Access</h3>
-                <p>Lookup categories, author names, and shelf spots instantly with our quick indexing.</p>
+                <h3>📖 University Syllabus Mapped</h3>
+                <p>Find all prescribed and recommended textbooks for Patna University semesters easily.</p>
             </div>
             <div class="why-card">
-                <h3>🔒 Secure System</h3>
-                <p>High-end authorization protocols protect private credentials and issue histories.</p>
+                <h3>💡 24/7 E-Resource Access</h3>
+                <p>Read digital chapters, software guides, and download PDF materials anytime, anywhere.</p>
             </div>
             <div class="why-card">
-                <h3>📊 Smart Analytics</h3>
-                <p>Track book demands, student activity trends, and category popularities on detailed graphs.</p>
+                <h3>🏫 Quiet Reading Rooms</h3>
+                <p>A spacious, fully air-conditioned environment with individual study desks and high-speed Wi-Fi.</p>
             </div>
         </div>
     </section>
 
     <!-- TESTIMONIALS -->
     <section class="testimonial-section">
-        <h2>What Students Say</h2>
+        <h2>What ZHI Students Say</h2>
         <div class="testimonial-container">
             <div class="testimonial-card">
-                <p>“This digital system is extremely convenient. I can search book availability right from my hostel room before visiting.”</p>
-                <h4>- Rahul Kumar</h4>
+                <p>“The online book reservation system is a savior. I can reserve my semester syllabus reference book before coming to class!”</p>
+                <h4>- Rahul Kumar (BCA Student)</h4>
             </div>
             <div class="testimonial-card">
-                <p>“Book issuing and deadline tracking became super simple. No more unexpected overdue fines for missing dates!”</p>
-                <h4>- Priya Sharma</h4>
+                <p>“Accessing course chapter notes and PDFs on my phone via the digital resources portal is incredibly helpful for coding assignments.”</p>
+                <h4>- Priya Sharma (MCA Student)</h4>
             </div>
             <div class="testimonial-card">
-                <p>“Amazing user-friendly dashboard and beautiful Dark Mode. Highly recommended for colleges.”</p>
-                <h4>- Aman Raj</h4>
+                <p>“ZHI Library has quiet cubicles that are perfect for study sessions between lectures. The catalog is always up-to-date.”</p>
+                <h4>- Aman Raj (BBA Student)</h4>
             </div>
         </div>
     </section>
 
-    <!-- MEMBERSHIP PLANS & PRICING (SaaS) -->
-    <section class="why-section" style="background:var(--card-bg); border-top:1px solid var(--border-color); border-bottom:1px solid var(--border-color); padding:80px 8%;">
-        <div style="text-align:center; margin-bottom:50px;">
-            <h2 style="font-size:36px; font-weight:800; color:var(--text-color); margin-bottom:10px;">Premium Membership Plans</h2>
-            <p style="color:var(--text-muted); max-width:600px; margin:0 auto; font-size:16px;">Accelerate your education with unlimited access to digital e-books, home delivery, and priority booking.</p>
-        </div>
-        <div class="why-container" style="display:flex; justify-content:center; align-items:stretch; gap:30px; flex-wrap:wrap; margin-top:30px;">
-            <!-- Plan 1 -->
-            <div class="why-card" style="flex:1; min-width:280px; max-width:320px; background:var(--bg-color); border:1px solid var(--border-color); border-radius:16px; padding:35px 25px; display:flex; flex-direction:column; justify-content:space-between; text-align:center; box-shadow:0 8px 20px var(--shadow-color); margin-top: 0;">
+    <!-- ZHI CENTRAL LIBRARY GUIDELINES -->
+    <section class="about-section" style="background:var(--card-bg); border-top:1px solid var(--border-color); padding:80px 8%; display:block;">
+        <div style="max-width:1000px; margin:0 auto;">
+            <h2 style="font-size:32px; font-weight:800; color:var(--text-color); margin-bottom:12px; border-bottom:2px solid var(--border-color); padding-bottom:12px;">Dr. Zakir Husain Institute Library - Code of Rules & Regulations</h2>
+            <p style="color:var(--text-muted); font-size:15.5px; line-height:1.7; margin-bottom:30px;">
+                The following rules and regulations have been framed by the Library Advisory Committee of Dr. Zakir Husain Institute to ensure optimal utilization of library materials, resources, and facilities. All registered students, faculty members, and research staff are required to strictly adhere to these official policies.
+            </p>
+
+            <div style="display:grid; grid-template-columns:1fr; gap:30px; margin-bottom:30px;">
+                <!-- Subsection 1 -->
                 <div>
-                    <h3 style="font-size:20px; font-weight:700; margin-bottom:10px; color:var(--text-color);">Free Student</h3>
-                    <div style="font-size:28px; font-weight:800; margin-bottom:20px; color:var(--accent-color);">₹0 <span style="font-size:13px; font-weight:500; color:var(--text-muted);">/ lifetime</span></div>
-                    <ul style="text-align:left; font-size:13.5px; color:var(--text-color); margin-bottom:30px; line-height:2.2; list-style-type:none; padding:0;">
-                        <li>✔️ Borrow up to 2 physical books</li>
-                        <li>✔️ 15-day issue duration</li>
-                        <li>✔️ Access free e-books list</li>
-                        <li>❌ No home shipping delivery</li>
-                        <li>❌ Normal processing speed</li>
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-color); margin-bottom:12px; display:flex; align-items:center; gap:8px;">1. General Code of Conduct</h3>
+                    <ul style="font-size:14.5px; line-height:1.8; color:var(--text-muted); padding-left:20px; margin-bottom:20px;">
+                        <li style="margin-bottom:8px;">A valid ZHI student/employee ID card is strictly mandatory for entry and all circulation transactions. ID cards are non-transferable.</li>
+                        <li style="margin-bottom:8px;">Strict silence must be observed inside the reading rooms and study cabins. Cellular phones must be switched off or kept on silent mode.</li>
+                        <li style="margin-bottom:8px;">Personal belongings (such as bags, briefcases, folders, and printed books) are not permitted inside the open shelf stack section. These must be deposited at the property counter at the owner's risk.</li>
+                        <li style="margin-bottom:8px;">Smoking, drinking, eating, and sleeping are strictly prohibited within all areas of the library premises.</li>
                     </ul>
                 </div>
-                <a href="register.html" class="btn" style="width:100%; border:none; padding:12px 0; display:block; border-radius:8px; background:transparent; border:1.5px solid var(--border-color); color:var(--text-color); text-decoration:none; font-weight:600; cursor:pointer;">Join for Free</a>
-            </div>
-            <!-- Plan 2 (Popular) -->
-            <div class="why-card" style="flex:1; min-width:280px; max-width:320px; background:var(--bg-color); border:2.5px solid var(--accent-color); border-radius:16px; padding:35px 25px; display:flex; flex-direction:column; justify-content:space-between; text-align:center; box-shadow:0 12px 30px var(--shadow-hover); position:relative; transform:scale(1.03); margin-top: 0;">
-                <div style="position:absolute; top:-15px; left:50%; transform:translateX(-50%); background:var(--accent-color); color:#0f172a; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; padding:5px 15px; border-radius:30px; box-shadow:0 5px 15px rgba(0,0,0,0.15); z-index:10;">Most Popular</div>
+
+                <!-- Subsection 2: Table for Circulation -->
                 <div>
-                    <h3 style="font-size:20px; font-weight:700; margin-bottom:10px; color:var(--text-color); margin-top:5px;">Pro Scholar</h3>
-                    <div style="font-size:28px; font-weight:800; margin-bottom:20px; color:var(--accent-color);">₹199 <span style="font-size:13px; font-weight:500; color:var(--text-muted);">/ month</span></div>
-                    <ul style="text-align:left; font-size:13.5px; color:var(--text-color); margin-bottom:30px; line-height:2.2; list-style-type:none; padding:0;">
-                        <li>✔️ Borrow up to 5 physical books</li>
-                        <li>✔️ 30-day issue duration</li>
-                        <li>✔️ Access all e-books & chapters</li>
-                        <li>✔️ Priority queue checkout</li>
-                        <li>❌ No home shipping delivery</li>
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-color); margin-bottom:12px;">2. Circulation Policies & Overdue Charges</h3>
+                    <p style="font-size:14.5px; color:var(--text-muted); margin-bottom:15px; line-height:1.6;">
+                        Books are issued to members according to their registration category as outlined in the schedule below. Overdue returns are subject to automatic daily fines.
+                    </p>
+                    <div class="table-wrapper" style="margin-bottom:20px;">
+                        <table style="width:100%; border-collapse:collapse; margin-top:5px;">
+                            <thead>
+                                <tr>
+                                    <th style="padding:12px 16px; font-size:14px; background:var(--table-header-bg); color:#fff;">Membership Category</th>
+                                    <th style="padding:12px 16px; font-size:14px; background:var(--table-header-bg); color:#fff;">Borrowing Limit</th>
+                                    <th style="padding:12px 16px; font-size:14px; background:var(--table-header-bg); color:#fff;">Circulation Period</th>
+                                    <th style="padding:12px 16px; font-size:14px; background:var(--table-header-bg); color:#fff;">Overdue Fine Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">Undergraduate Students (BCA / BBA)</td>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">3 Books</td>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">15 Calendar Days</td>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">₹2.00 / day per volume</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">Postgraduate Students (MCA / MBA)</td>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">5 Books</td>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">30 Calendar Days</td>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">₹2.00 / day per volume</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">Academic Faculty & Research Staff</td>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">10 Books</td>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">90 Calendar Days</td>
+                                    <td style="padding:12px 16px; font-size:14px; border-bottom:1px solid var(--border-color); color:var(--text-color);">₹5.00 / day per volume</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Subsection 3 -->
+                <div>
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-color); margin-bottom:12px;">3. Loss & Damage Regulations</h3>
+                    <ul style="font-size:14.5px; line-height:1.8; color:var(--text-muted); padding-left:20px;">
+                        <li style="margin-bottom:8px;">Reference volumes, encyclopedias, bound university journals, and dissertation thesis projects are strictly restricted for in-library use only and cannot be checked out.</li>
+                        <li style="margin-bottom:8px;">Borrowers must inspect books before checkout. Any marking, page folding, underline, defacement, or damage detected on return will hold the last borrower responsible.</li>
+                        <li style="margin-bottom:8px;">In case of loss or severe damage to any issued book, the borrower is legally liable to replace the volume with its latest edition or pay twice the current market value of the book.</li>
+                        <li style="margin-bottom:8px;">Library clearance certificate (NOC) is mandatory for university examination registration, degree clearance, and institute exit procedures.</li>
                     </ul>
                 </div>
-                <button onclick="triggerSubscriptionCheckout('Pro Scholar Plan', 199)" class="btn" style="width:100%; border:none; padding:12px 0; border-radius:8px; background:var(--accent-color); color:#0f172a; font-weight:700; cursor:pointer; font-family:inherit;">Subscribe Now</button>
-            </div>
-            <!-- Plan 3 -->
-            <div class="why-card" style="flex:1; min-width:280px; max-width:320px; background:var(--bg-color); border:1px solid var(--border-color); border-radius:16px; padding:35px 25px; display:flex; flex-direction:column; justify-content:space-between; text-align:center; box-shadow:0 8px 20px var(--shadow-color); margin-top: 0;">
-                <div>
-                    <h3 style="font-size:20px; font-weight:700; margin-bottom:10px; color:var(--text-color);">Elite Researcher</h3>
-                    <div style="font-size:28px; font-weight:800; margin-bottom:20px; color:var(--accent-color);">₹499 <span style="font-size:13px; font-weight:500; color:var(--text-muted);">/ month</span></div>
-                    <ul style="text-align:left; font-size:13.5px; color:var(--text-color); margin-bottom:30px; line-height:2.2; list-style-type:none; padding:0;">
-                        <li>✔️ Borrow up to 10 physical books</li>
-                        <li>✔️ 45-day issue duration</li>
-                        <li>✔️ Access all e-books & chapters</li>
-                        <li>✔️ Free home delivery / returns</li>
-                        <li>✔️ Expert research assistant chat</li>
-                    </ul>
-                </div>
-                <button onclick="triggerSubscriptionCheckout('Elite Researcher Plan', 499)" class="btn" style="width:100%; border:none; padding:12px 0; border-radius:8px; background:transparent; border:1.5px solid var(--border-color); color:var(--text-color); font-weight:600; cursor:pointer; font-family:inherit;">Subscribe Now</button>
             </div>
         </div>
     </section>
 
-    <!-- CHECKOUT MODAL (Simulated subscription buy) -->
-    <div id="indexCheckoutModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.85); backdrop-filter:blur(8px); z-index:9999; justify-content:center; align-items:center; padding:20px;">
-        <div style="background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-color); width:100%; max-width:480px; padding:35px; border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto; position:relative;">
-            <button onclick="closeIndexCheckout()" style="position:absolute; top:20px; right:20px; background:transparent; border:none; color:var(--text-color); font-size:24px; cursor:pointer;">&times;</button>
-            <h2 id="indexCheckoutTitle" style="font-size:22px; font-weight:800; color:var(--accent-color); margin-bottom:5px;">Subscribe to Plan</h2>
-            <p id="indexCheckoutSubtitle" style="font-size:13.5px; color:var(--text-muted); margin-bottom:20px;">Complete payment below to unlock premium access.</p>
-            
-            <div style="background:var(--bg-color); border:1px solid var(--border-color); padding:15px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-                <span style="font-weight:600; font-size:14px;">Total Amount Due:</span>
-                <span id="indexCheckoutPrice" style="font-size:18px; font-weight:800; color:var(--accent-color);">₹0</span>
-            </div>
-
-            <!-- PAYMENT OPTIONS -->
-            <div style="display:flex; justify-content:center; gap:20px; margin-bottom:25px;">
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600; font-size:14px; color: var(--text-color);">
-                    <input type="radio" name="indexPayMethod" value="card" checked onclick="toggleIndexPayView('card')"> 💳 Credit/Debit Card
-                </label>
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600; font-size:14px; color: var(--text-color);">
-                    <input type="radio" name="indexPayMethod" value="upi" onclick="toggleIndexPayView('upi')"> 📱 UPI Scanner
-                </label>
-            </div>
-
-            <!-- CARD FORM -->
-            <form id="indexCardForm" onsubmit="processIndexPayment(event)" style="display:flex; flex-direction:column; gap:12px;">
-                <input type="text" placeholder="Cardholder Name" required style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-color); color:var(--text-color);">
-                <input type="text" placeholder="Card Number (XXXX-XXXX-XXXX-XXXX)" required pattern="\\d{4}-\\d{4}-\\d{4}-\\d{4}" title="Please match card format 1234-5678-9012-3456" style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-color); color:var(--text-color);">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                    <input type="text" placeholder="MM/YY" required pattern="\\d{2}/\\d{2}" title="Expiry MM/YY" style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-color); color:var(--text-color);">
-                    <input type="password" placeholder="CVV" required pattern="\\d{3}" title="3-digit CVV" style="padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-color); color:var(--text-color);">
-                </div>
-                <button type="submit" style="width:100%; border:none; padding:12px 0; border-radius:8px; background:var(--accent-color); color:#0f172a; font-weight:700; cursor:pointer; font-size:14px;">Authorize Payment</button>
-            </form>
-
-            <!-- UPI VIEW -->
-            <div id="indexUpiView" style="display:none; text-align:center; flex-direction:column; align-items:center; gap:15px;">
-                <p style="font-size:13px; color:var(--text-muted);">Scan this QR Code with BHIM, GooglePay, PhonePe or Paytm to pay instantly.</p>
-                <div style="background:#ffffff; padding:15px; border-radius:12px; display:inline-block; border:2px solid var(--accent-color);">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=smartlib@upi%26pn=SmartLib%26am=199%26cu=INR" alt="UPI QR Code" style="display:block; width:150px; height:150px;">
-                </div>
-                <button onclick="processIndexPaymentDirect()" style="width:100%; border:none; padding:12px 0; border-radius:8px; background:var(--accent-color); color:#0f172a; font-weight:700; cursor:pointer; font-size:14px;">I Have Paid / Confirm Payment</button>
-            </div>
-
-            <!-- LOADER -->
-            <div id="indexPayLoader" style="display:none; text-align:center; padding:30px 0;">
-                <div style="border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--accent-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px auto;"></div>
-                <p style="font-size:13.5px; font-weight:600;">Securing payment connection. Please do not close...</p>
-            </div>
-
-            <!-- SUCCESS receipt -->
-            <div id="indexSuccessReceipt" style="display:none; text-align:center; padding:10px 0;">
-                <span style="font-size:48px;">🎉</span>
-                <h3 style="color:#10b981; font-size:20px; font-weight:800; margin:10px 0 5px 0;">Payment Approved!</h3>
-                <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Your subscription has been activated successfully!</p>
-                <div style="background:var(--bg-color); border:1px solid var(--border-color); padding:15px; border-radius:10px; text-align:left; font-size:12px; margin-bottom:20px; line-height:1.6; color: var(--text-color);">
-                    <p><strong>Order ID:</strong> SUB-${Math.floor(Math.random()*900000 + 100000)}</p>
-                    <p><strong>Product:</strong> <span id="indexReceiptProduct">Plan</span></p>
-                    <p><strong>Status:</strong> Active (Premium Access Unlocked)</p>
-                </div>
-                <button onclick="closeIndexCheckout()" style="width:100%; border:none; padding:12px 0; border-radius:8px; background:var(--accent-color); color:#0f172a; font-weight:700; cursor:pointer;">Done</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SPIN ANIMATION STYLE -->
-    <style>
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-
-    <script>
-        function triggerSubscriptionCheckout(planName, price) {
-            document.getElementById("indexCheckoutTitle").innerText = "Subscribe: " + planName;
-            document.getElementById("indexReceiptProduct").innerText = planName;
-            document.getElementById("indexCheckoutPrice").innerText = "₹" + price;
-            
-            // Set QR code data
-            const qrImg = document.querySelector("#indexUpiView img");
-            if (qrImg) {
-                qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=smartlib@upi%26pn=SmartLib%26am=" + price + "%26cu=INR";
-            }
-
-            // Reset modal states
-            document.getElementById("indexCardForm").style.display = "flex";
-            document.getElementById("indexUpiView").style.display = "none";
-            document.getElementById("indexPayLoader").style.display = "none";
-            document.getElementById("indexSuccessReceipt").style.display = "none";
-            document.querySelector("input[name='indexPayMethod'][value='card']").checked = true;
-
-            document.getElementById("indexCheckoutModal").style.display = "flex";
-        }
-
-        function closeIndexCheckout() {
-            document.getElementById("indexCheckoutModal").style.display = "none";
-        }
-
-        function toggleIndexPayView(method) {
-            if (method === "card") {
-                document.getElementById("indexCardForm").style.display = "flex";
-                document.getElementById("indexUpiView").style.display = "none";
-            } else {
-                document.getElementById("indexCardForm").style.display = "none";
-                document.getElementById("indexUpiView").style.display = "flex";
-            }
-        }
-
-        function processIndexPayment(e) {
-            e.preventDefault();
-            document.getElementById("indexCardForm").style.display = "none";
-            document.getElementById("indexPayLoader").style.display = "block";
-
-            setTimeout(() => {
-                document.getElementById("indexPayLoader").style.display = "none";
-                document.getElementById("indexSuccessReceipt").style.display = "block";
-            }, 2500);
-        }
-
-        function processIndexPaymentDirect() {
-            document.getElementById("indexUpiView").style.display = "none";
-            document.getElementById("indexPayLoader").style.display = "block";
-
-            setTimeout(() => {
-                document.getElementById("indexPayLoader").style.display = "none";
-                document.getElementById("indexSuccessReceipt").style.display = "block";
-            }, 2000);
-        }
-    </script>
-
- 
+    <!-- Main Footer -->
     <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-box">
-                <h2>LibraryMS</h2>
-                <p>Modern digital library management system for schools and colleges.</p>
+                <h2>SmartLib</h2>
+                <p>Modern digital library management system for Dr. Zakir Husain Institute, Patna.</p>
             </div>
             <div class="footer-box">
                 <h3>Quick Links</h3>
                 <a href="index.html">Home</a>
-                <a href="all_books.html">Books</a>
-                <a href="contact.html">Contact</a>
+                <a href="all_books.html">College Library</a>
+                <a href="digital_library.html">Digital Resources</a>
+                <a href="learning_hub.html">Learning Hub</a>
             </div>
             <div class="footer-box">
                 <h3>Contact</h3>
-                <p>📍 Patna, Bihar</p>
-                <p>📞 +91 9876543210</p>
-                <p>✉ support@libraryms.com</p>
+                <p>📍 Boring Road, Patna, Bihar 800013</p>
+                <p>📞 +91 612 222 3456</p>
+                <p>✉ support@zhi.edu.in</p>
             </div>
         </div>
         <div class="footer-bottom">
-            © 2026 LibraryMS | Designed By Shikha Sharma
+            © 2026 SmartLib | Designed By Shikha Sharma
         </div>
     </footer>
 
-    
     <script src="js/script.js"></script>
-
 </body>
-
 </html>

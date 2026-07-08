@@ -24,6 +24,31 @@ const issueSchema = new mongoose.Schema(
     returnDate: {
       type: String,
       required: true
+    },
+    studentId: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    accessionNo: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    remarks: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    issueType: {
+      type: String,
+      trim: true,
+      default: "Student Online"
+    },
+    status: {
+      type: String,
+      enum: ["Active", "Returned", "Overdue"],
+      default: "Active"
     }
   },
   { timestamps: true }

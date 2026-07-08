@@ -30,9 +30,9 @@ function displayStudents(filteredStudents = students){
 
         <div class="book-card">
 
-            <h3>No Students Found</h3>
+            <h3>No Users Found</h3>
 
-            <p>Try another search or add a new student.</p>
+            <p>Try another search or add a new user.</p>
 
         </div>
 
@@ -50,9 +50,17 @@ function displayStudents(filteredStudents = students){
 
             <h3>${student.name}</h3>
 
-            <p><strong>Course:</strong> ${student.course}</p>
+            <p><strong>Class/Course:</strong> ${student.course} (${student.semester || 'N/A'})</p>
 
-            <p><strong>Roll:</strong> ${student.roll}</p>
+            <p><strong>Roll Number:</strong> ${student.roll}</p>
+
+            <p><strong>Student ID:</strong> ${student.studentId || 'N/A'}</p>
+
+            <p><strong>Session:</strong> ${student.session || 'N/A'}</p>
+
+            <p><strong>Email:</strong> ${student.email || 'N/A'}</p>
+
+            <p><strong>Mobile:</strong> ${student.phone || 'N/A'}</p>
 
             <button class="delete-btn"
             onclick="deleteStudent('${getId(student)}')">
@@ -80,7 +88,7 @@ async function loadStudents(searchValue = ""){
 
         if(!response.ok){
             const result = await response.json();
-            alert(result.message || "Students not loaded");
+            alert(result.message || "Users not loaded");
             return;
         }
 
@@ -107,7 +115,22 @@ studentForm.addEventListener("submit", async function(e){
     let roll =
     document.getElementById("studentRoll").value.trim();
 
-    if(name === "" || course === "" || roll === ""){
+    let studentIdVal =
+    document.getElementById("studentIdInput").value.trim();
+
+    let semesterVal =
+    document.getElementById("studentSemester").value;
+
+    let emailVal =
+    document.getElementById("studentEmail").value.trim();
+
+    let phoneVal =
+    document.getElementById("studentPhone").value.trim();
+
+    let sessionVal =
+    document.getElementById("studentSession").value.trim();
+
+    if(name === "" || course === "" || roll === "" || studentIdVal === "" || !semesterVal || emailVal === "" || phoneVal === "" || sessionVal === ""){
 
         alert("Please fill all fields");
 
@@ -121,13 +144,22 @@ studentForm.addEventListener("submit", async function(e){
             headers:{
                 "Content-Type":"application/json"
             },
-            body:JSON.stringify({ name, course, roll })
+            body:JSON.stringify({ 
+                name, 
+                course, 
+                roll, 
+                studentId: studentIdVal, 
+                semester: semesterVal,
+                email: emailVal,
+                phone: phoneVal,
+                session: sessionVal
+            })
         });
 
         const result = await response.json();
 
         if(!response.ok){
-            alert(result.message || "Student not added");
+            alert(result.message || "User not added");
             return;
         }
 
@@ -145,11 +177,11 @@ studentForm.addEventListener("submit", async function(e){
 async function deleteStudent(id){
 
     if(!id){
-        alert("Student id missing");
+        alert("User id missing");
         return;
     }
 
-    if(!confirm("Delete this student?")){
+    if(!confirm("Delete this user?")){
         return;
     }
 
@@ -161,7 +193,7 @@ async function deleteStudent(id){
         const result = await response.json();
 
         if(!response.ok){
-            alert(result.message || "Student not deleted");
+            alert(result.message || "User not deleted");
             return;
         }
 

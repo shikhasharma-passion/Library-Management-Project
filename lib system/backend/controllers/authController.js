@@ -50,7 +50,7 @@ async function ensureAdminUser() {
 
 async function register(req, res) {
   try {
-    const { name, email, course, password } = req.body;
+    const { name, email, course, password, studentId, semester, roll } = req.body;
 
     if (!name || !email || !course || !password) {
       res.status(400).json({ success: false, message: "Please fill all fields" });
@@ -81,10 +81,16 @@ async function register(req, res) {
       role: "student"
     });
 
+    const calculatedStudentId = studentId ? studentId.trim() : `STU-${Math.floor(1000 + Math.random() * 9000)}`;
+    const calculatedSemester = semester ? semester.trim() : "Semester 1";
+    const calculatedRoll = roll ? roll.trim() : `ROLL-${Math.floor(100 + Math.random() * 900)}`;
+
     await Student.create({
       name: user.name,
       course: user.course,
-      roll: req.body.roll || `LIB-${Date.now()}`
+      roll: calculatedRoll,
+      studentId: calculatedStudentId,
+      semester: calculatedSemester
     });
 
     res.status(201).json({

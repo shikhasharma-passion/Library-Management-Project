@@ -1,3 +1,71 @@
+// Global Custom Centered Warning/Success Alert Override
+window.alert = function(message) {
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0, 34, 68, 0.4)";
+    overlay.style.backdropFilter = "blur(4px)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "100000";
+    overlay.id = "customAlertOverlay";
+
+    const msgLower = String(message).toLowerCase();
+    const isSuccess = !msgLower.includes("fail") && 
+                      !msgLower.includes("error") && 
+                      !msgLower.includes("invalid") && 
+                      !msgLower.includes("reject") && 
+                      !msgLower.includes("limit") && 
+                      !msgLower.includes("offline");
+
+    const icon = isSuccess ? "✔️" : "⚠️";
+    const color = isSuccess ? "#10b981" : "#ef4444";
+    const title = isSuccess ? "Action Successful" : "System Warning";
+
+    overlay.innerHTML = `
+        <div style="width: 350px; background: var(--card-bg); border: 2.5px solid ${color}; border-radius: 16px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; justify-content: space-between; gap: 15px; animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-sizing: border-box;">
+            <div>
+                <div style="font-size: 40px; margin-bottom: 8px;">${icon}</div>
+                <h3 style="font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 800; color: ${color}; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">${title}</h3>
+                <p style="font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text-color); line-height: 1.5; margin: 0; font-weight: 500;">
+                    ${message}
+                </p>
+            </div>
+            <button onclick="document.getElementById('customAlertOverlay').remove()" style="width: 100%; padding: 12px; border-radius: 8px; background: ${color}; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.filter='brightness(0.9)';" onmouseout="this.style.filter='none';">
+                Close Window
+            </button>
+        </div>
+    `;
+
+    if (!document.getElementById("popupAnimationStyles")) {
+        const style = document.createElement("style");
+        style.id = "popupAnimationStyles";
+        style.innerHTML = `
+            @keyframes popupScaleIn {
+                from { transform: scale(0.8); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    document.body.appendChild(overlay);
+};
+
+// Intercept and route fetch requests on local files to localhost:3000
+const ORIGINAL_FETCH = window.fetch;
+window.fetch = function(url, options) {
+    const API_BASE_URL = window.location.protocol === "file:" ? "http://localhost:3000" : "";
+    if (typeof url === "string" && url.startsWith("/api")) {
+        url = API_BASE_URL + url;
+    }
+    return ORIGINAL_FETCH(url, options);
+};
+
 const issueForm =
 document.getElementById("issueForm");
 
@@ -47,31 +115,23 @@ function displayIssuedBooks(){
 
             <h3>${book.student}</h3>
 
-            <p><strong>Book:</strong>
-            ${book.book}</p>
+            <p><strong>Student ID:</strong> ${book.studentId || 'N/A'}</p>
 
-            <p><strong>Date:</strong>
-            ${book.date}</p>
+            <p><strong>Book Title:</strong> ${book.book}</p>
 
-            <p><strong>Return Date:</strong>
-${book.returnDate}</p>
+            <p><strong>Accession No:</strong> ${book.accessionNo || 'N/A'}</p>
 
-            <p>
-<strong>Fine:</strong>
+            <p><strong>Issue Date:</strong> ${book.date}</p>
 
-Rs. ${fine}
+            <p><strong>Return Deadline:</strong> ${book.returnDate}</p>
 
-</p>
+            <p><strong>Remarks:</strong> ${book.remarks || 'N/A'}</p>
 
-<p>
+            <p><strong>Issue Source:</strong> ${book.issueType || 'Student Online'}</p>
 
-<strong>Status:</strong>
+            <p><strong>Fine:</strong> Rs. ${fine}</p>
 
-${fine > 0
-? "Overdue"
-: "Issued"}
-
-</p>
+            <p><strong>Status:</strong> ${fine > 0 ? "Overdue" : "Issued"}</p>
 
             <button class="delete-btn"
             onclick="returnBook('${getId(book)}')">
@@ -152,12 +212,24 @@ async function(e){
     document.getElementById("issueDate").value;
 
     let returnDate =
-document.getElementById("returnDate").value;
+    document.getElementById("returnDate").value;
+
+    let studentIdVal =
+    document.getElementById("issueStudentId").value.trim();
+
+    let accessionNoVal =
+    document.getElementById("issueAccessionNo").value.trim();
+
+    let remarksVal =
+    document.getElementById("issueRemarks").value.trim();
 
    if(student === "" ||
-book === "" ||
-date === "" ||
-returnDate === ""){
+    book === "" ||
+    date === "" ||
+    returnDate === "" ||
+    studentIdVal === "" ||
+    accessionNoVal === "" ||
+    remarksVal === ""){
 
         alert("Please fill all fields");
 
@@ -171,7 +243,15 @@ returnDate === ""){
             headers:{
                 "Content-Type":"application/json"
             },
-            body:JSON.stringify({ student, book, date, returnDate })
+            body:JSON.stringify({ 
+                student, 
+                book, 
+                date, 
+                returnDate,
+                studentId: studentIdVal,
+                accessionNo: accessionNoVal,
+                remarks: remarksVal
+            })
         });
 
         const result = await response.json();
@@ -252,4 +332,61 @@ function initTheme() {
 /* INITIAL */
 initTheme();
 loadIssuedBooks();
+loadActiveStudentsFeed();
+
+async function loadActiveStudentsFeed() {
+    const feed = document.getElementById("activeStudentsFeed");
+    if (!feed) return;
+
+    try {
+        const response = await fetch("/api/students");
+        if (!response.ok) {
+            feed.innerHTML = `<div style="text-align:center; color:#ef4444; font-size:12.5px; padding:15px;">Failed to load students</div>`;
+            return;
+        }
+
+        const students = await response.json();
+        const sortedStudents = [...students].sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+            const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+            return dateB - dateA;
+        });
+
+        if (sortedStudents.length === 0) {
+            feed.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:15px;">No students registered.</div>`;
+            return;
+        }
+
+        feed.innerHTML = sortedStudents.map(student => {
+            const escapedName = student.name.replace(/'/g, "\\'");
+            const escapedId = (student.studentId || "").replace(/'/g, "\\'");
+            return `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-radius:8px; border:1px solid var(--border-color); background:rgba(0,0,0,0.01); gap:8px;">
+                    <div style="display:flex; align-items:center; gap:8px; overflow:hidden;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary-color); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; flex-shrink:0;">
+                            ${student.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div style="overflow:hidden;">
+                            <div style="font-size:12px; font-weight:700; color:var(--text-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${student.name}</div>
+                            <div style="font-size:10px; color:var(--text-muted); font-weight:500;"><code>${student.studentId || "N/A"}</code> | ${student.course || "BCA"}</div>
+                        </div>
+                    </div>
+                    <button type="button" onclick="fillForm('${escapedName}', '${escapedId}')" style="margin-top:0; padding:4px 8px; font-size:10px; border-radius:6px; background:var(--accent-color); color:#0f172a; font-weight:700; border:none; cursor:pointer; flex-shrink:0;">
+                        ✏️ Fill
+                    </button>
+                </div>
+            `;
+        }).join("");
+    } catch (err) {
+        console.error(err);
+        feed.innerHTML = `<div style="text-align:center; color:#ef4444; font-size:12.5px; padding:15px;">Server error loading students</div>`;
+    }
+}
+
+window.fillForm = function(name, studentId) {
+    const studentInput = document.getElementById("issueStudent");
+    const idInput = document.getElementById("issueStudentId");
+    if (studentInput) studentInput.value = name;
+    if (idInput) idInput.value = studentId;
+};
 

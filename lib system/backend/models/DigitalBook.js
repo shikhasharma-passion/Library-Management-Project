@@ -32,6 +32,11 @@ const digitalBookSchema = new mongoose.Schema(
       required: true,
       trim: true
     },
+    semester: {
+      type: String,
+      default: "N/A",
+      trim: true
+    },
     fullBookUrl: {
       type: String,
       trim: true

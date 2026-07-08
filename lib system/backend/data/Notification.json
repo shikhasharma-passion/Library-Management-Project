@@ -1,0 +1,128 @@
+[
+  {
+    "userId": "STU-2026-1004",
+    "message": "ALERT: Book \"High School English Grammar and Composition (Wren & Martin)\" is overdue. Please return immediately. Fine accumulated: ₹140.",
+    "type": "Due",
+    "_id": "mock_5yvnj9mcibmxd1pu55anuh",
+    "id": "mock_5yvnj9mcibmxd1pu55anuh",
+    "updatedAt": "2026-07-08T16:20:00.149Z",
+    "createdAt": "2026-07-08T16:20:00.149Z"
+  },
+  {
+    "userId": "STU-2026-1008",
+    "message": "ALERT: Book \"Objective General English for Competitive Exams\" is overdue. Please return immediately. Fine accumulated: ₹140.",
+    "type": "Due",
+    "_id": "mock_pb0et5yrprla17ecc1qfkr",
+    "id": "mock_pb0et5yrprla17ecc1qfkr",
+    "updatedAt": "2026-07-08T16:20:00.215Z",
+    "createdAt": "2026-07-08T16:20:00.215Z"
+  },
+  {
+    "userId": "STU-2026-1010",
+    "message": "ALERT: Book \"C++ Primer\" is overdue. Please return immediately. Fine accumulated: ₹140.",
+    "type": "Due",
+    "_id": "mock_zysy74x74na6rns7ilvvm",
+    "id": "mock_zysy74x74na6rns7ilvvm",
+    "updatedAt": "2026-07-08T16:20:00.303Z",
+    "createdAt": "2026-07-08T16:20:00.303Z"
+  },
+  {
+    "userId": "STU-2026-1012",
+    "message": "ALERT: Book \"Core Java An Integrated Approach\" is overdue. Please return immediately. Fine accumulated: ₹140.",
+    "type": "Due",
+    "_id": "mock_e9jy96lnpgagkx0a7t7mh",
+    "id": "mock_e9jy96lnpgagkx0a7t7mh",
+    "updatedAt": "2026-07-08T16:20:00.398Z",
+    "createdAt": "2026-07-08T16:20:00.398Z"
+  },
+  {
+    "userId": "STU-2026-1014",
+    "message": "ALERT: Book \"HTML5 and CSS3 Responsive Web Design\" is overdue. Please return immediately. Fine accumulated: ₹140.",
+    "type": "Due",
+    "_id": "mock_098mb9ngqdz4l5udl5pwuof",
+    "id": "mock_098mb9ngqdz4l5udl5pwuof",
+    "updatedAt": "2026-07-08T16:20:00.483Z",
+    "createdAt": "2026-07-08T16:20:00.483Z"
+  },
+  {
+    "userId": "STU-2026-1016",
+    "message": "ALERT: Book \"Beginning HTML5 and CSS3\" is overdue. Please return immediately. Fine accumulated: ₹140.",
+    "type": "Due",
+    "_id": "mock_eqcl17ubs4j425r2o2jpca",
+    "id": "mock_eqcl17ubs4j425r2o2jpca",
+    "updatedAt": "2026-07-08T16:20:00.636Z",
+    "createdAt": "2026-07-08T16:20:00.636Z"
+  },
+  {
+    "userId": "STU-2026-1018",
+    "message": "ALERT: Book \"You Don't Know JS\" is overdue. Please return immediately. Fine accumulated: ₹140.",
+    "type": "Due",
+    "_id": "mock_0c9h6rz91bhu30zk3x7yl5p",
+    "id": "mock_0c9h6rz91bhu30zk3x7yl5p",
+    "updatedAt": "2026-07-08T16:20:00.720Z",
+    "createdAt": "2026-07-08T16:20:00.720Z"
+  },
+  {
+    "userId": "STU-2026-1020",
+    "message": "ALERT: Book \"Core Java Fundamentals\" is overdue. Please return immediately. Fine accumulated: ₹140.",
+    "type": "Due",
+    "_id": "mock_vy0gu9u1m9medncd58agib",
+    "id": "mock_vy0gu9u1m9medncd58agib",
+    "updatedAt": "2026-07-08T16:20:00.845Z",
+    "createdAt": "2026-07-08T16:20:00.845Z"
+  },
+  {
+    "userId": "STU-2026-1022",
+    "message": "ALERT: Book \"Data Communication Principles\" is overdue. Please return immediately. Fine accumulated: ₹140.",
+    "type": "Due",
+    "_id": "mock_q1e96hjfpdr1ubza4clma",
+    "id": "mock_q1e96hjfpdr1ubza4clma",
+    "updatedAt": "2026-07-08T16:20:00.938Z",
+    "createdAt": "2026-07-08T16:20:00.938Z"
+  },
+  {
+    "userId": "STU-2026-1013",
+    "message": "Reservation request for \"Let Us C++\" is placed in the queue.",
+    "type": "Reservation",
+    "_id": "mock_s5h2z51b0eer4qckbpqrnh",
+    "id": "mock_s5h2z51b0eer4qckbpqrnh",
+    "updatedAt": "2026-07-08T16:20:00.945Z",
+    "createdAt": "2026-07-08T16:20:00.945Z"
+  },
+  {
+    "userId": "STU-2026-1014",
+    "message": "Reservation request for \"Let Us C++\" is placed in the queue.",
+    "type": "Reservation",
+    "_id": "mock_p8wt4f5lqqsjdj9evyuwi",
+    "id": "mock_p8wt4f5lqqsjdj9evyuwi",
+    "updatedAt": "2026-07-08T16:20:00.951Z",
+    "createdAt": "2026-07-08T16:20:00.951Z"
+  },
+  {
+    "userId": "STU-2026-1015",
+    "message": "Reservation request for \"Let Us C++\" is placed in the queue.",
+    "type": "Reservation",
+    "_id": "mock_f3icsonzaaib0iwvgdwasu",
+    "id": "mock_f3icsonzaaib0iwvgdwasu",
+    "updatedAt": "2026-07-08T16:20:00.959Z",
+    "createdAt": "2026-07-08T16:20:00.959Z"
+  },
+  {
+    "userId": "STU-2026-1016",
+    "message": "Reservation request for \"Let Us C++\" is placed in the queue.",
+    "type": "Reservation",
+    "_id": "mock_scwkly4zduhob2qnbe8yd",
+    "id": "mock_scwkly4zduhob2qnbe8yd",
+    "updatedAt": "2026-07-08T16:20:00.967Z",
+    "createdAt": "2026-07-08T16:20:00.967Z"
+  },
+  {
+    "userId": "STU-2026-1017",
+    "message": "Reservation request for \"Let Us C++\" is placed in the queue.",
+    "type": "Reservation",
+    "_id": "mock_0egh0o4mp78bu6416dqgenm",
+    "id": "mock_0egh0o4mp78bu6416dqgenm",
+    "updatedAt": "2026-07-08T16:20:01.006Z",
+    "createdAt": "2026-07-08T16:20:01.006Z"
+  }
+]

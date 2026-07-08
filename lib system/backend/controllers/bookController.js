@@ -16,7 +16,12 @@ async function getBooks(req, res) {
             { name: { $regex: safeQuery, $options: "i" } },
             { author: { $regex: safeQuery, $options: "i" } },
             { category: { $regex: safeQuery, $options: "i" } },
-            { status: { $regex: safeQuery, $options: "i" } }
+            { status: { $regex: safeQuery, $options: "i" } },
+            { subjectCode: { $regex: safeQuery, $options: "i" } },
+            { isbn: { $regex: safeQuery, $options: "i" } },
+            { accessionNo: { $regex: safeQuery, $options: "i" } },
+            { semester: { $regex: safeQuery, $options: "i" } },
+            { publisher: { $regex: safeQuery, $options: "i" } }
           ]
         }
       : {};
@@ -34,10 +39,30 @@ async function getBooks(req, res) {
 
 async function createBook(req, res) {
   try {
-    const { name, author, category } = req.body;
+    const { 
+      name, 
+      author, 
+      category, 
+      subjectCode, 
+      isbn, 
+      publisher, 
+      edition, 
+      language, 
+      accessionNo, 
+      rackNo, 
+      shelfNo, 
+      semester 
+    } = req.body;
 
-    if (!name || !author || !category) {
-      res.status(400).json({ success: false, message: "Please fill all fields" });
+    if (!name || !author || !category || !accessionNo) {
+      res.status(400).json({ success: false, message: "Please fill all required fields (name, author, category, accessionNo)" });
+      return;
+    }
+
+    // Check if accession number already exists to enforce primary key uniqueness
+    const existing = await Book.findOne({ accessionNo: accessionNo.trim() });
+    if (existing) {
+      res.status(400).json({ success: false, message: `Accession number ${accessionNo} already exists!` });
       return;
     }
 
@@ -45,6 +70,15 @@ async function createBook(req, res) {
       name: name.trim(),
       author: author.trim(),
       category: category.trim(),
+      subjectCode: (subjectCode || "").trim(),
+      isbn: (isbn || "").trim(),
+      publisher: (publisher || "").trim(),
+      edition: (edition || "").trim(),
+      language: (language || "").trim(),
+      accessionNo: accessionNo.trim(),
+      rackNo: (rackNo || "").trim(),
+      shelfNo: (shelfNo || "").trim(),
+      semester: (semester || "N/A").trim(),
       status: "Available"
     });
 

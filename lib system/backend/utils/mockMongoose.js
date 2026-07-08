@@ -38,6 +38,13 @@ function matches(doc, query) {
       continue;
     }
 
+    if (key === "$and") {
+      if (!Array.isArray(val)) return false;
+      const allMatch = val.every(subQuery => matches(doc, subQuery));
+      if (!allMatch) return false;
+      continue;
+    }
+
     const docVal = doc[key];
 
     if (val && typeof val === "object" && !Array.isArray(val)) {
@@ -49,6 +56,10 @@ function matches(doc, query) {
         if (!regex.test(String(docVal || ""))) return false;
       } else if (val.$lt !== undefined) {
         if (!(docVal < val.$lt)) return false;
+      } else if (val.$in !== undefined) {
+        if (!Array.isArray(val.$in)) return false;
+        const inVals = val.$in.map(v => String(v).toLowerCase());
+        if (!inVals.includes(String(docVal || "").toLowerCase())) return false;
       } else {
         if (JSON.stringify(docVal) !== JSON.stringify(val)) return false;
       }
@@ -219,11 +230,41 @@ class MockModel {
   }
 
   static async insertMany(arr) {
-    const results = [];
-    for (const item of arr) {
-      const inst = await this.create(item);
-      results.push(inst);
+    const filePath = path.join(DATA_DIR, `${this.modelName}.json`);
+    let list = [];
+    if (fs.existsSync(filePath)) {
+      try {
+        list = JSON.parse(fs.readFileSync(filePath, "utf8"));
+      } catch (e) {
+        list = [];
+      }
     }
+
+    const results = [];
+    const now = new Date().toISOString();
+    
+    for (const item of arr) {
+      const doc = { ...item };
+      if (!doc._id) {
+        doc._id = generateId();
+      }
+      doc.id = doc._id;
+      doc.createdAt = doc.createdAt || now;
+      doc.updatedAt = now;
+
+      // Behave like Mongoose Document
+      const inst = new MockDocument(this.modelName, doc);
+      results.push(inst);
+      
+      const index = list.findIndex(l => l._id === doc._id);
+      if (index >= 0) {
+        list[index] = doc;
+      } else {
+        list.push(doc);
+      }
+    }
+
+    fs.writeFileSync(filePath, JSON.stringify(list, null, 2), "utf8");
     return results;
   }
 
