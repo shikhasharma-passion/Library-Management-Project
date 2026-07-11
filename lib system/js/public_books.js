@@ -1,12 +1,3 @@
-// Intercept and route fetch requests on local files to localhost:3000
-const ORIGINAL_FETCH = window.fetch;
-window.fetch = function(url, options) {
-    const API_BASE_URL = window.location.protocol === "file:" ? "http://localhost:3000" : "";
-    if (typeof url === "string" && url.startsWith("/api")) {
-        url = API_BASE_URL + url;
-    }
-    return ORIGINAL_FETCH(url, options);
-};
 
 const publicBookList = document.getElementById("publicBookList");
 const loginPopup = document.getElementById("loginPopup");
@@ -228,10 +219,23 @@ function filterBooks(category) {
 }
 
 if (publicSearchInput) {
+    const clearBtn = document.getElementById("clearSearchBtn");
     publicSearchInput.addEventListener("input", function() {
-        loadPublicBooks(activeCategory, publicSearchInput.value.trim());
+        const val = publicSearchInput.value.trim();
+        if (clearBtn) {
+            clearBtn.style.display = val ? "block" : "none";
+        }
+        loadPublicBooks(activeCategory, val);
     });
 }
+
+window.clearPublicSearch = function() {
+    const input = document.getElementById("publicSearchInput");
+    const clearBtn = document.getElementById("clearSearchBtn");
+    if (input) input.value = "";
+    if (clearBtn) clearBtn.style.display = "none";
+    loadPublicBooks(activeCategory, "");
+};
 
 /* OPEN BOOK DETAILS MODAL */
 function openBookDetails(bookId) {
@@ -642,13 +646,19 @@ if (initialCat === "Computer") {
 
 if (publicSearchInput) {
     publicSearchInput.value = initialSearch;
+    const clearBtn = document.getElementById("clearSearchBtn");
+    if (clearBtn && initialSearch) {
+        clearBtn.style.display = "block";
+    }
 }
 
-if (initialCat !== "All") {
-    filterBooks(initialCat);
-} else {
-    loadPublicBooks("All", initialSearch);
-}
+window.API_RESOLVED_PROMISE.then(() => {
+    if (initialCat !== "All") {
+        filterBooks(initialCat);
+    } else {
+        loadPublicBooks("All", initialSearch);
+    }
+});
 
 /* BOOKSTORE CHECKOUT CONTROLLER */
 function triggerPurchase(bookTitle, price) {
@@ -669,7 +679,7 @@ function triggerPurchase(bookTitle, price) {
     // Update UPI QR Code
     const qrImg = document.querySelector("#upiView img");
     if (qrImg) {
-        qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=smartlib@upi%26pn=SmartLib%26am=" + price + "%26cu=INR";
+        qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=zhilibrary@upi%26pn=ZHILibrary%26am=" + price + "%26cu=INR";
     }
 
     // Reset checkout states

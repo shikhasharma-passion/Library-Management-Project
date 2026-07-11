@@ -1,6 +1,6 @@
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
-const API_BASE_URL = window.location.protocol === "file:" ? "http://localhost:3000" : "";
+const getApiBaseUrl = () => window.API_BASE_URL || "";
 
 // --- PASSWORD TOGGLE FUNCTIONALITY ---
 function setupPasswordToggle(btnId, inputId) {
@@ -42,7 +42,7 @@ if(loginForm){
         }
 
         try{
-            const response = await fetch(`${API_BASE_URL}/api/login`, {
+            const response = await fetch(`${getApiBaseUrl()}/api/login`, {
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json"
@@ -102,7 +102,7 @@ if(registerForm){
         }
 
         try{
-            const response = await fetch(`${API_BASE_URL}/api/register`, {
+            const response = await fetch(`${getApiBaseUrl()}/api/register`, {
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json"
@@ -209,20 +209,36 @@ function triggerGoogleSignIn() {
         if (event.data && event.data.type === 'GOOGLE_LOGIN_SUCCESS') {
             const { name, email } = event.data;
             
-            // Set session details in local storage
-            localStorage.setItem("user", name);
-            localStorage.setItem("userEmail", email);
-            localStorage.setItem("userRole", "student");
-            
-            showToast(`🔑 Signed in via Google as ${name}!`, "success");
-            
-            // Clean up listener
-            window.removeEventListener("message", messageListener);
-            
-            // Redirect user to student dashboard
-            setTimeout(() => {
-                window.location.href = "student_dashboard.html";
-            }, 1000);
+            // Post to backend to save / update login activity in database
+            fetch(`${getApiBaseUrl()}/api/google-login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    localStorage.setItem("user", result.user.name || name);
+                    localStorage.setItem("userEmail", result.user.email || email);
+                    localStorage.setItem("userRole", result.user.role || "student");
+                    showToast(`🔑 Signed in via Google as ${result.user.name || name}!`, "success");
+                } else {
+                    showToast(result.message || "Google Authentication failed", "error");
+                }
+            })
+            .catch(err => {
+                console.error("Google login backend error, using fallback:", err);
+                localStorage.setItem("user", name);
+                localStorage.setItem("userEmail", email);
+                localStorage.setItem("userRole", "student");
+                showToast(`🔑 Signed in via Google as ${name}!`, "success");
+            })
+            .finally(() => {
+                window.removeEventListener("message", messageListener);
+                setTimeout(() => {
+                    window.location.href = "student_dashboard.html";
+                }, 1000);
+            });
         }
     };
 

@@ -97,13 +97,47 @@ async function createIssue(req, res) {
     }
 
     if (!selectedBook) {
-      res.status(404).json({ success: false, message: "No available copy of this book was found. Please check title or accession number." });
-      return;
+      const existingBook = await Book.findOne({
+        name: { $regex: `^${escapeRegex(book.trim())}$`, $options: "i" }
+      });
+      const newAccessionNo = accessionNo ? accessionNo.trim() : `ACC-${Math.floor(10000 + Math.random() * 90000)}`;
+      selectedBook = await Book.create({
+        name: book.trim(),
+        author: existingBook ? existingBook.author : "Unknown Author",
+        category: existingBook ? existingBook.category : "BCA",
+        subjectCode: existingBook ? existingBook.subjectCode : `SUB-${Math.floor(100 + Math.random() * 900)}`,
+        isbn: existingBook ? existingBook.isbn : `978-${Math.floor(1000000000 + Math.random() * 9000000000)}`,
+        publisher: existingBook ? existingBook.publisher : "College Publisher",
+        edition: existingBook ? existingBook.edition : "1st Edition",
+        rackNo: existingBook ? existingBook.rackNo : "Rack GN-03",
+        shelfNo: existingBook ? existingBook.shelfNo : "Shelf 1",
+        quantity: 1,
+        availableCopies: 0,
+        issuedCopies: 1,
+        status: "Issued",
+        accessionNo: newAccessionNo
+      });
     }
 
     if (selectedBook.status === "Issued") {
-      res.status(409).json({ success: false, message: `Book copy with Accession No. ${selectedBook.accessionNo} is already issued` });
-      return;
+      // If it is already issued, let's create a new separate physical copy for it!
+      const newAccessionNo = `ACC-${Math.floor(10000 + Math.random() * 90000)}`;
+      selectedBook = await Book.create({
+        name: selectedBook.name,
+        author: selectedBook.author,
+        category: selectedBook.category,
+        subjectCode: selectedBook.subjectCode,
+        isbn: selectedBook.isbn,
+        publisher: selectedBook.publisher,
+        edition: selectedBook.edition,
+        rackNo: selectedBook.rackNo,
+        shelfNo: selectedBook.shelfNo,
+        quantity: 1,
+        availableCopies: 0,
+        issuedCopies: 1,
+        status: "Issued",
+        accessionNo: newAccessionNo
+      });
     }
 
     selectedBook.status = "Issued";

@@ -120,6 +120,7 @@
     <section class="search-section" style="padding: 40px 8% 10px 8%;">
         <div class="search-box" style="max-width: 600px; box-shadow: 0 8px 24px var(--shadow-color); display: flex; gap: 10px; width: 100%; border-radius: 30px; padding: 5px 15px; margin: 0 auto; align-items: center;">
             <input type="text" id="digitalSearchInput" placeholder="Search digital books, author, category..." style="flex: 1; border: none; background: transparent; padding: 10px 20px; font-size: 15px; outline: none; color: var(--text-color); font-family: inherit;">
+            <button id="clearDigitalSearchBtn" onclick="clearDigitalSearch()" style="display: none; background: transparent; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 0 10px; font-weight: 700; outline: none;">✕</button>
             <button id="digitalSearchBtn" style="background: var(--primary-color); border-radius: 20px; margin: 0; padding: 10px 25px; border: none; color: var(--accent-color); font-weight: 600; cursor: pointer;">Search</button>
         </div>
     </section>
@@ -164,15 +165,16 @@
                 <h3>Contact</h3>
                 <p>📍 Patna, Bihar</p>
                 <p>📞 +91 9876543210</p>
-                <p>✉ support@libraryms.com</p>
+                <p>✉ support@zhi.edu.in</p>
             </div>
         </div>
         <div class="footer-bottom">
-            © 2026 SmartLib | Designed By Shikha Sharma
+            © 2026 ZHI Library | Designed By Shikha Sharma
         </div>
     </footer>
 
     <!-- Scripts -->
+    <script src="js/api-resolver.js"></script>
     <script src="js/digital_library.js"></script>
     <script src="js/script.js"></script>
 

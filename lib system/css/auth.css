@@ -218,3 +218,11 @@
         padding: 30px 20px;
     }
 }
+
+/* Hide browser default password reveal button and clear button */
+input::-ms-reveal,
+input::-ms-clear,
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+    display: none !important;
+}

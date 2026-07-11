@@ -78,7 +78,9 @@ async function register(req, res) {
       course: course.trim(),
       username: normalizedEmail,
       password: hashedPassword,
-      role: "student"
+      role: "student",
+      lastLoginAt: new Date(),
+      loginMethod: "ZHI Credentials"
     });
 
     const calculatedStudentId = studentId ? studentId.trim() : `STU-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -90,7 +92,18 @@ async function register(req, res) {
       course: user.course,
       roll: calculatedRoll,
       studentId: calculatedStudentId,
-      semester: calculatedSemester
+      semester: calculatedSemester,
+      email: normalizedEmail
+    });
+
+    // Create persistent LoginLog entry
+    const LoginLog = require("../models/LoginLog");
+    await LoginLog.create({
+      studentId: calculatedStudentId,
+      name: user.name,
+      email: user.email,
+      loginMethod: "ZHI Credentials",
+      loginAt: new Date()
     });
 
     res.status(201).json({
@@ -135,6 +148,83 @@ async function login(req, res) {
       return;
     }
 
+    // Update login timestamp & method
+    user.lastLoginAt = new Date();
+    user.loginMethod = "ZHI Credentials";
+    await user.save();
+
+    // Create persistent LoginLog entry
+    const LoginLog = require("../models/LoginLog");
+    await LoginLog.create({
+      studentId: user.memberId || "",
+      name: user.name,
+      email: user.email,
+      loginMethod: "ZHI Credentials",
+      loginAt: new Date()
+    });
+
+    res.json({
+      success: true,
+      user: safeUser(user),
+      token: createToken(user)
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function googleLogin(req, res) {
+  try {
+    const { name, email } = req.body;
+    if (!email) {
+      res.status(400).json({ success: false, message: "Email is required" });
+      return;
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    let user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      const dummyPassword = await bcrypt.hash("google_dummy_pass_" + Math.random(), 10);
+      user = await User.create({
+        name: (name || "Google Student").trim(),
+        email: normalizedEmail,
+        course: "BCA",
+        username: normalizedEmail,
+        password: dummyPassword,
+        role: "student",
+        lastLoginAt: new Date(),
+        loginMethod: "Google OAuth"
+      });
+
+      const calculatedStudentId = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
+      const calculatedSemester = "Semester 1";
+      const calculatedRoll = `ROLL-${Math.floor(100 + Math.random() * 900)}`;
+
+      await Student.create({
+        name: user.name,
+        course: user.course,
+        roll: calculatedRoll,
+        studentId: calculatedStudentId,
+        semester: calculatedSemester,
+        email: normalizedEmail
+      });
+    } else {
+      user.lastLoginAt = new Date();
+      user.loginMethod = "Google OAuth";
+      await user.save();
+    }
+
+    // Create persistent LoginLog entry
+    const LoginLog = require("../models/LoginLog");
+    await LoginLog.create({
+      studentId: user.memberId || "",
+      name: user.name,
+      email: user.email,
+      loginMethod: user.loginMethod || "Google OAuth",
+      loginAt: new Date()
+    });
+
     res.json({
       success: true,
       user: safeUser(user),
@@ -148,5 +238,6 @@ async function login(req, res) {
 module.exports = {
   register,
   login,
+  googleLogin,
   ensureAdminUser
 };

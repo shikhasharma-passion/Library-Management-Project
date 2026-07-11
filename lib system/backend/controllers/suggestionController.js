@@ -2,7 +2,7 @@ const Suggestion = require("../models/Suggestion");
 
 async function createSuggestion(req, res) {
   try {
-    const { student, bookTitle, bookAuthor, category } = req.body;
+    const { student, bookTitle, bookAuthor, category, status, adminNotes } = req.body;
 
     if (!student || !bookTitle || !bookAuthor || !category) {
       res.status(400).json({ success: false, message: "Please fill all fields" });
@@ -14,8 +14,8 @@ async function createSuggestion(req, res) {
       bookTitle: bookTitle.trim(),
       bookAuthor: bookAuthor.trim(),
       category: category.trim(),
-      status: "Pending",
-      adminNotes: ""
+      status: status ? status.trim() : "Pending",
+      adminNotes: adminNotes ? adminNotes.trim() : ""
     });
 
     res.status(201).json({ success: true, suggestion });

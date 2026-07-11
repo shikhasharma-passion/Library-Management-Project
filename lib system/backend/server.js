@@ -39,6 +39,11 @@ function registerAppRoutes() {
 
   app.post("/api/login", require("./controllers/authController").login);
   app.post("/api/register", require("./controllers/authController").register);
+  app.post("/api/google-login", require("./controllers/authController").googleLogin);
+
+  const systemController = require("./controllers/systemController");
+  app.get("/api/system/status", systemController.getSystemStatus);
+  app.put("/api/system/status", systemController.updateSystemStatus);
 
   app.get("/api/health", (req, res) => {
     res.json({ success: true, app: "LibraryMS", status: "running" });

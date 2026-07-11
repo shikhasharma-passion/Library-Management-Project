@@ -240,6 +240,8 @@ function initTheme() {
 }
 
 /* INITIAL */
-initTheme();
-loadBooks();
+window.API_RESOLVED_PROMISE.then(() => {
+    initTheme();
+    loadBooks();
+});
 

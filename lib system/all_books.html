@@ -63,6 +63,9 @@
                 <!-- Search Input Box on the Left -->
                 <input type="text" id="publicSearchInput" placeholder="Search books, authors, categories..." style="flex: 1; border: none; background: transparent; padding: 10px 20px; font-size: 16px; outline: none; color: var(--text-color); font-family: inherit; min-width: 200px;">
 
+                <!-- Clear Search Button -->
+                <button id="clearSearchBtn" onclick="clearPublicSearch()" style="display: none; background: transparent; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 0 15px; font-weight: 700; outline: none;">✕</button>
+
                 <!-- Semester Filter Dropdown on the Right -->
                 <select id="semesterFilter" onchange="filterSemester()" style="padding: 10px 20px; border-radius: 30px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-family: inherit; font-size: 14.5px; outline: none; cursor: pointer; min-width: 150px; margin-right: 5px;">
                     <option value="All">All Semesters</option>
@@ -110,7 +113,7 @@
     <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-box">
-                <h2>LibraryMS</h2>
+                <h2>ZHI Library</h2>
                 <p>Modern digital library management system for Dr. Zakir Husain Institute, Patna.</p>
             </div>
             <div class="footer-box">
@@ -123,15 +126,16 @@
                 <h3>Contact</h3>
                 <p>📍 Patna, Bihar</p>
                 <p>📞 +91 9876543210</p>
-                <p>✉ support@libraryms.com</p>
+                <p>✉ support@zhi.edu.in</p>
             </div>
         </div>
         <div class="footer-bottom">
-            © 2026 LibraryMS | Designed By Shikha Sharma
+            © 2026 ZHI Library | Designed By Shikha Sharma
         </div>
     </footer>
 
     <!-- Scripts -->
+    <script src="js/api-resolver.js"></script>
     <script src="js/public_books.js"></script>
     <script src="js/script.js"></script>
 

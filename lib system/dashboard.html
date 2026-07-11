@@ -20,11 +20,11 @@
                 <h2>ZHI Admin</h2>
             </div>
             <ul>
-                <li><a href="dashboard.html" class="active">🏠 Dashboard</a></li>
-                <li><a href="books.html">📚 Books Inventory</a></li>
-                <li><a href="students.html">👥 Student List</a></li>
-                <li><a href="issue-book.html">📖 Issue Book</a></li>
-                <li><a href="logout.html">🚪 Logout</a></li>
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="books.html">Books Inventory</a></li>
+                <li><a href="students.html">Student List</a></li>
+                <li><a href="issue-book.html">Issue Book</a></li>
+                <li><a href="logout.html">Logout</a></li>
             </ul>
         </div>
         <div class="sidebar-profile" style="margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:12px;">
@@ -40,11 +40,14 @@
     <div class="main-content">
         <!-- TOPBAR -->
         <div class="topbar">
-            <h1>Admin Dashboard</h1>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button id="sidebarToggleBtn" style="display: none; background: none; border: none; color: var(--text-color); font-size: 24px; cursor: pointer; padding: 5px; outline: none;">☰</button>
+                <h1>Admin Dashboard</h1>
+            </div>
             
             <div class="profile-section">
                 <button id="darkModeBtn">
-                    🌙 Mode Toggle
+                    Mode Toggle
                 </button>
                 <div class="profile">
                     Welcome, Admin
@@ -55,17 +58,17 @@
         <!-- QUICK ACTIONS DECK -->
         <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:20px; margin-bottom:30px; box-shadow:0 10px 25px var(--shadow-color);">
             <h3 style="font-size:16px; font-weight:700; color:var(--text-color); margin-bottom:15px; display:flex; align-items:center; gap:8px;">
-                ⚡ Quick Administration Actions
+                Quick Administration Actions
             </h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:15px;">
                 <button onclick="location.href='books.html'" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:10px; background:var(--card-bg); border:1.5px solid var(--border-color); color:var(--text-color); cursor:pointer; font-weight:600; font-size:14.5px; transition:var(--transition);" onmouseover="this.style.borderColor='var(--accent-color)'; this.style.color='var(--accent-color)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-color)';">
-                    📚 Books Inventory
+                    Books Inventory
                 </button>
                 <button onclick="location.href='issue-book.html'" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:10px; background:var(--card-bg); border:1.5px solid var(--border-color); color:var(--text-color); cursor:pointer; font-weight:600; font-size:14.5px; transition:var(--transition);" onmouseover="this.style.borderColor='var(--accent-color)'; this.style.color='var(--accent-color)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-color)';">
-                    📖 Issue Book
+                    Issue Book
                 </button>
                 <button onclick="location.href='students.html'" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:10px; background:var(--card-bg); border:1.5px solid var(--border-color); color:var(--text-color); cursor:pointer; font-weight:600; font-size:14.5px; transition:var(--transition);" onmouseover="this.style.borderColor='var(--accent-color)'; this.style.color='var(--accent-color)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-color)';">
-                    👥 Student List
+                    Student List
                 </button>
             </div>
         </div>
@@ -110,7 +113,7 @@
             <!-- Card 1: Recently Registered -->
             <div class="table-section" style="padding: 22px; border-radius: 16px; background: var(--card-bg); border: 1px solid var(--border-color); display: flex; flex-direction: column; height: 380px;">
                 <h2 style="font-size: 16px; font-weight: 700; color: var(--text-color); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1.5px solid var(--border-color); display: flex; align-items: center; gap: 8px;">
-                    👥 Recently Registered Students
+                    Recently Registered Students
                 </h2>
                 <div id="recentRegisteredBody" style="display: flex; flex-direction: column; gap: 4px; overflow-y: auto; flex: 1; padding-right: 5px;">
                     <p style="text-align:center; color:var(--text-muted); padding:20px; font-size:14px;">Loading students...</p>
@@ -120,7 +123,7 @@
             <!-- Card 2: Recent Logins -->
             <div class="table-section" style="padding: 22px; border-radius: 16px; background: var(--card-bg); border: 1px solid var(--border-color); display: flex; flex-direction: column; height: 380px;">
                 <h2 style="font-size: 16px; font-weight: 700; color: var(--text-color); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1.5px solid var(--border-color); display: flex; align-items: center; gap: 8px;">
-                    🔑 Recent Student Logins & Session Activity
+                    Recent Student Logins & Session Activity
                 </h2>
                 <div id="recentLoginsBody" style="display: flex; flex-direction: column; gap: 4px; overflow-y: auto; flex: 1; padding-right: 5px;">
                     <p style="text-align:center; color:var(--text-muted); padding:20px; font-size:14px;">Loading activity...</p>
@@ -150,7 +153,7 @@
 
         <!-- TABLE SECTION: USER SUGGESTIONS -->
         <div class="table-section" id="suggestionsSection">
-            <h2>💡 User Book Suggestions & Acquirement Feedback</h2>
+            <h2>User Book Suggestions & Acquirement Feedback</h2>
             <div class="table-wrapper">
                 <table id="suggestionsTable">
                     <thead>
@@ -173,16 +176,107 @@
 
         <!-- ON THE WAY ORDERS SECTION -->
         <div class="table-section" id="ordersTrackerSection">
-            <h2>🚚 Procurement Shipments & Book Orders (On the Way)</h2>
-            <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;">Tracking educational textbooks currently ordered and transit-bound to our college central library shelf inventory.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h2 style="margin: 0;">Procurement Shipments & Book Orders (On the Way)</h2>
+                    <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 5px; margin-bottom: 0;">Tracking educational textbooks currently ordered and transit-bound to our college central library shelf inventory.</p>
+                </div>
+                <button onclick="toggleProcurementForm()" class="action-btn" style="margin-top: 0; padding: 10px 20px; font-size: 13.5px; font-weight: 600; cursor: pointer; border-radius: 8px; border: none;">
+                    + Create New Shipment / Book Order
+                </button>
+            </div>
+
+            <!-- Collapsible Add Procurement Order Form -->
+            <div id="addProcurementForm" style="display: none; background: rgba(0,0,0,0.01); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 15px; color: var(--text-color);">Order Direct College Procurement</h3>
+                <form id="procurementForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Book Title</label>
+                        <input type="text" id="orderTitle" required placeholder="e.g. Modern Operating Systems" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Author Name</label>
+                        <input type="text" id="orderAuthor" required placeholder="e.g. Andrew S. Tanenbaum" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Category / Stream</label>
+                        <select id="orderCategory" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+                            <option value="BCA">BCA</option>
+                            <option value="MCA">MCA</option>
+                            <option value="BBA">BBA</option>
+                            <option value="MBA">MBA</option>
+                            <option value="Competitive">Competitive</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Acquirement Notes / Supplier / ETA</label>
+                        <input type="text" id="orderNotes" placeholder="e.g. Ordered from Tata McGraw Hill, ETA 4 days" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+                    </div>
+                    <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                        <button type="button" onclick="toggleProcurementForm()" class="delete-btn" style="margin-top: 0; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; border: none;">Cancel</button>
+                        <button type="submit" class="action-btn" style="margin-top: 0; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; border: none;">Order & Track Shipment</button>
+                    </div>
+                </form>
+            </div>
+
             <div id="ordersTrackerGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
                 <!-- Loaded dynamically -->
             </div>
         </div>
 
+        <!-- LIVE CAMPUS LIBRARY MONITOR CONTROL -->
+        <div class="table-section" id="liveMonitorControlSection">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h2 style="margin: 0;">Live Campus Library Monitor Control</h2>
+                    <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 5px; margin-bottom: 0;">Update real-time student traffic metrics, digital lab utilization, reading room occupancy, and operating status shown on the student dashboard.</p>
+                </div>
+                <button onclick="toggleMonitorForm()" class="action-btn" style="margin-top: 0; padding: 10px 20px; font-size: 13.5px; font-weight: 600; cursor: pointer; border-radius: 8px; border: none;">
+                    🛠️ Manage Live Monitor Status
+                </button>
+            </div>
+
+            <!-- Collapsible Live Monitor Form -->
+            <div id="liveMonitorFormContainer" style="display: none; background: rgba(0,0,0,0.01); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                <form id="liveMonitorForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Library Status</label>
+                        <select id="monitorStatus" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+                            <option value="OPEN">OPEN</option>
+                            <option value="CLOSED">CLOSED</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Today's Footfall Count</label>
+                        <input type="number" id="monitorFootfall" required min="0" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Active Lab PCs (out of 25)</label>
+                        <input type="number" id="monitorLabActive" required min="0" max="25" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Reading Room Occupancy %</label>
+                        <input type="number" id="monitorReadingOccupancy" required min="0" max="100" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Current Shift Schedule</label>
+                        <input type="text" id="monitorShift" required style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Duty Librarian</label>
+                        <input type="text" id="monitorLibrarian" required style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+                    </div>
+                    <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                        <button type="button" onclick="toggleMonitorForm()" class="delete-btn" style="margin-top: 0; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; border: none;">Cancel</button>
+                        <button type="submit" class="action-btn" style="margin-top: 0; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; border: none;">Save & Update Monitor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- TABLE SECTION: USER FINES -->
         <div class="table-section" id="finesSection">
-            <h2>💸 Student Overdue Fines Management</h2>
+            <h2>Student Overdue Fines Management</h2>
             <div class="table-wrapper">
                 <table id="finesTable">
                     <thead>
@@ -224,6 +318,7 @@
     </div>
 
     <!-- ChartJS and script -->
+    <script src="js/api-resolver.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/dashboard.js"></script>
 </body>

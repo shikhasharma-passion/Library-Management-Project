@@ -56,6 +56,14 @@ function matches(doc, query) {
         if (!regex.test(String(docVal || ""))) return false;
       } else if (val.$lt !== undefined) {
         if (!(docVal < val.$lt)) return false;
+      } else if (val.$lte !== undefined) {
+        if (!(docVal <= val.$lte)) return false;
+      } else if (val.$gt !== undefined) {
+        if (!(docVal > val.$gt)) return false;
+      } else if (val.$gte !== undefined) {
+        if (!(docVal >= val.$gte)) return false;
+      } else if (val.$ne !== undefined) {
+        if (docVal == val.$ne) return false;
       } else if (val.$in !== undefined) {
         if (!Array.isArray(val.$in)) return false;
         const inVals = val.$in.map(v => String(v).toLowerCase());
@@ -224,9 +232,19 @@ class MockModel {
   }
 
   static async create(doc) {
-    const inst = new MockDocument(this.modelName, doc);
-    await inst.save();
-    return inst;
+    if (Array.isArray(doc)) {
+      const results = [];
+      for (const item of doc) {
+        const inst = new MockDocument(this.modelName, item);
+        await inst.save();
+        results.push(inst);
+      }
+      return results;
+    } else {
+      const inst = new MockDocument(this.modelName, doc);
+      await inst.save();
+      return inst;
+    }
   }
 
   static async insertMany(arr) {

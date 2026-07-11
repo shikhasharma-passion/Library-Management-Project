@@ -1,0 +1,17 @@
+[
+  {
+    "key": "libraryStatus",
+    "value": {
+      "status": "OPEN",
+      "shift": "09:00 AM - 06:00 PM",
+      "librarian": "Dr. A.K. Sinha",
+      "footfall": 140,
+      "labActive": 20,
+      "readingOccupancy": 90
+    },
+    "_id": "mock_ndbqgygkh6vzpuh09tw1e",
+    "id": "mock_ndbqgygkh6vzpuh09tw1e",
+    "updatedAt": "2026-07-11T01:54:22.405Z",
+    "createdAt": "2026-07-11T01:45:34.247Z"
+  }
+]

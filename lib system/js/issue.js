@@ -330,63 +330,8 @@ function initTheme() {
 }
 
 /* INITIAL */
-initTheme();
-loadIssuedBooks();
-loadActiveStudentsFeed();
-
-async function loadActiveStudentsFeed() {
-    const feed = document.getElementById("activeStudentsFeed");
-    if (!feed) return;
-
-    try {
-        const response = await fetch("/api/students");
-        if (!response.ok) {
-            feed.innerHTML = `<div style="text-align:center; color:#ef4444; font-size:12.5px; padding:15px;">Failed to load students</div>`;
-            return;
-        }
-
-        const students = await response.json();
-        const sortedStudents = [...students].sort((a, b) => {
-            const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
-            const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
-            return dateB - dateA;
-        });
-
-        if (sortedStudents.length === 0) {
-            feed.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:12.5px; padding:15px;">No students registered.</div>`;
-            return;
-        }
-
-        feed.innerHTML = sortedStudents.map(student => {
-            const escapedName = student.name.replace(/'/g, "\\'");
-            const escapedId = (student.studentId || "").replace(/'/g, "\\'");
-            return `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-radius:8px; border:1px solid var(--border-color); background:rgba(0,0,0,0.01); gap:8px;">
-                    <div style="display:flex; align-items:center; gap:8px; overflow:hidden;">
-                        <div style="width:28px; height:28px; border-radius:50%; background:var(--primary-light); color:var(--primary-color); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; flex-shrink:0;">
-                            ${student.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div style="overflow:hidden;">
-                            <div style="font-size:12px; font-weight:700; color:var(--text-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${student.name}</div>
-                            <div style="font-size:10px; color:var(--text-muted); font-weight:500;"><code>${student.studentId || "N/A"}</code> | ${student.course || "BCA"}</div>
-                        </div>
-                    </div>
-                    <button type="button" onclick="fillForm('${escapedName}', '${escapedId}')" style="margin-top:0; padding:4px 8px; font-size:10px; border-radius:6px; background:var(--accent-color); color:#0f172a; font-weight:700; border:none; cursor:pointer; flex-shrink:0;">
-                        ✏️ Fill
-                    </button>
-                </div>
-            `;
-        }).join("");
-    } catch (err) {
-        console.error(err);
-        feed.innerHTML = `<div style="text-align:center; color:#ef4444; font-size:12.5px; padding:15px;">Server error loading students</div>`;
-    }
-}
-
-window.fillForm = function(name, studentId) {
-    const studentInput = document.getElementById("issueStudent");
-    const idInput = document.getElementById("issueStudentId");
-    if (studentInput) studentInput.value = name;
-    if (idInput) idInput.value = studentId;
-};
+window.API_RESOLVED_PROMISE.then(() => {
+    initTheme();
+    loadIssuedBooks();
+});
 

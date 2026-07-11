@@ -257,6 +257,8 @@ function initTheme() {
 }
 
 /* INITIAL */
-initTheme();
-loadStudents();
+window.API_RESOLVED_PROMISE.then(() => {
+    initTheme();
+    loadStudents();
+});
 

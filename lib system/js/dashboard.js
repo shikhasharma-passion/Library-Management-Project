@@ -1,12 +1,3 @@
-// Intercept and route fetch requests on local files to localhost:3000
-const ORIGINAL_FETCH = window.fetch;
-window.fetch = function(url, options) {
-    const API_BASE_URL = window.location.protocol === "file:" ? "http://localhost:3000" : "";
-    if (typeof url === "string" && url.startsWith("/api")) {
-        url = API_BASE_URL + url;
-    }
-    return ORIGINAL_FETCH(url, options);
-};
 
 // Global Custom Centered Warning/Success Alert Override
 window.alert = function(message) {
@@ -28,7 +19,6 @@ window.alert = function(message) {
     const isSuccess = !msgLower.includes("fail") && 
                       !msgLower.includes("error") && 
                       !msgLower.includes("invalid") && 
-                      !msgLower.includes("reject") && 
                       !msgLower.includes("limit") && 
                       !msgLower.includes("offline");
 
@@ -37,7 +27,8 @@ window.alert = function(message) {
     const title = isSuccess ? "Action Successful" : "System Warning";
 
     overlay.innerHTML = `
-        <div style="width: 350px; background: var(--card-bg); border: 2.5px solid ${color}; border-radius: 16px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; justify-content: space-between; gap: 15px; animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-sizing: border-box;">
+        <div style="width: 350px; background: var(--card-bg); border: 2.5px solid ${color}; border-radius: 16px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; justify-content: space-between; gap: 15px; animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-sizing: border-box; position: relative;">
+            <button onclick="document.getElementById('customAlertOverlay').remove()" style="position: absolute; top: 12px; right: 15px; background: transparent; border: none; color: var(--text-muted); font-size: 18px; font-weight: bold; cursor: pointer; padding: 5px; outline: none; transition: color 0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--text-muted)'">✕</button>
             <div>
                 <div style="font-size: 40px; margin-bottom: 8px;">${icon}</div>
                 <h3 style="font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 800; color: ${color}; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">${title}</h3>
@@ -45,9 +36,6 @@ window.alert = function(message) {
                     ${message}
                 </p>
             </div>
-            <button onclick="document.getElementById('customAlertOverlay').remove()" style="width: 100%; padding: 12px; border-radius: 8px; background: ${color}; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.filter='brightness(0.9)';" onmouseout="this.style.filter='none';">
-                Close Window
-            </button>
         </div>
     `;
 
@@ -70,15 +58,76 @@ let libraryChart;
 let categoriesChart;
 
 document.addEventListener("DOMContentLoaded", () => {
-    initDashboardTheme();
-    loadDashboard();
-    loadContacts();
-    loadBorrowRequests();
-    loadExtensionRequests();
-    loadSuggestions();
-    loadFines();
-    loadOrdersTracker();
-    loadRecentStudentsAndActivity();
+    window.API_RESOLVED_PROMISE.then(() => {
+        initDashboardTheme();
+        loadDashboard();
+        loadContacts();
+        loadBorrowRequests();
+        loadExtensionRequests();
+        loadSuggestions();
+        loadFines();
+        loadOrdersTracker();
+        loadRecentStudentsAndActivity();
+        loadMonitorStatus();
+        setupMonitorFormHandler();
+
+        // Mobile Sidebar Toggle
+        const toggleBtn = document.getElementById("sidebarToggleBtn");
+        const sidebar = document.querySelector(".sidebar");
+        if (toggleBtn && sidebar) {
+            toggleBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle("active");
+            });
+            document.addEventListener("click", (e) => {
+                if (sidebar.classList.contains("active") && !sidebar.contains(e.target) && e.target !== toggleBtn) {
+                    sidebar.classList.remove("active");
+                }
+            });
+        }
+
+        // Direct Procurement Form Handler
+        const procForm = document.getElementById("procurementForm");
+        if (procForm) {
+            procForm.addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const bookTitle = document.getElementById("orderTitle").value.trim();
+                const bookAuthor = document.getElementById("orderAuthor").value.trim();
+                const category = document.getElementById("orderCategory").value;
+                const adminNotes = document.getElementById("orderNotes").value.trim() || "Ordered directly by Admin";
+                
+                try {
+                    const response = await fetch("/api/suggestions", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            student: "Admin Direct Order",
+                            bookTitle,
+                            bookAuthor,
+                            category,
+                            status: "Accepted - On the Way",
+                            adminNotes
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        alert("Shipment ordered and tracking registered!");
+                        procForm.reset();
+                        toggleProcurementForm();
+                        loadSuggestions();
+                        loadOrdersTracker();
+                        loadDashboard(); // Refresh category/stats charts
+                    } else {
+                        const res = await response.json();
+                        alert(res.message || "Failed to order shipment");
+                    }
+                } catch(err) {
+                    console.error(err);
+                    alert("Server connection failed");
+                }
+            });
+        }
+    });
 });
 
 /* THEME SYSTEM (Persistent across Admin Pages) */
@@ -194,28 +243,48 @@ function renderAnalyticsCharts(stats) {
     const ctx1 = document.getElementById("libraryChart");
     if (ctx1) {
         if (libraryChart) libraryChart.destroy();
+        const trends = stats.monthlyTrends || [];
+        const monthLabels = trends.map(t => t.month);
+        const issuesData = trends.map(t => t.issues);
+        const returnsData = trends.map(t => t.returns);
+
         libraryChart = new Chart(ctx1, {
-            type: "bar",
+            type: "line",
             data: {
-                labels: ["Books Available", "No. of Students", "Issued Books", "Overdue Returns"],
-                datasets: [{
-                    label: "Library Activity",
-                    data: [stats.totalBooks, stats.totalStudents, stats.issuedBooks, stats.pendingBooks],
-                    backgroundColor: [
-                        isDark ? "#6366f1" : "#4f46e5", // Indigo (Books Available)
-                        isDark ? "#10b981" : "#059669", // Emerald Green (No. of Students)
-                        isDark ? "#06b6d4" : "#0891b2", // Cyan Blue (Issued Books)
-                        isDark ? "#f43f5e" : "#e11d48"  // Rose Red (Overdue Returns)
-                    ],
-                    borderWidth: 0,
-                    borderRadius: 8
-                }]
+                labels: monthLabels.length > 0 ? monthLabels : ["No Data"],
+                datasets: [
+                    {
+                        label: "Books Issued",
+                        data: issuesData.length > 0 ? issuesData : [0],
+                        borderColor: isDark ? "#38bdf8" : "#0284c7", // Sky Blue
+                        backgroundColor: "rgba(56, 189, 248, 0.08)",
+                        borderWidth: 3,
+                        tension: 0.35,
+                        fill: true,
+                        pointBackgroundColor: isDark ? "#38bdf8" : "#0284c7",
+                        pointRadius: 4
+                    },
+                    {
+                        label: "Books Returned",
+                        data: returnsData.length > 0 ? returnsData : [0],
+                        borderColor: isDark ? "#34d399" : "#10b981", // Emerald Green
+                        backgroundColor: "rgba(52, 211, 153, 0.04)",
+                        borderWidth: 3,
+                        tension: 0.35,
+                        fill: true,
+                        pointBackgroundColor: isDark ? "#34d399" : "#10b981",
+                        pointRadius: 4
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false },
+                    legend: { 
+                        display: true,
+                        labels: { color: textColor, font: { weight: 600, size: 12 } }
+                    },
                     tooltip: { padding: 12 }
                 },
                 scales: {
@@ -224,7 +293,7 @@ function renderAnalyticsCharts(stats) {
                         grid: { display: false }
                     },
                     y: {
-                        ticks: { color: textColor },
+                        ticks: { color: textColor, stepSize: 5 },
                         grid: { color: gridColor }
                     }
                 }
@@ -339,7 +408,7 @@ async function loadContacts() {
                     <td><span style="font-size: 14px;">${msg.message}</span></td>
                     <td>${formattedDate}</td>
                     <td>
-                        <button class="delete-btn" style="margin-top: 0;" onclick="deleteContact('${msg.id}')">
+                        <button class="delete-btn" style="margin-top: 0;" onclick="deleteContact('${msg._id || msg.id}')">
                             Resolve / Delete
                         </button>
                     </td>
@@ -465,7 +534,7 @@ async function approveBorrowRequest(id) {
 }
 
 async function rejectBorrowRequest(id) {
-    if (!confirm("Are you sure you want to reject this request?")) return;
+    if (!confirm("Are you sure you want to reject?")) return;
 
     try {
         const response = await fetch(`/api/issues/requests/${id}/reject`, {
@@ -578,7 +647,7 @@ async function approveExtensionRequest(id) {
 }
 
 async function rejectExtensionRequest(id) {
-    if (!confirm("Are you sure you want to reject this extension request?")) return;
+    if (!confirm("Are you sure you want to reject?")) return;
 
     try {
         const response = await fetch(`/api/issues/extensions/${id}/reject`, {
@@ -724,31 +793,32 @@ async function loadFines() {
     if (!tbody) return;
 
     try {
-        const response = await fetch("/api/issues");
+        const response = await fetch("/api/issues/fines");
         if (!response.ok) {
             tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Failed to load fines</td></tr>`;
             return;
         }
-        const issues = await response.json();
-        const overdueIssues = issues.filter(iss => iss.fine > 0);
+        const fines = await response.json();
+        const unpaidFines = fines.filter(f => f.status === "Unpaid");
 
-        if (overdueIssues.length === 0) {
+        if (unpaidFines.length === 0) {
             tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 15px;">No students have outstanding overdue fines. All clear!</td></tr>`;
             return;
         }
 
-        tbody.innerHTML = overdueIssues.map(iss => {
-            const delayDays = Math.floor((new Date() - new Date(iss.returnDate)) / (1000 * 60 * 60 * 24));
-            const displayDelay = delayDays > 0 ? `${delayDays} days late` : "1 day late";
+        tbody.innerHTML = unpaidFines.map(f => {
+            const fineDate = f.createdAt 
+                ? new Date(f.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
+                : "Recent";
             return `
                 <tr>
-                    <td><strong>${iss.student}</strong></td>
-                    <td>${iss.book}</td>
-                    <td>${iss.returnDate}</td>
-                    <td><span style="font-size:13px; font-weight:600; color:var(--text-muted);">${displayDelay}</span></td>
-                    <td><span style="color:#ef4444; font-weight:700;">₹${iss.fine}</span></td>
+                    <td><strong>${f.studentName}</strong></td>
+                    <td>${f.bookTitle}</td>
+                    <td><code>${f.studentId}</code></td>
+                    <td><span style="font-size:13px; font-weight:600; color:var(--text-muted);">${fineDate}</span></td>
+                    <td><span style="color:#ef4444; font-weight:700;">₹${f.amount}</span></td>
                     <td>
-                        <button onclick="clearFine('${iss.id}', ${iss.fine})" class="action-btn" style="margin-top:0; padding:6px 12px; font-size:12px; background:#10b981; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+                        <button onclick="clearFine('${f._id || f.id}', ${f.amount})" class="action-btn" style="margin-top:0; padding:6px 12px; font-size:12px; background:#10b981; color:#fff; border:none; border-radius:6px; cursor:pointer;">
                             💰 Collect & Clear Fine
                         </button>
                     </td>
@@ -762,13 +832,13 @@ async function loadFines() {
 }
 
 async function clearFine(id, amount) {
-    if (!confirm(`Confirm collection of ₹${amount} fine and mark book as returned?`)) return;
+    if (!confirm(`Confirm collection of ₹${amount} fine and mark it as Paid?`)) return;
     try {
-        const response = await fetch(`/api/issues/${id}`, {
-            method: "DELETE"
+        const response = await fetch(`/api/issues/fines/${id}/pay`, {
+            method: "PUT"
         });
         if (response.ok) {
-            alert(`Collected ₹${amount} fine successfully! Book has been returned to campus shelves.`);
+            alert(`Collected ₹${amount} fine successfully! Fine status marked as Paid.`);
             loadDashboard();
             loadFines();
         } else {
@@ -883,87 +953,195 @@ async function loadRecentStudentsAndActivity() {
     const loginBody = document.getElementById("recentLoginsBody");
     if (!regBody || !loginBody) return;
 
+    // Relative time formatting helper
+    function formatRelativeTime(dateString) {
+        if (!dateString) return "Never";
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        if (diffMins < 1) return "Just now";
+        if (diffMins < 60) return `${diffMins} mins ago`;
+        const diffHours = Math.floor(diffMins / 60);
+        if (diffHours < 24) return `${diffHours} hr${diffHours > 1 ? 's' : ''} ago`;
+        const diffDays = Math.floor(diffHours / 24);
+        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    }
+
+    // 1. Fetch recently registered students
     try {
         const response = await fetch("/api/students");
-        if (!response.ok) {
+        if (response.ok) {
+            const students = await response.json();
+            const sortedStudents = [...students].sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+                const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+                return dateB - dateA;
+            });
+
+            if (sortedStudents.length === 0) {
+                regBody.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px; font-size:13.5px;">No students registered yet.</div>`;
+            } else {
+                regBody.innerHTML = sortedStudents.slice(0, 10).map(student => {
+                    const regDate = student.createdAt 
+                        ? new Date(student.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
+                        : "Recently";
+                    
+                    return `
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-radius:10px; border:1px solid var(--border-color); background:rgba(0,0,0,0.01); gap: 10px; transition: var(--transition);" onmouseover="this.style.background='rgba(0,51,102,0.03)';" onmouseout="this.style.background='rgba(0,0,0,0.01)';">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-light); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 1.5px solid var(--primary-color);">
+                                    ${student.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div style="font-size: 13.5px; font-weight: 700; color: var(--text-color);">${student.name}</div>
+                                    <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;">${student.course || "BCA"} | ${student.semester || "Semester 1"}</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 11px; font-weight: 700; color: var(--accent-color);"><code>${student.studentId || "N/A"}</code></div>
+                                <div style="font-size: 10.5px; color: var(--text-muted); font-weight:500;">${regDate}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            }
+        } else {
             regBody.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">Failed to load students</div>`;
-            loginBody.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">Failed to load logins</div>`;
-            return;
         }
-        
-        const students = await response.json();
-        
-        // Sort students by creation date (newest first)
-        const sortedStudents = [...students].sort((a, b) => {
-            const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
-            const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
-            return dateB - dateA;
-        });
-        
-        if (sortedStudents.length === 0) {
-            regBody.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px; font-size:13.5px;">No students registered yet.</div>`;
-            loginBody.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px; font-size:13.5px;">No login activity.</div>`;
-            return;
-        }
-
-        // Render recently registered vertical feeds
-        regBody.innerHTML = sortedStudents.map(student => {
-            const regDate = student.createdAt 
-                ? new Date(student.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
-                : "08 Jul 2026";
-            
-            return `
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-radius:10px; border:1px solid var(--border-color); background:rgba(0,0,0,0.01); gap: 10px; transition: var(--transition);" onmouseover="this.style.background='rgba(0,51,102,0.03)';" onmouseout="this.style.background='rgba(0,0,0,0.01)';">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-light); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 1.5px solid var(--primary-color);">
-                            ${student.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                            <div style="font-size: 13.5px; font-weight: 700; color: var(--text-color);">${student.name}</div>
-                            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 500;">${student.course || "BCA"} | ${student.semester || "Semester 1"}</div>
-                        </div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 11px; font-weight: 700; color: var(--accent-color);"><code>${student.studentId || "N/A"}</code></div>
-                        <div style="font-size: 10.5px; color: var(--text-muted); font-weight:500;">${regDate}</div>
-                    </div>
-                </div>
-            `;
-        }).join("");
-
-        // Render recent logins dynamically using the registered students list
-        const loginTimes = ["Just now", "4 mins ago", "18 mins ago", "45 mins ago", "1 hour ago", "3 hours ago", "5 hours ago"];
-        const authMethods = ["ZHI Credentials", "Google OAuth Popup", "ZHI Credentials", "Google OAuth Popup", "ZHI Credentials"];
-        
-        loginBody.innerHTML = sortedStudents.map((student, idx) => {
-            const time = loginTimes[idx % loginTimes.length];
-            const method = authMethods[idx % authMethods.length];
-            const isGoogle = method.includes("Google");
-            
-            return `
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-radius:10px; border:1px solid var(--border-color); background:rgba(0,0,0,0.01); gap: 10px; transition: var(--transition);" onmouseover="this.style.background='rgba(0,51,102,0.03)';" onmouseout="this.style.background='rgba(0,0,0,0.01)';">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 38px; height: 38px; border-radius: 50%; background: ${isGoogle ? "rgba(26,115,232,0.08)" : "rgba(16,185,129,0.08)"}; color: ${isGoogle ? "#1a73e8" : "#10b981"}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 1.5px solid ${isGoogle ? "#1a73e8" : "#10b981"};">
-                            ${student.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                            <div style="font-size: 13.5px; font-weight: 700; color: var(--text-color);">${student.name}</div>
-                            <div style="font-size: 11px; color: var(--text-muted); font-weight:500;">${student.email || `${student.name.toLowerCase().replace(/\s+/g, '')}@zhi.edu.in`}</div>
-                        </div>
-                    </div>
-                    <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                        <span style="font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 700; ${isGoogle ? "background:rgba(26,115,232,0.1); color:#1a73e8; border:1px solid rgba(26,115,232,0.2);" : "background:rgba(16,185,129,0.1); color:#10b981; border:1px solid rgba(16,185,129,0.2);"}"">
-                            ${method}
-                        </span>
-                        <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 600;">${time}</div>
-                    </div>
-                </div>
-            `;
-        }).join("");
     } catch (err) {
-        console.error("Error loading student logins/activity:", err);
-        regBody.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">Server connection failure</div>`;
-        loginBody.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">Server connection failure</div>`;
+        console.error(err);
+        regBody.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">Server error</div>`;
     }
+
+    // 2. Fetch real-time active student logins
+    try {
+        const response = await fetch("/api/students/recent-logins");
+        if (response.ok) {
+            const logins = await response.json();
+            if (logins.length === 0) {
+                loginBody.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px; font-size:13.5px;">No recent login activity.</div>`;
+            } else {
+                loginBody.innerHTML = logins.map(user => {
+                    const method = user.loginMethod || "ZHI Credentials";
+                    const isGoogle = method.includes("Google");
+                    const relativeTime = formatRelativeTime(user.loginAt);
+                    
+                    return `
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-radius:10px; border:1px solid var(--border-color); background:rgba(0,0,0,0.01); gap: 10px; transition: var(--transition);" onmouseover="this.style.background='rgba(0,51,102,0.03)';" onmouseout="this.style.background='rgba(0,0,0,0.01)';">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 38px; height: 38px; border-radius: 50%; background: ${isGoogle ? "rgba(26,115,232,0.08)" : "rgba(16,185,129,0.08)"}; color: ${isGoogle ? "#1a73e8" : "#10b981"}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; border: 1.5px solid ${isGoogle ? "#1a73e8" : "#10b981"};">
+                                    ${user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div style="font-size: 13.5px; font-weight: 700; color: var(--text-color);">${user.name}</div>
+                                    <div style="font-size: 11px; color: var(--text-muted); font-weight:500;">${user.email}</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                                <span style="font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 700; ${isGoogle ? "background:rgba(26,115,232,0.1); color:#1a73e8; border:1px solid rgba(26,115,232,0.2);" : "background:rgba(16,185,129,0.1); color:#10b981; border:1px solid rgba(16,185,129,0.2);"}"">
+                                    ${method}
+                                </span>
+                                <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 600;">${relativeTime}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            }
+        } else {
+            loginBody.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">Failed to load logins</div>`;
+        }
+    } catch (err) {
+        console.error(err);
+        loginBody.innerHTML = `<div style="text-align:center; color:#ef4444; padding:20px;">Server error</div>`;
+    }
+}
+
+function toggleProcurementForm() {
+    const formDiv = document.getElementById("addProcurementForm");
+    if (!formDiv) return;
+    if (formDiv.style.display === "none") {
+        formDiv.style.display = "block";
+    } else {
+        formDiv.style.display = "none";
+    }
+}
+
+function toggleMonitorForm() {
+    const formDiv = document.getElementById("liveMonitorFormContainer");
+    if (!formDiv) return;
+    if (formDiv.style.display === "none") {
+        formDiv.style.display = "block";
+    } else {
+        formDiv.style.display = "none";
+    }
+}
+
+async function loadMonitorStatus() {
+    try {
+        const response = await fetch("/api/system/status");
+        if (response.ok) {
+            const data = await response.json();
+            const statusInput = document.getElementById("monitorStatus");
+            const footfallInput = document.getElementById("monitorFootfall");
+            const labActiveInput = document.getElementById("monitorLabActive");
+            const readingOccupancyInput = document.getElementById("monitorReadingOccupancy");
+            const shiftInput = document.getElementById("monitorShift");
+            const librarianInput = document.getElementById("monitorLibrarian");
+
+            if (statusInput) statusInput.value = data.status || "OPEN";
+            if (footfallInput) footfallInput.value = data.footfall !== undefined ? data.footfall : 148;
+            if (labActiveInput) labActiveInput.value = data.labActive !== undefined ? data.labActive : 18;
+            if (readingOccupancyInput) readingOccupancyInput.value = data.readingOccupancy !== undefined ? data.readingOccupancy : 72;
+            if (shiftInput) shiftInput.value = data.shift || "09:00 AM - 06:00 PM";
+            if (librarianInput) librarianInput.value = data.librarian || "Dr. A.K. Sinha";
+        }
+    } catch (error) {
+        console.error("Error loading library monitor status:", error);
+    }
+}
+
+function setupMonitorFormHandler() {
+    const form = document.getElementById("liveMonitorForm");
+    if (!form) return;
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const status = document.getElementById("monitorStatus").value;
+        const footfall = document.getElementById("monitorFootfall").value;
+        const labActive = document.getElementById("monitorLabActive").value;
+        const readingOccupancy = document.getElementById("monitorReadingOccupancy").value;
+        const shift = document.getElementById("monitorShift").value;
+        const librarian = document.getElementById("monitorLibrarian").value;
+
+        try {
+            const response = await fetch("/api/system/status", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    status,
+                    footfall,
+                    labActive,
+                    readingOccupancy,
+                    shift,
+                    librarian
+                })
+            });
+
+            if (response.ok) {
+                alert("Library Live Monitor status updated successfully!");
+                toggleMonitorForm();
+                loadMonitorStatus();
+            } else {
+                alert("Failed to update status.");
+            }
+        } catch (error) {
+            console.error("Error updating status:", error);
+            alert("Server connection failed");
+        }
+    });
 }
 

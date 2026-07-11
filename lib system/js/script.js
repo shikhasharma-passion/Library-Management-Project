@@ -444,7 +444,7 @@ function triggerCartCheckout() {
 
     document.getElementById("globalCheckoutTitle").innerText = `Purchase: ${cartItems.length} Books`;
     document.getElementById("globalCheckoutPrice").innerText = "₹" + subtotal;
-    document.getElementById("globalUpiQr").src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=smartlib@upi%26pn=SmartLib%26am=${subtotal}%26cu=INR`;
+    document.getElementById("globalUpiQr").src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=zhilibrary@upi%26pn=ZHILibrary%26am=${subtotal}%26cu=INR`;
 
     // Reset payment states
     document.getElementById("globalCardForm").style.display = "flex";

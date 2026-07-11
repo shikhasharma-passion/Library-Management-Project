@@ -222,6 +222,15 @@
         <p>Your gateway to world-class educational guides. We have collected top-tier video playlists, reference drives, and academic toolkits organized by stream to help you master any subject.</p>
     </section>
 
+    <!-- SEARCH -->
+    <section class="search-section" style="padding: 40px 8% 10px 8%;">
+        <div class="search-box" style="max-width: 600px; box-shadow: 0 8px 24px var(--shadow-color); display: flex; gap: 10px; width: 100%; border-radius: 30px; padding: 5px 15px; margin: 0 auto; align-items: center; border: 1px solid var(--border-color); background: var(--card-bg);">
+            <input type="text" id="hubSearchInput" placeholder="Search learning guides, playlists, toolkits..." style="flex: 1; border: none; background: transparent; padding: 10px 20px; font-size: 15px; outline: none; color: var(--text-color); font-family: inherit;">
+            <button id="clearHubSearchBtn" onclick="clearHubSearch()" style="display: none; background: transparent; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 0 10px; font-weight: 700; outline: none;">✕</button>
+            <button id="hubSearchBtn" style="background: var(--primary-color); border-radius: 20px; margin: 0; padding: 10px 25px; border: none; color: var(--accent-color); font-weight: 600; cursor: pointer;">Search</button>
+        </div>
+    </section>
+
     <!-- STREAM FILTER TABS -->
     <section class="grid-container">
         <div class="filter-tabs" id="hubTabs">
@@ -260,15 +269,16 @@
                 <h3>Contact</h3>
                 <p>📍 Patna, Bihar</p>
                 <p>📞 +91 9876543210</p>
-                <p>✉ support@libraryms.com</p>
+                <p>✉ support@zhi.edu.in</p>
             </div>
         </div>
         <div class="footer-bottom">
-            © 2026 SmartLib | Designed By Shikha Sharma
+            © 2026 ZHI Library | Designed By Shikha Sharma
         </div>
     </footer>
 
     <!-- Scripts -->
+    <script src="js/api-resolver.js"></script>
     <script src="js/learning_hub.js"></script>
     <script src="js/script.js"></script>
 

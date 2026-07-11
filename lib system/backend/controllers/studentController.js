@@ -68,8 +68,21 @@ async function deleteStudent(req, res) {
   }
 }
 
+async function getRecentLogins(req, res) {
+  try {
+    const LoginLog = require("../models/LoginLog");
+    const logins = await LoginLog.find()
+      .sort({ loginAt: -1 })
+      .limit(20);
+    res.json(logins);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
 module.exports = {
   getStudents,
   createStudent,
-  deleteStudent
+  deleteStudent,
+  getRecentLogins
 };

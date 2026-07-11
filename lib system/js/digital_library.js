@@ -1,15 +1,8 @@
-// Intercept and route fetch requests on local files to localhost:3000
-const ORIGINAL_FETCH = window.fetch;
-window.fetch = function(url, options) {
-    const API_BASE_URL = window.location.protocol === "file:" ? "http://localhost:3000" : "";
-    if (typeof url === "string" && url.startsWith("/api")) {
-        url = API_BASE_URL + url;
-    }
-    return ORIGINAL_FETCH(url, options);
-};
 
 document.addEventListener("DOMContentLoaded", () => {
-    initDigitalLibrary();
+    window.API_RESOLVED_PROMISE.then(() => {
+        initDigitalLibrary();
+    });
 });
 
 let digitalBooks = [];
@@ -24,6 +17,7 @@ async function initDigitalLibrary() {
     await fetchDigitalBooks();
 
     // Event listener for Search
+    const clearBtn = document.getElementById("clearDigitalSearchBtn");
     if (searchBtn && searchInput) {
         searchBtn.addEventListener("click", () => {
             fetchDigitalBooks(selectedStream, searchInput.value.trim());
@@ -33,7 +27,22 @@ async function initDigitalLibrary() {
                 fetchDigitalBooks(selectedStream, searchInput.value.trim());
             }
         });
+        searchInput.addEventListener("input", () => {
+            const val = searchInput.value.trim();
+            if (clearBtn) {
+                clearBtn.style.display = val ? "block" : "none";
+            }
+            fetchDigitalBooks(selectedStream, val);
+        });
     }
+
+    window.clearDigitalSearch = function() {
+        const input = document.getElementById("digitalSearchInput");
+        const clearButton = document.getElementById("clearDigitalSearchBtn");
+        if (input) input.value = "";
+        if (clearButton) clearButton.style.display = "none";
+        fetchDigitalBooks(selectedStream, "");
+    };
 
     // Event listener for stream tabs
     streamTabs.forEach(btn => {
@@ -280,7 +289,7 @@ function downloadBookById(id) {
                 <h1 style="font-size: 38px; color: #0f172a; margin-bottom: 10px; font-weight: 800;">${book.name}</h1>
                 <p style="font-size: 18px; color: #475569; margin-bottom: 40px; font-weight: 500;">By ${book.author}</p>
                 <div style="margin-top: auto; font-size: 13px; color: #94a3b8;">
-                    <p>Smart Library System - Premium Digital Edition</p>
+                    <p>ZHI Library System - Premium Digital Edition</p>
                     <p>© ${new Date().getFullYear()} LibraryMS. All rights reserved.</p>
                 </div>
             </div>

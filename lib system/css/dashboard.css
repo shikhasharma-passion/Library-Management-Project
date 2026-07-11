@@ -453,42 +453,52 @@ canvas {
     margin-bottom: 30px;
 }
 
-/* RESPONSIVE DESIGN */
+/* RESPONSIVE DESIGN & MOBILE OPTIMIZATIONS */
 @media (max-width: 991px) {
-    body {
-        flex-direction: column;
+    #sidebarToggleBtn {
+        display: block !important;
     }
 
     .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        padding: 20px;
+        position: fixed !important;
+        left: -270px !important;
+        top: 0;
+        width: 260px !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex !important;
+        box-shadow: 10px 0 30px rgba(0,0,0,0.25);
     }
 
-    .logo {
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-    }
-
-    .sidebar ul {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .sidebar ul li {
-        margin-bottom: 0;
-    }
-
-    .sidebar ul li a {
-        padding: 10px 14px;
+    .sidebar.active {
+        transform: translateX(270px);
     }
 
     .main-content {
-        margin-left: 0;
-        width: 100%;
-        padding: 25px;
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 20px !important;
+    }
+
+    .topbar {
+        padding-top: 10px;
+        gap: 15px;
+    }
+
+    .cards {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+        gap: 15px !important;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        padding: 20px !important;
+    }
+
+    .charts-section {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
     }
 }
 
@@ -496,19 +506,27 @@ canvas {
     .topbar {
         flex-direction: column;
         align-items: flex-start;
+        gap: 12px;
     }
 
     .profile-section {
         width: 100%;
         justify-content: space-between;
+        flex-wrap: wrap;
     }
 
     .table-section {
-        padding: 20px 15px;
+        padding: 15px 10px;
+        border-radius: 12px;
     }
-    
+
     table th, table td {
-        padding: 12px 10px;
-        font-size: 13px;
+        padding: 10px 8px;
+        font-size: 12.5px;
+    }
+
+    .status-badge {
+        padding: 4px 10px;
+        font-size: 11px;
     }
 }

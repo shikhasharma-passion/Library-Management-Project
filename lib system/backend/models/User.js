@@ -44,6 +44,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: ""
+    },
+    lastLoginAt: {
+      type: Date,
+      default: null
+    },
+    loginMethod: {
+      type: String,
+      default: ""
     }
   },
   { timestamps: true }

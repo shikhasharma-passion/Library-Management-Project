@@ -50,6 +50,12 @@ function getDepartmentForCategory(category) {
 async function seedCatalogBooks() {
   await ensureAdminUser();
 
+  const count = await CatalogBook.countDocuments({});
+  if (count > 0) {
+    console.log("Database already has records. Skipping clean seeder to preserve user data.");
+    return;
+  }
+
   console.log("Cleaning database collections...");
   await Promise.all([
     CatalogBook.deleteMany({}),
@@ -410,6 +416,32 @@ async function seedCatalogBooks() {
     { name: "Prof. R. P. Verma", email: "faculty.2@zhi.edu.in", message: "Need additional copies of MBA Strategic Management case studies." },
     { name: "Neha Gupta", email: "neha.gupta@example.com", message: "Can we access IEEE journals from home via the library portal?" }
   ]);
+
+  // Seed mock login logs
+  const LoginLog = require("../models/LoginLog");
+  await LoginLog.deleteMany({});
+  const seededLogins = [];
+  const loginTimes = [
+    new Date(Date.now() - 5 * 60 * 1000),      // 5 mins ago
+    new Date(Date.now() - 18 * 60 * 1000),     // 18 mins ago
+    new Date(Date.now() - 45 * 60 * 1000),     // 45 mins ago
+    new Date(Date.now() - 2 * 3600 * 1000),    // 2 hours ago
+    new Date(Date.now() - 5 * 3600 * 1000),    // 5 hours ago
+    new Date(Date.now() - 1 * 24 * 3600 * 1000),// 1 day ago
+    new Date(Date.now() - 2 * 24 * 3600 * 1000)// 2 days ago
+  ];
+  for (let i = 0; i < 7; i++) {
+    const student = seededStudents[i % seededStudents.length];
+    seededLogins.push({
+      studentId: student.studentId,
+      name: student.name,
+      email: student.email,
+      loginMethod: i % 2 === 0 ? "Google OAuth" : "ZHI Credentials",
+      loginAt: loginTimes[i]
+    });
+  }
+  await LoginLog.insertMany(seededLogins);
+  console.log("Login logs seeded.");
 
   // Seed pending borrow requests
   console.log("Seeding pending student borrow requests...");

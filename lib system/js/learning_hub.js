@@ -1278,11 +1278,17 @@ const learningResources = [
     }
 ];
 
+let activeHubCategory = "All";
+let activeHubSearch = "";
+
 function initLearningHub() {
     const tabs = document.querySelectorAll("#hubTabs .filter-btn");
+    const searchInput = document.getElementById("hubSearchInput");
+    const searchBtn = document.getElementById("hubSearchBtn");
+    const clearBtn = document.getElementById("clearHubSearchBtn");
 
     // Initial render
-    renderResources("All");
+    renderResources("All", "");
 
     // Event listeners for tabs
     tabs.forEach(tab => {
@@ -1293,27 +1299,66 @@ function initLearningHub() {
             // Add active class
             tab.classList.add("active");
 
-            const selectedStream = tab.getAttribute("data-stream");
-            renderResources(selectedStream);
+            activeHubCategory = tab.getAttribute("data-stream");
+            const query = searchInput ? searchInput.value.trim() : "";
+            renderResources(activeHubCategory, query);
         });
     });
+
+    if (searchBtn && searchInput) {
+        searchBtn.addEventListener("click", () => {
+            renderResources(activeHubCategory, searchInput.value.trim());
+        });
+        searchInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                renderResources(activeHubCategory, searchInput.value.trim());
+            }
+        });
+        searchInput.addEventListener("input", () => {
+            const val = searchInput.value.trim();
+            if (clearBtn) {
+                clearBtn.style.display = val ? "block" : "none";
+            }
+            renderResources(activeHubCategory, val);
+        });
+    }
+
+    window.clearHubSearch = function() {
+        if (searchInput) searchInput.value = "";
+        if (clearBtn) clearBtn.style.display = "none";
+        renderResources(activeHubCategory, "");
+    };
 }
 
-function renderResources(stream = "All") {
+function renderResources(stream = "All", searchValue = "") {
+    activeHubCategory = stream;
+    activeHubSearch = searchValue;
+
     const grid = document.getElementById("resourceGrid");
     if (!grid) return;
 
     grid.innerHTML = "";
 
-    const filtered = stream === "All"
-        ? learningResources
-        : learningResources.filter(r => r.stream === stream);
+    let filtered = learningResources;
+    if (stream !== "All") {
+        filtered = filtered.filter(r => r.stream === stream);
+    }
+
+    if (searchValue) {
+        const query = searchValue.toLowerCase();
+        filtered = filtered.filter(r => 
+            r.name.toLowerCase().includes(query) ||
+            r.provider.toLowerCase().includes(query) ||
+            r.desc.toLowerCase().includes(query) ||
+            r.stream.toLowerCase().includes(query)
+        );
+    }
 
     if (filtered.length === 0) {
         grid.innerHTML = `
             <div style="grid-column: 1/-1; text-align:center; padding:50px; color:var(--text-muted);">
                 <h3>No Resources Available</h3>
-                <p>Try selecting another tab category.</p>
+                <p>Try searching for another query or selecting a different tab.</p>
             </div>
         `;
         return;

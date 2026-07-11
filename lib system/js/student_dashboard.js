@@ -1,12 +1,3 @@
-// Intercept and route fetch requests on local files to localhost:3000
-const ORIGINAL_FETCH = window.fetch;
-window.fetch = function(url, options) {
-    const API_BASE_URL = window.location.protocol === "file:" ? "http://localhost:3000" : "";
-    if (typeof url === "string" && url.startsWith("/api")) {
-        url = API_BASE_URL + url;
-    }
-    return ORIGINAL_FETCH(url, options);
-};
 
 // Global Custom Centered Warning/Success Alert Override
 window.alert = function(message) {
@@ -28,7 +19,6 @@ window.alert = function(message) {
     const isSuccess = !msgLower.includes("fail") && 
                       !msgLower.includes("error") && 
                       !msgLower.includes("invalid") && 
-                      !msgLower.includes("reject") && 
                       !msgLower.includes("limit") && 
                       !msgLower.includes("offline");
 
@@ -37,7 +27,8 @@ window.alert = function(message) {
     const title = isSuccess ? "Action Successful" : "System Warning";
 
     overlay.innerHTML = `
-        <div style="width: 350px; background: var(--card-bg); border: 2.5px solid ${color}; border-radius: 16px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; justify-content: space-between; gap: 15px; animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-sizing: border-box;">
+        <div style="width: 350px; background: var(--card-bg); border: 2.5px solid ${color}; border-radius: 16px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; display: flex; flex-direction: column; justify-content: space-between; gap: 15px; animation: popupScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-sizing: border-box; position: relative;">
+            <button onclick="document.getElementById('customAlertOverlay').remove()" style="position: absolute; top: 12px; right: 15px; background: transparent; border: none; color: var(--text-muted); font-size: 18px; font-weight: bold; cursor: pointer; padding: 5px; outline: none; transition: color 0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--text-muted)'">✕</button>
             <div>
                 <div style="font-size: 40px; margin-bottom: 8px;">${icon}</div>
                 <h3 style="font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 800; color: ${color}; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">${title}</h3>
@@ -45,9 +36,6 @@ window.alert = function(message) {
                     ${message}
                 </p>
             </div>
-            <button onclick="document.getElementById('customAlertOverlay').remove()" style="width: 100%; padding: 12px; border-radius: 8px; background: ${color}; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.filter='brightness(0.9)';" onmouseout="this.style.filter='none';">
-                Close Window
-            </button>
         </div>
     `;
 
@@ -67,15 +55,17 @@ window.alert = function(message) {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    initStudentTheme();
-    loadStudentDashboard();
-    initAvailableBookSearch();
-    loadAvailableBooks();
-    loadStudentBorrowRequests();
-    loadStudentExtensionRequests();
-    loadDigitalReadingHistory();
-    initSuggestionForm();
-    loadStudentSuggestions();
+    window.API_RESOLVED_PROMISE.then(() => {
+        initStudentTheme();
+        loadStudentDashboard();
+        initAvailableBookSearch();
+        loadAvailableBooks();
+        loadStudentBorrowRequests();
+        loadStudentExtensionRequests();
+        loadDigitalReadingHistory();
+        initSuggestionForm();
+        loadStudentSuggestions();
+    });
 });
 
 /* THEME SYSTEM (Persistent across Student Dashboard) */
@@ -266,7 +256,17 @@ function renderAvailableBooks(books, isSearchActive) {
 
     list.innerHTML = "";
 
-    if (books.length === 0) {
+    // Deduplicate books by name so only one copy of each book title is shown
+    const uniqueBooksMap = new Map();
+    books.forEach(book => {
+        const nameKey = String(book.name || "").trim().toLowerCase();
+        if (!uniqueBooksMap.has(nameKey)) {
+            uniqueBooksMap.set(nameKey, book);
+        }
+    });
+    const uniqueBooks = Array.from(uniqueBooksMap.values());
+
+    if (uniqueBooks.length === 0) {
         list.innerHTML = `
             <div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-muted);">
                 <h3>No Available Shelf Books</h3>
@@ -278,9 +278,9 @@ function renderAvailableBooks(books, isSearchActive) {
     }
 
     // Limit to 8 books initially on page load if search is inactive
-    let booksToRender = books;
-    if (!isSearchActive && books.length > 8) {
-        booksToRender = books.slice(0, 8);
+    let booksToRender = uniqueBooks;
+    if (!isSearchActive && uniqueBooks.length > 8) {
+        booksToRender = uniqueBooks.slice(0, 8);
         if (viewMoreContainer) {
             viewMoreContainer.innerHTML = `
                 <button onclick="location.href='all_books.html'" style="padding:12px 28px; border-radius:10px; background:var(--accent-color); color:#0f172a; border:none; cursor:pointer; font-weight:700; font-size:14.5px; transition:var(--transition); box-shadow:0 8px 20px var(--shadow-color);" onmouseover="this.style.filter='brightness(1.15)';" onmouseout="this.style.filter='none';">
@@ -385,17 +385,53 @@ async function loadStudentDashboard() {
     const user = localStorage.getItem("user") || "";
     const profile = document.getElementById("studentProfile");
 
-    if (profile && user) {
-        profile.innerText = `Welcome, ${user}`;
-    }
-
     try {
         const response = await fetch(`/api/student-dashboard?name=${encodeURIComponent(user)}`);
         const data = await response.json();
 
+        if (profile && user) {
+            const semStr = data.studentInfo ? ` (${data.studentInfo.course} | ${data.studentInfo.semester})` : "";
+            profile.innerText = `Welcome, ${user}${semStr}`;
+        }
+
         document.getElementById("studentIssuedCount").innerText = data.totalIssued;
         document.getElementById("studentPendingCount").innerText = data.pendingReturns;
         document.getElementById("studentFineAmount").innerText = `Rs. ${data.fineAmount}`;
+
+        // Fetch real-time library live monitor status
+        try {
+            const statusRes = await fetch("/api/system/status");
+            if (statusRes.ok) {
+                const statusData = await statusRes.json();
+                
+                const badge = document.getElementById("liveStatusBadge");
+                const shiftText = document.getElementById("liveShiftText");
+                const footfallText = document.getElementById("liveFootfallText");
+                const occupancyText = document.getElementById("liveOccupancyDetails");
+
+                if (badge) {
+                    badge.innerText = statusData.status || "OPEN";
+                    if (statusData.status === "CLOSED") {
+                        badge.style.background = "rgba(239, 68, 68, 0.12)";
+                        badge.style.color = "#ef4444";
+                    } else {
+                        badge.style.background = "rgba(16, 185, 129, 0.12)";
+                        badge.style.color = "#10b981";
+                    }
+                }
+                if (shiftText) {
+                    shiftText.innerHTML = `Current Shift: ${statusData.shift}<br>Duty Librarian: ${statusData.librarian}<br>Stack Hall gate: Active`;
+                }
+                if (footfallText) {
+                    footfallText.innerText = `Today's Footfall: ${statusData.footfall}`;
+                }
+                if (occupancyText) {
+                    occupancyText.innerHTML = `Digital Lab: ${statusData.labActive}/25 active PCs<br>Reading Room: ${statusData.readingOccupancy}% occupancy<br>Gate scanner: Normal`;
+                }
+            }
+        } catch (statusErr) {
+            console.error("Error loading system status:", statusErr);
+        }
 
         // Show/Hide Overdue return alert warning
         const alertCard = document.getElementById("overdueAlert");
